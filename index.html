@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис создания индивидуальных трек‑листов для подготовки к ОГЭ/ЕГЭ по информатике</title>
+</head>
+<body>
+    <header>
+        <h1>Создание индивидуальных трек‑листов</h1>
+        <p>Составьте план подготовки к ОГЭ/ЕГЭ по информатике: выберите темы и распределите их по этапам!</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Выберите экзамен</h2>
+            <div>
+                <input type="radio" id="oge" name="exam" value="oge">
+                <label for="oge">ОГЭ</label>
+            </div>
+            <div>
+                <input type="radio" id="ege" name="exam" value="ege">
+                <label for="ege">ЕГЭ</label>
+            </div>
+        </section>
+
+        <section>
+            <h2>Темы для изучения</h2>
+            <p>Отметьте темы, которые хотите включить в трек‑лист:</p>
+            <div>
+                <input type="checkbox" id="algorithms" name="topics" value="algorithms">
+                <label for="algorithms">Алгоритмы и их свойства</label>
+            </div>
+            <div>
+                <input type="checkbox" id="logic" name="topics" value="logic">
+                <label for="logic">Логические операции и таблицы истинности</label>
+            </div>
+            <div>
+                <input type="checkbox" id="programming" name="topics" value="programming">
+                <label for="programming">Основы программирования (Python, Pascal, C++)</label>
+            </div>
+            <div>
+                <input type="checkbox" id="systems" name="topics" value="systems">
+                <label for="systems">Системы счисления и перевод чисел</label>
+            </div>
+            <div>
+                <input type="checkbox" id="dataStructures" name="topics" value="dataStructures">
+                <label for="dataStructures">Структуры данных (массивы, списки, деревья)</label>
+            </div>
+            <div>
+                <input type="checkbox" id="networks" name="topics" value="networks">
+                <label for="networks">Компьютерные сети и Интернет</label>
+            </div>
+            <div>
+                <input type="checkbox" id="infoSecurity" name="topics" value="infoSecurity">
+                <label for="infoSecurity">Информационная безопасность</label>
+            </div>
+        </section>
+
+        <section>
+            <h2>Настройки трек‑листа</h2>
+            <label for="duration">Срок подготовки (недель):</label>
+            <input type="number" id="duration" name="duration" min="1" max="52" value="12">
+
+            <label for="hoursPerWeek">Часов в неделю:</label>
+            <input type="number" id="hoursPerWeek" name="hoursPerWeek" min="1" max="40" value="5">
+
+            <label for="difficulty">Уровень сложности:</label>
+            <select id="difficulty" name="difficulty">
+                <option value="basic">Базовый</option>
+                <option value="intermediate">Средний</option>
+                <option value="advanced">Продвинутый</option>
+            </select>
+        </section>
+
+        <section>
+            <button type="button" onclick="generateTracklist()">Сгенерировать трек‑лист</button>
+        </section>
+
+        <section id="tracklistResult">
+            <h2>Ваш индивидуальный трек‑лист</h2>
+            <div id="tracklist">
+                <!-- Сюда будет добавляться трек‑лист через JS -->
+                <p>Нажмите «Сгенерировать трек‑лист», чтобы увидеть план подготовки.</p>
+            </div>
+            <button type="button">Скачать трек‑лист (PDF)</button>
+            <button type="button">Поделиться трек‑листом</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Сервис создания индивидуальных трек‑листов для подготовки к ОГЭ/ЕГЭ по информатике</p>
+    </footer>
+</body>
+</html>
