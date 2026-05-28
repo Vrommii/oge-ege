@@ -44,11 +44,13 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            position: relative;
         }
         .logo-area {
             display: flex;
             align-items: center;
             gap: 12px;
+            width: 120px;
         }
         .account-icon {
             background: #034694;
@@ -75,7 +77,10 @@
             font-weight: 800;
             color: var(--primary-dark);
             text-align: center;
-            flex: 1;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
         }
         .logo i {
             margin-right: 8px;
@@ -130,31 +135,53 @@
             margin-bottom: 15px;
             font-size: 1rem;
         }
-        /* НОВЫЕ БЛОКИ ПОД ЛОГОТИПОМ */
+        /* БЛОК С НАДПИСЯМИ - ФИКСИРОВАННЫЙ И ИСЧЕЗАЮЩИЙ ПРИ СКРОЛЛЕ */
+        .tagline-wrapper {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        .tagline-wrapper.hide {
+            opacity: 0;
+            transform: translateY(-100%);
+            visibility: hidden;
+        }
         .tagline-block {
             text-align: center;
-            margin: 20px 0 10px 0;
+            margin: 0 auto;
+            max-width: 1200px;
+            padding: 0 20px;
         }
         .tagline-main {
             background: rgba(141, 216, 247, 0.75);
             color: #034694;
-            padding: 12px 24px;
+            padding: 10px 24px;
             border-radius: 10px;
             display: inline-block;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             backdrop-filter: blur(2px);
+            pointer-events: auto;
         }
         .tagline-description {
             background: rgba(141, 216, 247, 0.75);
             color: #034694;
-            padding: 12px 24px;
+            padding: 8px 20px;
             border-radius: 10px;
-            max-width: 800px;
-            margin: 12px auto 0;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            max-width: 950px;
+            margin: 8px auto 0;
+            font-size: 0.7rem;
+            line-height: 1.4;
             backdrop-filter: blur(2px);
+            pointer-events: auto;
+        }
+        /* Отступ для основного контента, чтобы он не перекрывался фиксированным блоком */
+        .content-offset {
+            margin-top: 110px;
         }
         .random-section {
             background: rgba(141, 219, 248, 0.75);
@@ -504,8 +531,10 @@
             .btn-random, .btn-white { min-width: 220px; padding: 12px 32px; }
             .random-section { padding: 25px 20px; }
             .stat-card .value { font-size: 1.2rem; }
-            .tagline-main { font-size: 1rem; padding: 8px 16px; }
-            .tagline-description { font-size: 0.8rem; }
+            .tagline-main { font-size: 0.9rem; padding: 6px 16px; }
+            .tagline-description { font-size: 0.6rem; }
+            .content-offset { margin-top: 95px; }
+            .tagline-wrapper { top: 70px; }
         }
     </style>
 </head>
@@ -526,89 +555,94 @@
             <button class="btn btn-primary" id="openRegisterBtn">Создать аккаунт</button>
         </div>
     </div>
-    <!-- НОВЫЕ БЛОКИ ПОД ЛОГОТИПОМ -->
+</header>
+
+<!-- ФИКСИРОВАННЫЙ БЛОК С НАДПИСЯМИ, КОТОРЫЙ ИСЧЕЗАЕТ ПРИ СКРОЛЛЕ -->
+<div class="tagline-wrapper" id="taglineWrapper">
     <div class="container">
         <div class="tagline-block">
             <div class="tagline-main">
                 ПЕРСОНАЛЬНЫЕ ТРЕК-ЛИСТЫ ДЛЯ ПОДГОТОВКИ ОГЭ/ЕГЭ
             </div>
             <div class="tagline-description">
-                Сервис автоматизирует подготовку к ОГЭ/ЕГЭ по информатике через адаптивные учебные планы — индивидуальные трек-листы. Учитывает уровень знаний, динамически меняет сложность, даёт структурированное обучение и наглядный прогресс
+                Сервис автоматизирует подготовку к ОГЭ/ЕГЭ по информатике через адаптивные учебные планы — индивидуальные трек-листы. Учитывает уровень знаний, динамически меняет сложность, даёт структурированное обучение, наглядный прогресс и персонализированные рекомендации для достижения максимальных результатов на экзаменах.
             </div>
         </div>
     </div>
-</header>
+</div>
 
-<div class="container">
-    <section class="hero">
-        <h1>Создай свой индивидуальный трек-лист для подготовки к ЕГЭ/ОГЭ по информатике!</h1>
-        <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
-        <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
-    </section>
+<div class="content-offset" id="mainContent">
+    <div class="container">
+        <section class="hero">
+            <h1>Создай свой индивидуальный трек-лист для подготовки к ЕГЭ/ОГЭ по информатике!</h1>
+            <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
+            <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
+        </section>
 
-    <section class="stats-chart">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-            <h3>📈 Динамика успеваемости</h3>
-            <span style="font-size:13px; color:#666;">Правильные ответы (ОГЭ — синий, ЕГЭ — красный)</span>
-        </div>
-        <div class="chart-wrapper">
-            <canvas id="progressChart"></canvas>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="label">✅ Лучше всего</div><div class="value" id="bestTask">—</div></div>
-            <div class="stat-card"><div class="label">⚠️ Самое сложное</div><div class="value" id="worstTask">—</div></div>
-            <div class="stat-card"><div class="label">📊 Процент правильных ответов</div><div class="value" id="percentCorrect">0%</div></div>
-        </div>
-    </section>
-
-    <section class="random-section">
-        <div class="random-header">
-            <h3><i class="fas fa-dice-d6"></i> Рандомное задание</h3>
-            <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
-        </div>
-        <div class="task-card" id="randomTaskCard">
-            <div class="meta">
-                <span id="randomExamBadge" style="background:#034694; color:white;">ОГЭ</span>
-                <span id="randomNumBadge">Задание №1</span>
+        <section class="stats-chart">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                <h3>📈 Динамика успеваемости</h3>
+                <span style="font-size:13px; color:#666;">Правильные ответы (ОГЭ — синий, ЕГЭ — красный)</span>
             </div>
-            <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
-            <div class="answer-area">
-                <input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ...">
-                <button id="checkRandomBtn">Проверить →</button>
+            <div class="chart-wrapper">
+                <canvas id="progressChart"></canvas>
             </div>
-            <div class="feedback" id="randomFeedback"></div>
-        </div>
-        <div class="generate-variant-section">
-            <button class="btn-white" id="generateVariantBtn">
-                <i class="fas fa-layer-group"></i> Сгенерировать вариант
-            </button>
-        </div>
-    </section>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="label">✅ Лучше всего</div><div class="value" id="bestTask">—</div></div>
+                <div class="stat-card"><div class="label">⚠️ Самое сложное</div><div class="value" id="worstTask">—</div></div>
+                <div class="stat-card"><div class="label">📊 Процент правильных ответов</div><div class="value" id="percentCorrect">0%</div></div>
+            </div>
+        </section>
 
-    <section class="list-section">
-        <h3>📚 Все задания по типам</h3>
-        <div class="tabs">
-            <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
-            <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
-        </div>
-        <div class="tasks-list" id="tasksList"></div>
-    </section>
+        <section class="random-section">
+            <div class="random-header">
+                <h3><i class="fas fa-dice-d6"></i> Рандомное задание</h3>
+                <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
+            </div>
+            <div class="task-card" id="randomTaskCard">
+                <div class="meta">
+                    <span id="randomExamBadge" style="background:#034694; color:white;">ОГЭ</span>
+                    <span id="randomNumBadge">Задание №1</span>
+                </div>
+                <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
+                <div class="answer-area">
+                    <input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ...">
+                    <button id="checkRandomBtn">Проверить →</button>
+                </div>
+                <div class="feedback" id="randomFeedback"></div>
+            </div>
+            <div class="generate-variant-section">
+                <button class="btn-white" id="generateVariantBtn">
+                    <i class="fas fa-layer-group"></i> Сгенерировать вариант
+                </button>
+            </div>
+        </section>
 
-    <section class="admin-panel" id="adminPanel">
-        <h3>🛠 Панель администратора — добавление заданий</h3>
-        <div class="row">
-            <select id="adminExam">
-                <option value="oge">ОГЭ</option>
-                <option value="ege">ЕГЭ</option>
-            </select>
-            <input type="text" id="adminAnswer" placeholder="Правильный ответ">
-        </div>
-        <div class="row">
-            <textarea id="adminTaskText" placeholder="Текст задания"></textarea>
-        </div>
-        <button class="btn-success" id="adminAddBtn">➕ Добавить задание</button>
-        <div id="adminFeedback" style="margin-top:10px; font-weight:bold;"></div>
-    </section>
+        <section class="list-section">
+            <h3>📚 Все задания по типам</h3>
+            <div class="tabs">
+                <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
+                <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
+            </div>
+            <div class="tasks-list" id="tasksList"></div>
+        </section>
+
+        <section class="admin-panel" id="adminPanel">
+            <h3>🛠 Панель администратора — добавление заданий</h3>
+            <div class="row">
+                <select id="adminExam">
+                    <option value="oge">ОГЭ</option>
+                    <option value="ege">ЕГЭ</option>
+                </select>
+                <input type="text" id="adminAnswer" placeholder="Правильный ответ">
+            </div>
+            <div class="row">
+                <textarea id="adminTaskText" placeholder="Текст задания"></textarea>
+            </div>
+            <button class="btn-success" id="adminAddBtn">➕ Добавить задание</button>
+            <div id="adminFeedback" style="margin-top:10px; font-weight:bold;"></div>
+        </section>
+    </div>
 </div>
 
 <div class="modal-overlay" id="authModal">
@@ -700,6 +734,22 @@
 
         const ADMIN_EMAIL = "admin@it-track.ru";
         const ADMIN_PASSWORD = "admin123";
+
+        // СКРОЛЛ ДЛЯ ИСЧЕЗАНИЯ НАДПИСЕЙ
+        const taglineWrapper = document.getElementById('taglineWrapper');
+        let lastScrollY = window.scrollY;
+        
+        function handleScroll() {
+            if (window.scrollY > 50) {
+                taglineWrapper.classList.add('hide');
+            } else {
+                taglineWrapper.classList.remove('hide');
+            }
+            lastScrollY = window.scrollY;
+        }
+        
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
 
         function getAllTasksList() {
             let tasks = [];
@@ -958,7 +1008,6 @@
             modal.classList.add('active');
         }
 
-        // Иконка аккаунта открывает модальное окно
         document.getElementById('accountIconBtn').addEventListener('click', () => openModal('login'));
         document.getElementById('openRegisterBtn').addEventListener('click', () => openModal('register'));
         document.getElementById('loginBtn').addEventListener('click', () => openModal('login'));
