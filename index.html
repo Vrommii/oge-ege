@@ -45,10 +45,37 @@
             flex-wrap: wrap;
             gap: 15px;
         }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .account-icon {
+            background: #034694;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(3,70,148,0.2);
+        }
+        .account-icon:hover {
+            transform: scale(1.05);
+            background: #023a7a;
+        }
+        .account-icon i {
+            color: white;
+            font-size: 1.3rem;
+        }
         .logo {
             font-size: 1.7rem;
             font-weight: 800;
             color: var(--primary-dark);
+            text-align: center;
+            flex: 1;
         }
         .logo i {
             margin-right: 8px;
@@ -102,6 +129,32 @@
             cursor: pointer;
             margin-bottom: 15px;
             font-size: 1rem;
+        }
+        /* НОВЫЕ БЛОКИ ПОД ЛОГОТИПОМ */
+        .tagline-block {
+            text-align: center;
+            margin: 20px 0 10px 0;
+        }
+        .tagline-main {
+            background: rgba(141, 216, 247, 0.75);
+            color: #034694;
+            padding: 12px 24px;
+            border-radius: 10px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.2rem;
+            backdrop-filter: blur(2px);
+        }
+        .tagline-description {
+            background: rgba(141, 216, 247, 0.75);
+            color: #034694;
+            padding: 12px 24px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 12px auto 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            backdrop-filter: blur(2px);
         }
         .random-section {
             background: rgba(141, 219, 248, 0.75);
@@ -451,6 +504,8 @@
             .btn-random, .btn-white { min-width: 220px; padding: 12px 32px; }
             .random-section { padding: 25px 20px; }
             .stat-card .value { font-size: 1.2rem; }
+            .tagline-main { font-size: 1rem; padding: 8px 16px; }
+            .tagline-description { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -458,16 +513,28 @@
 
 <header>
     <div class="container header-inner">
-        <div class="logo"><i class="fas fa-rocket"></i>IT-Track</div>
-        <nav class="main-nav">
-            <a href="#how">Как это работает</a>
-            <a href="#tariffs">Тарифы</a>
-            <a href="#reviews">Отзывы</a>
-            <a href="#contacts">Контакты</a>
-        </nav>
+        <div class="logo-area">
+            <div class="account-icon" id="accountIconBtn">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+        <div class="logo">
+            <i class="fas fa-rocket"></i>IT-Track
+        </div>
         <div class="auth-buttons">
             <button class="btn btn-outline" id="loginBtn">Войти</button>
             <button class="btn btn-primary" id="openRegisterBtn">Создать аккаунт</button>
+        </div>
+    </div>
+    <!-- НОВЫЕ БЛОКИ ПОД ЛОГОТИПОМ -->
+    <div class="container">
+        <div class="tagline-block">
+            <div class="tagline-main">
+                ПЕРСОНАЛЬНЫЕ ТРЕК-ЛИСТЫ ДЛЯ ПОДГОТОВКИ ОГЭ/ЕГЭ
+            </div>
+            <div class="tagline-description">
+                Сервис автоматизирует подготовку к ОГЭ/ЕГЭ по информатике через адаптивные учебные планы — индивидуальные трек-листы. Учитывает уровень знаний, динамически меняет сложность, даёт структурированное обучение и наглядный прогресс
+            </div>
         </div>
     </div>
 </header>
@@ -631,7 +698,6 @@
         let userExam = localStorage.getItem("userExam") || "oge";
         let userRole = localStorage.getItem("userRole") || "student";
 
-        // АККАУНТ АДМИНИСТРАТОРА
         const ADMIN_EMAIL = "admin@it-track.ru";
         const ADMIN_PASSWORD = "admin123";
 
@@ -850,7 +916,7 @@
             setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
         });
 
-        // Модальное окно с выбором экзамена
+        // Модальное окно
         const modal = document.getElementById('authModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalActionBtn = document.getElementById('modalActionBtn');
@@ -892,6 +958,8 @@
             modal.classList.add('active');
         }
 
+        // Иконка аккаунта открывает модальное окно
+        document.getElementById('accountIconBtn').addEventListener('click', () => openModal('login'));
         document.getElementById('openRegisterBtn').addEventListener('click', () => openModal('register'));
         document.getElementById('loginBtn').addEventListener('click', () => openModal('login'));
         document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
@@ -906,7 +974,6 @@
             }
             modalError.style.display = 'none';
             
-            // Проверка на администратора
             if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
                 userRole = 'admin';
                 userExam = selectedExam;
@@ -923,7 +990,6 @@
                 return;
             }
             
-            // Обычный пользователь
             userRole = 'student';
             userExam = selectedExam;
             localStorage.setItem("userRole", 'student');
