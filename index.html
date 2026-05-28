@@ -423,15 +423,6 @@
             margin: 8px 0;
             display: none;
         }
-        .info-text {
-            font-size: 13px;
-            color: #666;
-            text-align: center;
-            margin-top: 10px;
-            padding: 8px;
-            background: #f1f5f9;
-            border-radius: 12px;
-        }
         @media (max-width: 768px) {
             .header-inner { flex-direction: column; align-items: stretch; text-align: center; }
             .main-nav { justify-content: center; flex-wrap: wrap; }
@@ -542,9 +533,6 @@
         <input type="password" id="modalPassword" placeholder="Пароль">
         <div class="error-msg" id="modalError">Введите корректный email (должен содержать @ и .)</div>
         <button class="btn btn-primary" id="modalActionBtn">Создать аккаунт</button>
-        <div class="info-text" id="adminInfo" style="display:none;">
-            🔐 Данные администратора: admin@it-track.ru / admin123
-        </div>
     </div>
 </div>
 
@@ -619,7 +607,7 @@
         let userExam = localStorage.getItem("userExam") || "oge";
         let userRole = localStorage.getItem("userRole") || "student";
 
-        // АККАУНТ АДМИНИСТРАТОРА
+        // АККАУНТ АДМИНИСТРАТОРА (скрыт от пользователя)
         const ADMIN_EMAIL = "admin@it-track.ru";
         const ADMIN_PASSWORD = "admin123";
 
@@ -838,14 +826,13 @@
             setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
         });
 
-        // Модальное окно (без выбора экзамена)
+        // Модальное окно (без выбора экзамена и без отображения данных админа)
         const modal = document.getElementById('authModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalActionBtn = document.getElementById('modalActionBtn');
         const modalEmail = document.getElementById('modalEmail');
         const modalPassword = document.getElementById('modalPassword');
         const modalError = document.getElementById('modalError');
-        const adminInfo = document.getElementById('adminInfo');
         let currentMode = 'register';
 
         function openModal(mode) {
@@ -856,11 +843,9 @@
             if(mode === 'login') {
                 modalTitle.innerText = 'Войти в аккаунт';
                 modalActionBtn.innerText = 'Войти';
-                adminInfo.style.display = 'block';
             } else {
                 modalTitle.innerText = 'Создать аккаунт';
                 modalActionBtn.innerText = 'Создать аккаунт';
-                adminInfo.style.display = 'block';
             }
             modal.classList.add('active');
         }
@@ -879,10 +864,10 @@
             }
             modalError.style.display = 'none';
             
-            // Проверка на администратора
+            // Проверка на администратора (скрытый вход)
             if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
                 userRole = 'admin';
-                userExam = 'oge';  // по умолчанию ОГЭ для админа
+                userExam = 'oge';
                 localStorage.setItem("userRole", 'admin');
                 localStorage.setItem("userExam", 'oge');
                 currentExam = 'oge';
@@ -896,9 +881,9 @@
                 return;
             }
             
-            // Обычный пользователь (регистрация или вход)
+            // Обычный пользователь
             userRole = 'student';
-            userExam = 'oge';  // по умолчанию ОГЭ
+            userExam = 'oge';
             localStorage.setItem("userRole", 'student');
             localStorage.setItem("userExam", 'oge');
             currentExam = 'oge';
