@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>IT-Track — Подготовка к ЕГЭ по информатике</title>
-    <!-- Font Awesome & Chart.js -->
+    <title>IT-Track — Подготовка к ЕГЭ/ОГЭ по информатике</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -30,7 +29,6 @@
             margin: 0 auto;
             padding: 0 20px;
         }
-        /* шапка */
         header {
             background: var(--white);
             box-shadow: var(--shadow);
@@ -104,20 +102,66 @@
             margin-bottom: 15px;
             font-size: 1rem;
         }
-        .task-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 16px;
+        .random-section {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            margin: 30px 0;
             box-shadow: var(--shadow);
+        }
+        .random-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .random-header h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .btn-random {
+            background: linear-gradient(135deg, #0EA5E9, #0284C7);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 1rem;
+        }
+        .btn-random:hover {
+            transform: scale(1.02);
+        }
+        .task-card {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 10px;
         }
         .task-card .meta {
             display: flex;
             gap: 15px;
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
-        .task-card .question { font-size: 16px; line-height: 1.5; margin: 10px 0; }
+        .task-card .meta span {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        .task-card .question {
+            font-size: 17px;
+            line-height: 1.5;
+            margin: 15px 0;
+            background: white;
+            padding: 18px;
+            border-radius: 16px;
+        }
         .task-card .answer-area {
             display: flex;
             gap: 10px;
@@ -126,23 +170,30 @@
         }
         .task-card .answer-area input {
             flex: 2;
-            padding: 10px 15px;
+            padding: 12px 18px;
             border-radius: 60px;
-            border: 1.5px solid #BAE6FD;
+            border: 2px solid var(--primary-light);
             outline: none;
+            font-size: 1rem;
         }
         .task-card .answer-area button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 28px;
             border-radius: 60px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .task-card .answer-area button:hover {
+            background: #0284C7;
         }
         .feedback {
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: bold;
+            padding: 10px;
+            border-radius: 12px;
             display: none;
         }
         .list-section {
@@ -162,6 +213,7 @@
             font-weight: 700;
             cursor: pointer;
             color: #64748B;
+            font-size: 1.1rem;
         }
         .tabs .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary-light); }
         .tasks-grid {
@@ -173,13 +225,18 @@
         }
         .tasks-grid .item {
             background: var(--white);
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             border: 1px solid #BAE6FD;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: 0.2s;
+        }
+        .tasks-grid .item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
         .tasks-grid .item.solved { background: #D1FAE5; border-color: #10B981; }
         .tasks-grid .item .num { font-weight: 700; color: var(--primary); }
@@ -256,16 +313,6 @@
             flex: 1;
             text-align: center;
         }
-        .btn-random {
-            background: #0EA5E9;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 60px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -324,17 +371,13 @@
             margin: 8px 0;
             display: none;
         }
-        input, textarea, select {
-            width: 100%;
-            margin-top: 8px;
-            margin-bottom: 8px;
-        }
         @media (max-width: 768px) {
             .header-inner { flex-direction: column; align-items: stretch; text-align: center; }
             .main-nav { justify-content: center; flex-wrap: wrap; }
             .auth-buttons { justify-content: center; }
             .hero h1 { font-size: 1.8rem; }
             .tasks-grid { grid-template-columns: 1fr; }
+            .random-header { flex-direction: column; }
         }
     </style>
 </head>
@@ -358,8 +401,7 @@
 
 <div class="container">
     <section class="hero">
-        <h1>Создай свой индивидуальный трек-лист
-        для подготовки к ЕГЭ по информатике!</h1>
+        <h1>Создай свой индивидуальный трек-лист для подготовки к ЕГЭ/ОГЭ по информатике!</h1>
         <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
         <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
         <div class="hero-visual">
@@ -386,29 +428,31 @@
         </div>
     </section>
 
-    <section class="task-block">
-        <h3>🎲 Рандомное задание ОГЭ/ЕГЭ</h3>
-        <p style="margin-bottom:15px; font-size:14px; color:#0369A1;">Нажми на кнопку — получи случайную задачу!</p>
-        <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
+    <!-- ОБЪЕДИНЕННЫЙ БЛОК: Рандомное задание в одном окне -->
+    <section class="random-section">
+        <div class="random-header">
+            <h3><i class="fas fa-dice-d6"></i> Рандомное задание</h3>
+            <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
+        </div>
         <div class="task-card" id="randomTaskCard">
             <div class="meta">
-                <span style="background:#E0F2FE; padding:2px 10px; border-radius:30px;" id="randomExam">ОГЭ</span>
-                <span id="randomNum">Задания 1 типа</span>
+                <span id="randomExamBadge" style="background:#0EA5E9; color:white;">ОГЭ</span>
+                <span id="randomNumBadge">Задание №1</span>
             </div>
             <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
             <div class="answer-area">
-                <input type="text" id="randomAnswerInput" placeholder="Введите ответ...">
-                <button id="checkRandomBtn">Проверить</button>
+                <input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ...">
+                <button id="checkRandomBtn">Проверить →</button>
             </div>
             <div class="feedback" id="randomFeedback"></div>
         </div>
     </section>
 
     <section class="list-section">
-        <h3>📚 Просмотр заданий</h3>
+        <h3>📚 Все задания по типам</h3>
         <div class="tabs">
-            <div class="tab active" data-exam="oge">ОГЭ</div>
-            <div class="tab" data-exam="ege">ЕГЭ</div>
+            <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
+            <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
         </div>
         <div class="tasks-grid" id="tasksGrid"></div>
     </section>
@@ -455,7 +499,7 @@
 </footer>
 
 <script>
-        // ---------- БАЗА ДАННЫХ ----------
+        // ===== ПОЛНЫЙ СПИСОК ОГЭ (16 ЗАДАНИЙ) =====
         const ogeTasks = [
             { num: 1, text: "Статья содержит 8 страниц, на каждой 40 строк по 64 символа. Кодировка Unicode (16 бит на символ). Определите информационный объём статьи в Кбайтах.", answer: "40" },
             { num: 2, text: "От разведчика получено сообщение: 1100110. Буквы: А(00), Б(01), В(10), Г(11). Расшифруйте.", answer: "ВГА" },
@@ -466,9 +510,16 @@
             { num: 7, text: "Файл размером 16 Кбайт передаётся со скоростью 4096 бит/с. Определите время передачи в секундах.", answer: "32" },
             { num: 8, text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231" },
             { num: 9, text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5" },
-            { num: 10, text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны" }
+            { num: 10, text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны" },
+            { num: 11, text: "Пользователь перешёл из C:\\Документы в D:\\Учёба\\Информатика. Какой путь стал текущим?", answer: "D:\\Учёба\\Информатика" },
+            { num: 12, text: "Определите значение переменной s после выполнения фрагмента: s=0; for i=1 to 5: s=s+i", answer: "15" },
+            { num: 13, text: "В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно значение ячейки A4, если A1=5, A2=7, A3=10?", answer: "10" },
+            { num: 14, text: "Переведите число 101010₂ в десятичную систему счисления.", answer: "42" },
+            { num: 15, text: "Чертёжник: Сместиться на (2,3). Повтори 3 раза: (1,-2). Конечная точка?", answer: "5,-3" },
+            { num: 16, text: "a=5; b=2; while a>0: a-=b; print(a) — что будет выведено?", answer: "3" }
         ];
 
+        // ===== ПОЛНЫЙ СПИСОК ЕГЭ (27 ЗАДАНИЙ) =====
         const egeTasks = [
             { num: 1, text: "Сколько путей из A в L на схеме дорог?", answer: "8" },
             { num: 2, text: "Функция F = (¬x∧y)∨(x∧¬y). Сколько единиц в таблице истинности?", answer: "2" },
@@ -479,7 +530,24 @@
             { num: 7, text: "Скорость 128000 бит/с, время 10 с. Объём в Кбайтах?", answer: "160" },
             { num: 8, text: "Сколько слов длины 4 из букв {A,B,C}?", answer: "81" },
             { num: 9, text: "Формула =СРЗНАЧ(A1:A10). Результат?", answer: "5.5" },
-            { num: 10, text: "В 'abcabc' заменить 'ab' на 'x'. Результат?", answer: "xcxc" }
+            { num: 10, text: "В 'abcabc' заменить 'ab' на 'x'. Результат?", answer: "xcxc" },
+            { num: 11, text: "Сообщение из 16 символов, алфавит из 256 символов. Объём в битах?", answer: "128" },
+            { num: 12, text: "s=0; for i=1 to 4: s=s+2*i; print(s)", answer: "20" },
+            { num: 13, text: "IP: 192.168.1.1, маска 255.255.255.0. Адрес сети?", answer: "192.168.1.0" },
+            { num: 14, text: "Переведите 101010₂ в десятичную.", answer: "42" },
+            { num: 15, text: "Упростите (A∧B)∨(A∧¬B).", answer: "A" },
+            { num: 16, text: "F(1)=1, F(n)=F(n-1)*n. F(5)=?", answer: "120" },
+            { num: 17, text: "Сумма чисел от 1 до 10.", answer: "55" },
+            { num: 18, text: "Робот собрал монеты. Максимум?", answer: "15" },
+            { num: 19, text: "Два игрока берут камни. При каком S выигрывает первый?", answer: "5" },
+            { num: 20, text: "Найдите все S, при которых выигрывает второй.", answer: "3,4" },
+            { num: 21, text: "Найдите S, при которых выигрывает первый вторым ходом.", answer: "6" },
+            { num: 22, text: "3 процессора, задачи: 5,3,4,2. Минимальное время?", answer: "7" },
+            { num: 23, text: "Сколько программ из 1 в 10 с командами +1 и *2?", answer: "8" },
+            { num: 24, text: "В 'abracadabra' замените 'a' на 'b'.", answer: "bbrbcbdbbrb" },
+            { num: 25, text: "Сумма цифр числа 12345.", answer: "15" },
+            { num: 26, text: "Количество чётных чисел от 1 до 20.", answer: "10" },
+            { num: 27, text: "Что выведет print(5+3*2)?", answer: "11" }
         ];
 
         let customOgeTasks = JSON.parse(localStorage.getItem("customOgeTasks")) || [];
@@ -523,7 +591,7 @@
                     { label: 'ОГЭ', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: true },
                     { label: 'ЕГЭ', data: [], borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: true }
                 ] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Правильные ответы (накоплено)' } } } }
             });
             updateChart();
         }
@@ -532,7 +600,7 @@
             const oge = ogeCorrectHistory.slice(-15);
             const ege = egeCorrectHistory.slice(-15);
             const maxLen = Math.max(oge.length, ege.length);
-            const labels = Array.from({ length: maxLen }, (_, i) => `#${i+1}`);
+            const labels = Array.from({ length: maxLen }, (_, i) => `Шаг ${i+1}`);
             chart.data.labels = labels;
             chart.data.datasets[0].data = oge;
             chart.data.datasets[1].data = ege;
@@ -568,7 +636,7 @@
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = filtered.map(t => `
                 <div class="item ${t.solved ? 'solved' : ''}" data-id="${t.id}">
-                    <span class="num">Задания ${t.num} типа</span>
+                    <span class="num">Задание ${t.num}</span>
                     <span>${t.solved ? '✅' : '📌'}</span>
                 </div>
             `).join('');
@@ -588,11 +656,15 @@
 
         function showRandomTask(task) {
             currentRandomTask = task;
-            document.getElementById('randomExam').innerText = task.exam.toUpperCase();
-            document.getElementById('randomNum').innerText = `Задания ${task.num} типа`;
-            document.getElementById('randomQuestion').innerText = task.text;
+            const badge = document.getElementById('randomExamBadge');
+            badge.innerText = task.exam.toUpperCase();
+            badge.style.background = task.exam === 'oge' ? '#0EA5E9' : '#EF4444';
+            document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
+            document.getElementById('randomQuestion').innerHTML = task.text;
             document.getElementById('randomAnswerInput').value = '';
-            document.getElementById('randomFeedback').style.display = 'none';
+            const fb = document.getElementById('randomFeedback');
+            fb.style.display = 'none';
+            fb.innerHTML = '';
         }
 
         function checkAnswer() {
@@ -603,7 +675,8 @@
             const fb = document.getElementById('randomFeedback');
             fb.style.display = 'block';
             if(correct) {
-                fb.innerHTML = '✅ Верно!'; fb.style.color = '#16a34a';
+                fb.innerHTML = '✅ Верно! Отлично!'; fb.style.color = '#16a34a';
+                fb.style.background = '#D1FAE5';
                 if(!currentRandomTask.solved) {
                     currentRandomTask.solved = true;
                     solvedTasks[currentRandomTask.id] = true;
@@ -612,6 +685,7 @@
                 }
             } else {
                 fb.innerHTML = `❌ Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626';
+                fb.style.background = '#FEE2E2';
             }
             if(currentRandomTask.exam === 'oge') {
                 const last = ogeCorrectHistory.length ? ogeCorrectHistory[ogeCorrectHistory.length-1] : 0;
@@ -629,7 +703,7 @@
             setTimeout(() => {
                 const newTask = getRandomTask();
                 showRandomTask(newTask);
-            }, 1300);
+            }, 1500);
         }
 
         function init() {
@@ -649,6 +723,7 @@
         document.getElementById('getRandomBtn').addEventListener('click', () => showRandomTask(getRandomTask()));
         document.getElementById('checkRandomBtn').addEventListener('click', checkAnswer);
         document.getElementById('randomAnswerInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAnswer(); });
+        
         document.querySelectorAll('.tabs .tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
@@ -670,12 +745,13 @@
             refreshTasksList();
             renderTasks(currentExam);
             updateStats();
-            feedbackDiv.innerHTML = '✅ Задание добавлено!'; feedbackDiv.style.color = '#16a34a';
+            feedbackDiv.innerHTML = '✅ Задание успешно добавлено!'; feedbackDiv.style.color = '#16a34a';
             document.getElementById('adminTaskText').value = '';
             document.getElementById('adminAnswer').value = '';
+            setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
         });
 
-        // MODAL
+        // Модальное окно
         const modal = document.getElementById('authModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalActionBtn = document.getElementById('modalActionBtn');
@@ -728,7 +804,7 @@
                 refreshTasksList();
                 renderTasks(currentExam); updateStats(); showRandomTask(getRandomTask());
                 document.getElementById('adminPanel').style.display = 'block';
-                alert('Администратор вошёл');
+                alert('Добро пожаловать, администратор!');
                 modal.classList.remove('active');
                 return;
             }
@@ -738,7 +814,7 @@
             refreshTasksList();
             renderTasks(currentExam); updateStats(); showRandomTask(getRandomTask());
             document.getElementById('adminPanel').style.display = 'none';
-            alert('Аккаунт ученика создан / вход выполнен');
+            alert('Аккаунт успешно создан!');
             modal.classList.remove('active');
         });
 
