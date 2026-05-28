@@ -476,13 +476,6 @@
         <h1>Создай свой индивидуальный трек-лист для подготовки к ЕГЭ/ОГЭ по информатике!</h1>
         <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
         <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
-        <div class="hero-visual">
-            <div style="background:#fff; padding:20px; border-radius:16px; max-width:600px; width:100%; box-shadow:var(--shadow); margin-top:15px;">
-                <div style="height:120px; background:linear-gradient(90deg, #BAE6FD, #034694); border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">
-                    📊 Ваш прогресс в реальном времени
-                </div>
-            </div>
-        </div>
     </section>
 
     <section class="stats-chart">
@@ -682,7 +675,6 @@
             chart.update();
         }
 
-        // НОВАЯ ФУНКЦИЯ: считает процент правильных ответов (качество)
         function calculatePercentCorrect() {
             const totalAttempts = answerHistory.length;
             if (totalAttempts === 0) return 0;
@@ -691,11 +683,9 @@
         }
 
         function updateStats() {
-            // Процент правильных ответов (качество, а не количество решённых)
             const percentCorrect = calculatePercentCorrect();
             document.getElementById('percentCorrect').innerText = percentCorrect + '%';
 
-            // Анализ лучших и худших заданий по качеству ответов
             const taskStats = {};
             answerHistory.forEach(item => {
                 const key = `${item.exam}_${item.taskNum}`;
