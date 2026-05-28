@@ -123,18 +123,6 @@
         .btn-primary:hover {
             background: #023a7a;
         }
-        .btn-hero {
-            background: var(--primary-dark);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 60px;
-            border: none;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            margin-bottom: 15px;
-            font-size: 1rem;
-        }
         /* БЛОК С НАДПИСЯМИ - ФИКСИРОВАННЫЙ И ИСЧЕЗАЮЩИЙ ПРИ СКРОЛЛЕ */
         .tagline-wrapper {
             position: fixed;
@@ -179,7 +167,7 @@
             backdrop-filter: blur(2px);
             pointer-events: auto;
         }
-        /* Отступ для основного контента, чтобы он не перекрывался фиксированным блоком */
+        /* Отступ для основного контента */
         .content-offset {
             margin-top: 110px;
         }
@@ -526,7 +514,6 @@
             .header-inner { flex-direction: column; align-items: stretch; text-align: center; }
             .main-nav { justify-content: center; flex-wrap: wrap; }
             .auth-buttons { justify-content: center; }
-            .hero h1 { font-size: 1.8rem; }
             .task-text-preview { max-width: 180px; }
             .btn-random, .btn-white { min-width: 220px; padding: 12px 32px; }
             .random-section { padding: 25px 20px; }
@@ -573,11 +560,7 @@
 
 <div class="content-offset" id="mainContent">
     <div class="container">
-        <section class="hero">
-            <h1>Создай свой индивидуальный трек-лист для подготовки к ЕГЭ/ОГЭ по информатике!</h1>
-            <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
-            <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
-        </section>
+        <!-- Hero секция полностью удалена -->
 
         <section class="stats-chart">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
@@ -737,7 +720,6 @@
 
         // СКРОЛЛ ДЛЯ ИСЧЕЗАНИЯ НАДПИСЕЙ
         const taglineWrapper = document.getElementById('taglineWrapper');
-        let lastScrollY = window.scrollY;
         
         function handleScroll() {
             if (window.scrollY > 50) {
@@ -745,7 +727,6 @@
             } else {
                 taglineWrapper.classList.remove('hide');
             }
-            lastScrollY = window.scrollY;
         }
         
         window.addEventListener('scroll', handleScroll);
