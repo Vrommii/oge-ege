@@ -229,6 +229,7 @@
             padding: 5px 15px;
             border-radius: 30px;
             font-weight: 600;
+            color: #034694;
         }
         .task-card .question {
             font-size: 17px;
@@ -281,10 +282,10 @@
             margin-top: 25px;
             padding-top: 10px;
         }
-        /* НОВАЯ КНОПКА - такого же размера как блок task-card, без обводки, скругление 10 */
+        /* БЕЛАЯ КНОПКА СГЕНЕРИРОВАТЬ ВАРИАНТ */
         .btn-generate-variant {
-            background: #034694;
-            color: white;
+            background: white;
+            color: #034694;
             border: none;
             padding: 20px 40px;
             border-radius: 10px;
@@ -294,34 +295,42 @@
             transition: all 0.2s;
             display: block;
             width: 100%;
-            box-shadow: 0 2px 8px rgba(3,70,148,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .btn-generate-variant:hover {
-            background: #023a7a;
+            background: #f0f0f0;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(3,70,148,0.3);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
+        /* НОВЫЙ БЛОК ПРОСМОТР ЗАДАНИЙ - ЦВЕТ #8DD8F7 */
         .list-section {
-            background: var(--bg-light);
+            background: #8DD8F7;
             border-radius: 24px;
             padding: 20px;
             margin: 20px 0;
         }
+        .list-section h3 {
+            color: #034694;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
         .tabs {
             display: flex;
-            gap: 20px;
-            border-bottom: 2px solid #BAE6FD;
+            gap: 30px;
+            border-bottom: 2px solid rgba(3,70,148,0.3);
             margin-bottom: 15px;
-            justify-content: center;
         }
         .tabs .tab {
             padding: 10px 0;
             font-weight: 700;
             cursor: pointer;
-            color: #64748B;
+            color: #034694;
             font-size: 1.1rem;
         }
-        .tabs .tab.active { color: #034694; border-bottom: 3px solid #034694; }
+        .tabs .tab.active { 
+            color: #034694; 
+            border-bottom: 3px solid #034694;
+        }
         
         .tasks-list {
             max-height: 450px;
@@ -595,8 +604,8 @@
             <button class="btn-random" id="getRandomBtn">Выдать случайное задание</button>
             <div class="task-card" id="randomTaskCard">
                 <div class="meta">
-                    <span id="randomExamBadge" style="background:#034694; color:white;">ОГЭ</span>
-                    <span id="randomNumBadge">Задание №1</span>
+                    <span id="randomExamBadge" style="background:#E0F2FE; color:#034694;">ОГЭ</span>
+                    <span id="randomNumBadge" style="background:#E0F2FE; color:#034694;">Задание №1</span>
                 </div>
                 <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
                 <div class="answer-area">
@@ -611,10 +620,10 @@
         </section>
 
         <section class="list-section">
-            <h3>Все задания по типам</h3>
+            <h3>Просмотр заданий</h3>
             <div class="tabs">
-                <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
-                <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
+                <div class="tab active" data-exam="oge">ОГЭ</div>
+                <div class="tab" data-exam="ege">ЕГЭ</div>
             </div>
             <div class="tasks-list" id="tasksList"></div>
         </section>
@@ -727,7 +736,6 @@
         const ADMIN_EMAIL = "admin@it-track.ru";
         const ADMIN_PASSWORD = "admin123";
 
-        // СКРОЛЛ ДЛЯ ИСЧЕЗАНИЯ НАДПИСЕЙ
         const taglineWrapper = document.getElementById('taglineWrapper');
         
         function handleScroll() {
@@ -861,8 +869,9 @@
         function showRandomTask(task) {
             currentRandomTask = task;
             const badge = document.getElementById('randomExamBadge');
-            badge.innerText = task.exam.toUpperCase();
-            badge.style.background = task.exam === 'oge' ? '#034694' : '#EF4444';
+            badge.innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
+            badge.style.background = '#E0F2FE';
+            badge.style.color = '#034694';
             document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
             document.getElementById('randomQuestion').innerHTML = task.text;
             document.getElementById('randomAnswerInput').value = '';
@@ -956,7 +965,6 @@
             setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
         });
 
-        // Модальное окно
         const modal = document.getElementById('authModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalActionBtn = document.getElementById('modalActionBtn');
