@@ -181,7 +181,6 @@
             padding: 5px 12px;
             border-radius: 20px;
         }
-        /* БЛОК С НАДПИСЯМИ */
         .tagline-wrapper {
             position: fixed;
             top: 80px;
@@ -621,7 +620,6 @@
     </div>
 </header>
 
-<!-- ФИКСИРОВАННЫЙ БЛОК С НАДПИСЯМИ -->
 <div class="tagline-wrapper" id="taglineWrapper">
     <div class="container">
         <div class="tagline-block">
@@ -770,4 +768,469 @@
         { num: 10, text: "В 'abcabc' заменить 'ab' на 'x'. Результат?", answer: "xcxc" },
         { num: 11, text: "Сообщение из 16 символов, алфавит из 256 символов. Объём в битах?", answer: "128" },
         { num: 12, text: "s=0; for i=1 to 4: s=s+2*i; print(s)", answer: "20" },
-        { num: 13, text: "IP: 192.168.1.1, маска 255.255.255.0. Адрес сети?", answer: "192.
+        { num: 13, text: "IP: 192.168.1.1, маска 255.255.255.0. Адрес сети?", answer: "192.168.1.0" },
+        { num: 14, text: "Переведите 101010₂ в десятичную.", answer: "42" },
+        { num: 15, text: "Упростите (A∧B)∨(A∧¬B).", answer: "A" },
+        { num: 16, text: "F(1)=1, F(n)=F(n-1)*n. F(5)=?", answer: "120" },
+        { num: 17, text: "Сумма чисел от 1 до 10.", answer: "55" },
+        { num: 18, text: "Робот собрал монеты. Максимум?", answer: "15" },
+        { num: 19, text: "Два игрока берут камни. При каком S выигрывает первый?", answer: "5" },
+        { num: 20, text: "Найдите все S, при которых выигрывает второй.", answer: "3,4" },
+        { num: 21, text: "Найдите S, при которых выигрывает первый вторым ходом.", answer: "6" },
+        { num: 22, text: "3 процессора, задачи: 5,3,4,2. Минимальное время?", answer: "7" },
+        { num: 23, text: "Сколько программ из 1 в 10 с командами +1 и *2?", answer: "8" },
+        { num: 24, text: "В 'abracadabra' замените 'a' на 'b'.", answer: "bbrbcbdbbrb" },
+        { num: 25, text: "Сумма цифр числа 12345.", answer: "15" },
+        { num: 26, text: "Количество чётных чисел от 1 до 20.", answer: "10" },
+        { num: 27, text: "Что выведет print(5+3*2)?", answer: "11" }
+    ];
+
+    // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+    let customOgeTasks = [];
+    let customEgeTasks = [];
+    let solvedTasks = {};
+    let answerHistory = [];
+    let ogeCorrectHistory = [];
+    let egeCorrectHistory = [];
+    let currentExam = "oge";
+    let currentRandomTask = null;
+    let chart = null;
+    let userExam = "oge";
+    let userRole = "student";
+    let currentUser = null;
+
+    const ADMIN_EMAIL = "admin@it-track.ru";
+    const ADMIN_PASSWORD = "admin123";
+
+    // ===== ФУНКЦИИ РАБОТЫ С FIRESTORE =====
+    async function saveUserData(userId) {
+        if (!userId) return;
+        try {
+            await setDoc(doc(db, "users", userId), {
+                solvedTasks: solvedTasks,
+                answerHistory: answerHistory,
+                ogeCorrectHistory: ogeCorrectHistory,
+                egeCorrectHistory: egeCorrectHistory,
+                userExam: userExam,
+                lastUpdated: new Date().toISOString()
+            }, { merge: true });
+            console.log("Данные сохранены в Firebase");
+        } catch (error) {
+            console.error("Ошибка сохранения:", error);
+        }
+    }
+
+    async function loadUserData(userId) {
+        if (!userId) return false;
+        try {
+            const docRef = doc(db, "users", userId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                solvedTasks = data.solvedTasks || {};
+                answerHistory = data.answerHistory || [];
+                ogeCorrectHistory = data.ogeCorrectHistory || [];
+                egeCorrectHistory = data.egeCorrectHistory || [];
+                userExam = data.userExam || "oge";
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Ошибка загрузки:", error);
+            return false;
+        }
+    }
+
+    function getAllTasksList() {
+        let tasks = [];
+        let allOge = [...ogeTasks];
+        customOgeTasks.forEach((t, idx) => { allOge.push({ num: ogeTasks.length + idx + 1, text: t.text, answer: t.answer }); });
+        allOge.forEach(t => { tasks.push({ exam: "oge", id: `oge_${t.num}`, num: t.num, text: t.text, answer: t.answer, solved: solvedTasks[`oge_${t.num}`] || false }); });
+
+        let allEge = [...egeTasks];
+        customEgeTasks.forEach((t, idx) => { allEge.push({ num: egeTasks.length + idx + 1, text: t.text, answer: t.answer }); });
+        allEge.forEach(t => { tasks.push({ exam: "ege", id: `ege_${t.num}`, num: t.num, text: t.text, answer: t.answer, solved: solvedTasks[`ege_${t.num}`] || false }); });
+        return tasks;
+    }
+
+    let allTasks = getAllTasksList();
+
+    function refreshTasksList() {
+        allTasks = getAllTasksList();
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [
+                { label: 'ОГЭ', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: true },
+                { label: 'ЕГЭ', data: [], borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: true }
+            ] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Накоплено правильных ответов' } } } }
+        });
+        updateChart();
+    }
+
+    function updateChart() {
+        if (!chart) return;
+        const oge = ogeCorrectHistory.slice(-15);
+        const ege = egeCorrectHistory.slice(-15);
+        const maxLen = Math.max(oge.length, ege.length);
+        const labels = Array.from({ length: maxLen }, (_, i) => `Шаг ${i+1}`);
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = oge;
+        chart.data.datasets[1].data = ege;
+        chart.update();
+    }
+
+    function calculatePercentCorrect() {
+        const totalAttempts = answerHistory.length;
+        if (totalAttempts === 0) return 0;
+        const correctAttempts = answerHistory.filter(item => item.correct === true).length;
+        return Math.round((correctAttempts / totalAttempts) * 100);
+    }
+
+    function updateStats() {
+        const percentCorrect = calculatePercentCorrect();
+        document.getElementById('percentCorrect').innerText = percentCorrect + '%';
+
+        const taskStats = {};
+        answerHistory.forEach(item => {
+            const key = `${item.exam}_${item.taskNum}`;
+            if(!taskStats[key]) taskStats[key] = { total: 0, correct: 0 };
+            taskStats[key].total++;
+            if(item.correct) taskStats[key].correct++;
+        });
+        let best = null, bestP = -1, worst = null, worstP = 101;
+        for(const [key, s] of Object.entries(taskStats)) {
+            if(s.total < 2) continue;
+            const p = (s.correct / s.total) * 100;
+            if(p > bestP) { bestP = p; best = key; }
+            if(p < worstP) { worstP = p; worst = key; }
+        }
+        document.getElementById('bestTask').innerText = best ? best.replace('_',' ').toUpperCase() + ' ('+Math.round(bestP)+'%)' : '—';
+        document.getElementById('worstTask').innerText = worst ? worst.replace('_',' ').toUpperCase() + ' ('+Math.round(worstP)+'%)' : '—';
+    }
+
+    function renderTasksList(exam) {
+        const filtered = allTasks.filter(t => t.exam === exam);
+        const container = document.getElementById('tasksList');
+        container.innerHTML = filtered.map(t => `
+            <div class="task-list-item ${t.solved ? 'solved' : ''}" data-id="${t.id}">
+                <div class="task-info">
+                    <span class="task-num">Задание ${t.num}</span>
+                    <span class="task-text-preview">${t.text.length > 60 ? t.text.substring(0, 60) + '...' : t.text}</span>
+                </div>
+                <div class="task-status">${t.solved ? 'Решено' : 'Не решено'}</div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.task-list-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const task = allTasks.find(t => t.id === el.dataset.id);
+                if(task) showRandomTask(task);
+            });
+        });
+    }
+
+    function getRandomTask() {
+        const unsolved = allTasks.filter(t => !t.solved);
+        if(unsolved.length > 0) return unsolved[Math.floor(Math.random() * unsolved.length)];
+        return allTasks[Math.floor(Math.random() * allTasks.length)];
+    }
+
+    function generateVariant() {
+        const allCurrentTasks = allTasks.filter(t => t.exam === currentExam);
+        if(allCurrentTasks.length === 0) {
+            alert("Нет заданий для выбранного экзамена");
+            return;
+        }
+        const shuffled = [...allCurrentTasks];
+        for(let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const variantTasks = shuffled.slice(0, Math.min(5, shuffled.length));
+        let variantText = "СГЕНЕРИРОВАННЫЙ ВАРИАНТ (5 заданий):\n\n";
+        variantTasks.forEach((task, idx) => {
+            variantText += `${idx+1}. [${task.exam.toUpperCase()} ${task.num}] ${task.text}\n`;
+            variantText += `   Ответ: ${task.answer}\n\n`;
+        });
+        alert(variantText);
+    }
+
+    function showRandomTask(task) {
+        currentRandomTask = task;
+        const badge = document.getElementById('randomExamBadge');
+        badge.innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
+        badge.style.background = '#E0F2FE';
+        badge.style.color = '#034694';
+        document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
+        document.getElementById('randomQuestion').innerHTML = task.text;
+        document.getElementById('randomAnswerInput').value = '';
+        const fb = document.getElementById('randomFeedback');
+        fb.style.display = 'none';
+        fb.innerHTML = '';
+    }
+
+    async function checkAnswer() {
+        if(!currentRandomTask) { alert('Сначала получите задание'); return; }
+        const user = document.getElementById('randomAnswerInput').value.trim().toLowerCase();
+        if(!user) { alert('Введите ответ'); return; }
+        const correct = user === String(currentRandomTask.answer).toLowerCase();
+        const fb = document.getElementById('randomFeedback');
+        fb.style.display = 'block';
+        if(correct) {
+            fb.innerHTML = 'Верно! Отлично!'; fb.style.color = '#16a34a';
+            fb.style.background = '#D1FAE5';
+            if(!currentRandomTask.solved) {
+                currentRandomTask.solved = true;
+                solvedTasks[currentRandomTask.id] = true;
+                renderTasksList(currentExam);
+                if (currentUser) await saveUserData(currentUser.uid);
+            }
+        } else {
+            fb.innerHTML = `Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626';
+            fb.style.background = '#FEE2E2';
+        }
+        if(currentRandomTask.exam === 'oge') {
+            const last = ogeCorrectHistory.length ? ogeCorrectHistory[ogeCorrectHistory.length-1] : 0;
+            ogeCorrectHistory.push(last + (correct ? 1 : 0));
+        } else {
+            const last = egeCorrectHistory.length ? egeCorrectHistory[egeCorrectHistory.length-1] : 0;
+            egeCorrectHistory.push(last + (correct ? 1 : 0));
+        }
+        answerHistory.push({ exam: currentRandomTask.exam, taskNum: currentRandomTask.num, correct: correct });
+        updateChart();
+        updateStats();
+        if (currentUser) await saveUserData(currentUser.uid);
+        setTimeout(() => {
+            const newTask = getRandomTask();
+            showRandomTask(newTask);
+        }, 1500);
+    }
+
+    async function init() {
+        currentExam = userExam;
+        refreshTasksList();
+        document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+        const activeTab = document.querySelector(`.tabs .tab[data-exam="${currentExam}"]`);
+        if(activeTab) activeTab.classList.add('active');
+        renderTasksList(currentExam);
+        initChart();
+        updateStats();
+        showRandomTask(getRandomTask());
+        if(userRole === 'admin') document.getElementById('adminPanel').style.display = 'block';
+        else document.getElementById('adminPanel').style.display = 'none';
+    }
+
+    // ===== АУТЕНТИФИКАЦИЯ =====
+    async function register(email, password, exam) {
+        try {
+            const userCredential = await window.createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            solvedTasks = {};
+            answerHistory = [];
+            ogeCorrectHistory = [];
+            egeCorrectHistory = [];
+            userExam = exam;
+            await saveUserData(user.uid);
+            return { success: true, user };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    async function login(email, password) {
+        try {
+            const userCredential = await window.signInWithEmailAndPassword(auth, email, password);
+            return { success: true, user: userCredential.user };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    async function logout() {
+        try {
+            await signOut(auth);
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    // ===== ОБРАБОТЧИКИ =====
+    const taglineWrapper = document.getElementById('taglineWrapper');
+    function handleScroll() {
+        if (window.scrollY > 50) {
+            taglineWrapper.classList.add('hide');
+        } else {
+            taglineWrapper.classList.remove('hide');
+        }
+    }
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    document.getElementById('getRandomBtn').addEventListener('click', () => showRandomTask(getRandomTask()));
+    document.getElementById('checkRandomBtn').addEventListener('click', checkAnswer);
+    document.getElementById('randomAnswerInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAnswer(); });
+    document.getElementById('generateVariantBtn').addEventListener('click', generateVariant);
+    
+    document.querySelectorAll('.tabs .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentExam = tab.dataset.exam;
+            renderTasksList(currentExam);
+            updateStats();
+        });
+    });
+
+    document.getElementById('adminAddBtn').addEventListener('click', () => {
+        const exam = document.getElementById('adminExam').value;
+        const text = document.getElementById('adminTaskText').value.trim();
+        const answer = document.getElementById('adminAnswer').value.trim();
+        const feedbackDiv = document.getElementById('adminFeedback');
+        if (!text || !answer) { feedbackDiv.innerHTML = 'Заполните все поля!'; feedbackDiv.style.color = '#dc2626'; return; }
+        if (exam === 'oge') { customOgeTasks.push({ text, answer }); }
+        else { customEgeTasks.push({ text, answer }); }
+        refreshTasksList();
+        renderTasksList(currentExam);
+        updateStats();
+        feedbackDiv.innerHTML = 'Задание успешно добавлено!'; feedbackDiv.style.color = '#16a34a';
+        document.getElementById('adminTaskText').value = '';
+        document.getElementById('adminAnswer').value = '';
+        setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
+    });
+
+    // Модальное окно
+    const modal = document.getElementById('authModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalActionBtn = document.getElementById('modalActionBtn');
+    const modalEmail = document.getElementById('modalEmail');
+    const modalPassword = document.getElementById('modalPassword');
+    const modalError = document.getElementById('modalError');
+    const examBtns = document.querySelectorAll('.exam-btn');
+    let selectedExam = 'oge';
+    let currentMode = 'register';
+
+    examBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            examBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            selectedExam = this.dataset.exam;
+        });
+    });
+
+    function openModal(mode) {
+        currentMode = mode;
+        modalError.style.display = 'none';
+        modalEmail.value = '';
+        modalPassword.value = '';
+        if(mode === 'login') {
+            modalTitle.innerText = 'Войти в аккаунт';
+            modalActionBtn.innerText = 'Войти';
+            document.querySelector('.exam-buttons').style.display = 'flex';
+            examBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+            selectedExam = 'oge';
+        } else {
+            modalTitle.innerText = 'Создать аккаунт';
+            modalActionBtn.innerText = 'Создать аккаунт';
+            document.querySelector('.exam-buttons').style.display = 'flex';
+            examBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+            selectedExam = 'oge';
+        }
+        modal.classList.add('active');
+    }
+
+    document.getElementById('accountIconBtn').addEventListener('click', () => openModal('login'));
+    document.getElementById('openRegisterBtn').addEventListener('click', () => openModal('register'));
+    document.getElementById('loginBtn').addEventListener('click', () => openModal('login'));
+    document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
+
+    modalActionBtn.addEventListener('click', async () => {
+        const email = modalEmail.value.trim();
+        const pass = modalPassword.value.trim();
+        if (!email.includes('@') || !email.includes('.')) { 
+            modalError.style.display = 'block'; 
+            return; 
+        }
+        modalError.style.display = 'none';
+        
+        if(currentMode === 'login') {
+            const result = await login(email, pass);
+            if(result.success) {
+                alert('Вход выполнен успешно!');
+                modal.classList.remove('active');
+            } else {
+                modalError.style.display = 'block';
+                modalError.innerText = result.error;
+            }
+        } else {
+            const result = await register(email, pass, selectedExam);
+            if(result.success) {
+                alert('Аккаунт успешно создан!');
+                modal.classList.remove('active');
+            } else {
+                modalError.style.display = 'block';
+                modalError.innerText = result.error;
+            }
+        }
+    });
+
+    // ===== СЛЕЖЕНИЕ ЗА СОСТОЯНИЕМ АУТЕНТИФИКАЦИИ =====
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('userEmail').innerText = user.email;
+            
+            await loadUserData(user.uid);
+            currentExam = userExam;
+            refreshTasksList();
+            renderTasksList(currentExam);
+            updateStats();
+            updateChart();
+            showRandomTask(getRandomTask());
+            
+            if(user.email === ADMIN_EMAIL) {
+                userRole = 'admin';
+                document.getElementById('adminPanel').style.display = 'block';
+            } else {
+                userRole = 'student';
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        } else {
+            currentUser = null;
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'none';
+            userRole = 'student';
+            document.getElementById('adminPanel').style.display = 'none';
+            
+            solvedTasks = {};
+            answerHistory = [];
+            ogeCorrectHistory = [];
+            egeCorrectHistory = [];
+            userExam = "oge";
+            currentExam = "oge";
+            refreshTasksList();
+            renderTasksList(currentExam);
+            updateStats();
+            updateChart();
+            showRandomTask(getRandomTask());
+        }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await logout();
+        alert('Вы вышли из аккаунта');
+    });
+
+    init();
+</script>
+</body>
+</html>
