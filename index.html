@@ -2,93 +2,747 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сервис создания индивидуальных трек‑листов для подготовки к ОГЭ/ЕГЭ по информатике</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>IT-Track — Подготовка к ЕГЭ по информатике</title>
+    <!-- Font Awesome & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+        }
+        :root {
+            --primary: #0EA5E9;
+            --primary-light: #BAE6FD;
+            --bg-light: #F0F9FF;
+            --white: #ffffff;
+            --shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+        }
+        body {
+            background: #F8FAFE;
+            color: #0F172A;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* шапка */
+        header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .logo i {
+            margin-right: 8px;
+        }
+        .main-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .main-nav a:hover {
+            color: var(--primary);
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 6px rgba(14,165,233,0.2);
+        }
+        .btn-primary:hover {
+            background: #0284C7;
+        }
+        .btn-hero {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .task-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .task-card .meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .task-card .question { font-size: 16px; line-height: 1.5; margin: 10px 0; }
+        .task-card .answer-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .task-card .answer-area input {
+            flex: 2;
+            padding: 10px 15px;
+            border-radius: 60px;
+            border: 1.5px solid #BAE6FD;
+            outline: none;
+        }
+        .task-card .answer-area button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+        .list-section {
+            background: var(--bg-light);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 2px solid #BAE6FD;
+            margin-bottom: 15px;
+        }
+        .tabs .tab {
+            padding: 10px 0;
+            font-weight: 700;
+            cursor: pointer;
+            color: #64748B;
+        }
+        .tabs .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary-light); }
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .tasks-grid .item {
+            background: var(--white);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #BAE6FD;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tasks-grid .item.solved { background: #D1FAE5; border-color: #10B981; }
+        .tasks-grid .item .num { font-weight: 700; color: var(--primary); }
+        .admin-panel {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+            border: 2px dashed var(--primary-light);
+            display: none;
+        }
+        .admin-panel h3 { margin-bottom: 15px; color: var(--primary); }
+        .admin-panel .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .admin-panel input, .admin-panel select, .admin-panel textarea {
+            padding: 10px;
+            border: 1.5px solid #BAE6FD;
+            border-radius: 30px;
+            outline: none;
+            flex: 1;
+            min-width: 150px;
+        }
+        .admin-panel textarea { min-height: 60px; }
+        .admin-panel .btn-success {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        footer {
+            background: var(--white);
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid #E2E8F0;
+        }
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-inner .col { display: flex; flex-direction: column; gap: 8px; }
+        .footer-inner .col a { color: #666; text-decoration: none; }
+        .footer-inner .col a:hover { color: var(--primary); }
+        .stats-chart {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        .chart-wrapper {
+            height: 240px;
+            margin: 20px 0;
+        }
+        .stats-grid {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .stat-card {
+            background: #F1F5F9;
+            padding: 12px 18px;
+            border-radius: 20px;
+            flex: 1;
+            text-align: center;
+        }
+        .btn-random {
+            background: #0EA5E9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 60px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal {
+            background: white;
+            max-width: 400px;
+            width: 90%;
+            padding: 30px 25px;
+            border-radius: 32px;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .exam-buttons {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .exam-btn {
+            flex:1;
+            padding: 8px;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+        .exam-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .error-msg {
+            color: #dc2626;
+            font-size: 13px;
+            margin: 8px 0;
+            display: none;
+        }
+        input, textarea, select {
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column; align-items: stretch; text-align: center; }
+            .main-nav { justify-content: center; flex-wrap: wrap; }
+            .auth-buttons { justify-content: center; }
+            .hero h1 { font-size: 1.8rem; }
+            .tasks-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Создание индивидуальных трек‑листов</h1>
-        <p>Составьте план подготовки к ОГЭ/ЕГЭ по информатике: выберите темы и распределите их по этапам!</p>
-    </header>
 
-    <main>
-        <section>
-            <h2>Выберите экзамен</h2>
-            <div>
-                <input type="radio" id="oge" name="exam" value="oge">
-                <label for="oge">ОГЭ</label>
-            </div>
-            <div>
-                <input type="radio" id="ege" name="exam" value="ege">
-                <label for="ege">ЕГЭ</label>
-            </div>
-        </section>
+<header>
+    <div class="container header-inner">
+        <div class="logo"><i class="fas fa-rocket"></i>IT-Track</div>
+        <nav class="main-nav">
+            <a href="#how">Как это работает</a>
+            <a href="#tariffs">Тарифы</a>
+            <a href="#reviews">Отзывы</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn btn-outline" id="loginBtn">Войти</button>
+            <button class="btn btn-primary" id="openRegisterBtn">Создать аккаунт</button>
+        </div>
+    </div>
+</header>
 
-        <section>
-            <h2>Темы для изучения</h2>
-            <p>Отметьте темы, которые хотите включить в трек‑лист:</p>
-            <div>
-                <input type="checkbox" id="algorithms" name="topics" value="algorithms">
-                <label for="algorithms">Алгоритмы и их свойства</label>
+<div class="container">
+    <section class="hero">
+        <h1>Создай свой индивидуальный трек-лист
+        для подготовки к ЕГЭ по информатике!</h1>
+        <p>Адаптивная программа, которая подстраивается под твой уровень. Никаких скучных учебников!</p>
+        <button class="btn-hero" onclick="document.getElementById('openRegisterBtn').click()">Начать подготовку сейчас</button>
+        <div class="hero-visual">
+            <div style="background:#fff; padding:20px; border-radius:16px; max-width:600px; width:100%; box-shadow:var(--shadow); margin-top:15px;">
+                <div style="height:120px; background:linear-gradient(90deg, #BAE6FD, #0EA5E9); border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">
+                    📊 Ваш прогресс в реальном времени
+                </div>
             </div>
-            <div>
-                <input type="checkbox" id="logic" name="topics" value="logic">
-                <label for="logic">Логические операции и таблицы истинности</label>
-            </div>
-            <div>
-                <input type="checkbox" id="programming" name="topics" value="programming">
-                <label for="programming">Основы программирования (Python, Pascal, C++)</label>
-            </div>
-            <div>
-                <input type="checkbox" id="systems" name="topics" value="systems">
-                <label for="systems">Системы счисления и перевод чисел</label>
-            </div>
-            <div>
-                <input type="checkbox" id="dataStructures" name="topics" value="dataStructures">
-                <label for="dataStructures">Структуры данных (массивы, списки, деревья)</label>
-            </div>
-            <div>
-                <input type="checkbox" id="networks" name="topics" value="networks">
-                <label for="networks">Компьютерные сети и Интернет</label>
-            </div>
-            <div>
-                <input type="checkbox" id="infoSecurity" name="topics" value="infoSecurity">
-                <label for="infoSecurity">Информационная безопасность</label>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <section>
-            <h2>Настройки трек‑листа</h2>
-            <label for="duration">Срок подготовки (недель):</label>
-            <input type="number" id="duration" name="duration" min="1" max="52" value="12">
+    <section class="stats-chart">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <h3>📈 Динамика успеваемости</h3>
+            <span style="font-size:13px; color:#666;">Правильные ответы (ОГЭ — синий, ЕГЭ — красный)</span>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="progressChart"></canvas>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="label">✅ Лучше всего</div><div class="value" id="bestTask">—</div></div>
+            <div class="stat-card"><div class="label">⚠️ Самое сложное</div><div class="value" id="worstTask">—</div></div>
+            <div class="stat-card"><div class="label">📊 Процент решённых</div><div class="value" id="percentSolved">0%</div></div>
+        </div>
+    </section>
 
-            <label for="hoursPerWeek">Часов в неделю:</label>
-            <input type="number" id="hoursPerWeek" name="hoursPerWeek" min="1" max="40" value="5">
+    <section class="task-block">
+        <h3>🎲 Рандомное задание ОГЭ/ЕГЭ</h3>
+        <p style="margin-bottom:15px; font-size:14px; color:#0369A1;">Нажми на кнопку — получи случайную задачу!</p>
+        <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
+        <div class="task-card" id="randomTaskCard">
+            <div class="meta">
+                <span style="background:#E0F2FE; padding:2px 10px; border-radius:30px;" id="randomExam">ОГЭ</span>
+                <span id="randomNum">Задания 1 типа</span>
+            </div>
+            <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
+            <div class="answer-area">
+                <input type="text" id="randomAnswerInput" placeholder="Введите ответ...">
+                <button id="checkRandomBtn">Проверить</button>
+            </div>
+            <div class="feedback" id="randomFeedback"></div>
+        </div>
+    </section>
 
-            <label for="difficulty">Уровень сложности:</label>
-            <select id="difficulty" name="difficulty">
-                <option value="basic">Базовый</option>
-                <option value="intermediate">Средний</option>
-                <option value="advanced">Продвинутый</option>
+    <section class="list-section">
+        <h3>📚 Просмотр заданий</h3>
+        <div class="tabs">
+            <div class="tab active" data-exam="oge">ОГЭ</div>
+            <div class="tab" data-exam="ege">ЕГЭ</div>
+        </div>
+        <div class="tasks-grid" id="tasksGrid"></div>
+    </section>
+
+    <section class="admin-panel" id="adminPanel">
+        <h3>🛠 Панель администратора — добавление заданий</h3>
+        <div class="row">
+            <select id="adminExam">
+                <option value="oge">ОГЭ</option>
+                <option value="ege">ЕГЭ</option>
             </select>
-        </section>
+            <input type="text" id="adminAnswer" placeholder="Правильный ответ">
+        </div>
+        <div class="row">
+            <textarea id="adminTaskText" placeholder="Текст задания"></textarea>
+        </div>
+        <button class="btn-success" id="adminAddBtn">➕ Добавить задание</button>
+        <div id="adminFeedback" style="margin-top:10px; font-weight:bold;"></div>
+    </section>
+</div>
 
-        <section>
-            <button type="button" onclick="generateTracklist()">Сгенерировать трек‑лист</button>
-        </section>
+<div class="modal-overlay" id="authModal">
+    <div class="modal">
+        <span class="close-btn" id="closeModalBtn">&times;</span>
+        <h3 id="modalTitle">Создайте аккаунт</h3>
+        <input type="email" id="modalEmail" placeholder="Email">
+        <input type="password" id="modalPassword" placeholder="Пароль">
+        <label style="font-size:14px; color:#555; display:block; margin-top:8px; margin-bottom:4px;">Выберите экзамен:</label>
+        <div class="exam-buttons">
+            <button class="exam-btn active" data-exam="oge">📘 ОГЭ</button>
+            <button class="exam-btn" data-exam="ege">🎓 ЕГЭ</button>
+        </div>
+        <div class="error-msg" id="modalError">Введите корректный email (должен содержать @ и .)</div>
+        <button class="btn btn-primary" id="modalActionBtn">Создать аккаунт</button>
+    </div>
+</div>
 
-        <section id="tracklistResult">
-            <h2>Ваш индивидуальный трек‑лист</h2>
-            <div id="tracklist">
-                <p>Нажмите «Сгенерировать трек‑лист», чтобы увидеть план подготовки.</p>
-            </div>
-            <button type="button">Скачать трек‑лист (PDF)</button>
-            <button type="button">Поделиться трек‑листом</button>
-        </section>
-    </main>
+<footer>
+    <div class="container footer-inner">
+        <div class="col"><h4>О сервисе</h4><a href="#">Как это работает</a><a href="#">Тарифы</a><a href="#">Отзывы</a></div>
+        <div class="col"><h4>Помощь</h4><a href="#">Пользовательское соглашение</a><a href="#">Политика конфиденциальности</a><a href="#">Контакты</a></div>
+        <div class="col"><h4>Контакты</h4><a href="mailto:support@it-track.ru">support@it-track.ru</a><a href="tel:+78001234567">8 (800) 123-45-67</a></div>
+    </div>
+</footer>
 
-    <footer>
-        <p>&copy; 2026 Сервис создания индивидуальных трек‑листов для подготовки к ОГЭ/ЕГЭ по информатике</p>
-    </footer>
+<script>
+        // ---------- БАЗА ДАННЫХ ----------
+        const ogeTasks = [
+            { num: 1, text: "Статья содержит 8 страниц, на каждой 40 строк по 64 символа. Кодировка Unicode (16 бит на символ). Определите информационный объём статьи в Кбайтах.", answer: "40" },
+            { num: 2, text: "От разведчика получено сообщение: 1100110. Буквы: А(00), Б(01), В(10), Г(11). Расшифруйте.", answer: "ВГА" },
+            { num: 3, text: "Для какого числа X ложно выражение: (X > 5) ИЛИ НЕ (X > 3)? Варианты: 6, 5, 4, 3", answer: "4" },
+            { num: 4, text: "Между пунктами A, B, C, D, E построены дороги. Найдите длину кратчайшего пути между A и E.", answer: "6" },
+            { num: 5, text: "У исполнителя Альфа команды: +1 и *2. Сколько разных чисел можно получить из 2 с помощью программы из 3 команд?", answer: "4" },
+            { num: 6, text: "Определите значение b после выполнения: a:=5; b:=7; if a>b then b:=b+3 else b:=b-3;", answer: "4" },
+            { num: 7, text: "Файл размером 16 Кбайт передаётся со скоростью 4096 бит/с. Определите время передачи в секундах.", answer: "32" },
+            { num: 8, text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231" },
+            { num: 9, text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5" },
+            { num: 10, text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны" }
+        ];
+
+        const egeTasks = [
+            { num: 1, text: "Сколько путей из A в L на схеме дорог?", answer: "8" },
+            { num: 2, text: "Функция F = (¬x∧y)∨(x∧¬y). Сколько единиц в таблице истинности?", answer: "2" },
+            { num: 3, text: "Найдите количество потомков Иванова в БД.", answer: "3" },
+            { num: 4, text: "Для букв А(0), Б(10), В(110). Найдите кратчайший код для Г.", answer: "111" },
+            { num: 5, text: "Чертёжник: (3,2), повторить 2: (-1,4). Конечная точка?", answer: "1,10" },
+            { num: 6, text: "s=0; for i=1 to 5: s=s+i. Чему равно s?", answer: "15" },
+            { num: 7, text: "Скорость 128000 бит/с, время 10 с. Объём в Кбайтах?", answer: "160" },
+            { num: 8, text: "Сколько слов длины 4 из букв {A,B,C}?", answer: "81" },
+            { num: 9, text: "Формула =СРЗНАЧ(A1:A10). Результат?", answer: "5.5" },
+            { num: 10, text: "В 'abcabc' заменить 'ab' на 'x'. Результат?", answer: "xcxc" }
+        ];
+
+        let customOgeTasks = JSON.parse(localStorage.getItem("customOgeTasks")) || [];
+        let customEgeTasks = JSON.parse(localStorage.getItem("customEgeTasks")) || [];
+        let solvedTasks = JSON.parse(localStorage.getItem("solvedTasks")) || {};
+        let answerHistory = JSON.parse(localStorage.getItem("answerHistory")) || [];
+        let ogeCorrectHistory = JSON.parse(localStorage.getItem("ogeCorrectHistory")) || [];
+        let egeCorrectHistory = JSON.parse(localStorage.getItem("egeCorrectHistory")) || [];
+        let currentExam = "oge";
+        let currentRandomTask = null;
+        let chart = null;
+        let userExam = localStorage.getItem("userExam") || "oge";
+        let userRole = localStorage.getItem("userRole") || "student";
+
+        const ADMIN_EMAIL = "admin@it-track.ru";
+        const ADMIN_PASSWORD = "admin123";
+
+        function getAllTasksList() {
+            let tasks = [];
+            let allOge = [...ogeTasks];
+            customOgeTasks.forEach((t, idx) => { allOge.push({ num: ogeTasks.length + idx + 1, text: t.text, answer: t.answer }); });
+            allOge.forEach(t => { tasks.push({ exam: "oge", id: `oge_${t.num}`, num: t.num, text: t.text, answer: t.answer, solved: solvedTasks[`oge_${t.num}`] || false }); });
+
+            let allEge = [...egeTasks];
+            customEgeTasks.forEach((t, idx) => { allEge.push({ num: egeTasks.length + idx + 1, text: t.text, answer: t.answer }); });
+            allEge.forEach(t => { tasks.push({ exam: "ege", id: `ege_${t.num}`, num: t.num, text: t.text, answer: t.answer, solved: solvedTasks[`ege_${t.num}`] || false }); });
+            return tasks;
+        }
+
+        let allTasks = getAllTasksList();
+
+        function refreshTasksList() {
+            allTasks = getAllTasksList();
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: [], datasets: [
+                    { label: 'ОГЭ', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: true },
+                    { label: 'ЕГЭ', data: [], borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: true }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+            updateChart();
+        }
+
+        function updateChart() {
+            const oge = ogeCorrectHistory.slice(-15);
+            const ege = egeCorrectHistory.slice(-15);
+            const maxLen = Math.max(oge.length, ege.length);
+            const labels = Array.from({ length: maxLen }, (_, i) => `#${i+1}`);
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = oge;
+            chart.data.datasets[1].data = ege;
+            chart.update();
+        }
+
+        function updateStats() {
+            const filtered = allTasks.filter(t => t.exam === currentExam);
+            const total = filtered.length;
+            const solvedCount = filtered.filter(t => t.solved).length;
+            document.getElementById('percentSolved').innerText = total > 0 ? Math.round((solvedCount/total)*100) + '%' : '0%';
+
+            const taskStats = {};
+            answerHistory.forEach(item => {
+                const key = `${item.exam}_${item.taskNum}`;
+                if(!taskStats[key]) taskStats[key] = { total: 0, correct: 0 };
+                taskStats[key].total++;
+                if(item.correct) taskStats[key].correct++;
+            });
+            let best = null, bestP = -1, worst = null, worstP = 101;
+            for(const [key, s] of Object.entries(taskStats)) {
+                if(s.total < 2) continue;
+                const p = (s.correct / s.total) * 100;
+                if(p > bestP) { bestP = p; best = key; }
+                if(p < worstP) { worstP = p; worst = key; }
+            }
+            document.getElementById('bestTask').innerText = best ? best.replace('_',' ').toUpperCase() + ' ('+Math.round(bestP)+'%)' : '—';
+            document.getElementById('worstTask').innerText = worst ? worst.replace('_',' ').toUpperCase() + ' ('+Math.round(worstP)+'%)' : '—';
+        }
+
+        function renderTasks(exam) {
+            const filtered = allTasks.filter(t => t.exam === exam);
+            const grid = document.getElementById('tasksGrid');
+            grid.innerHTML = filtered.map(t => `
+                <div class="item ${t.solved ? 'solved' : ''}" data-id="${t.id}">
+                    <span class="num">Задания ${t.num} типа</span>
+                    <span>${t.solved ? '✅' : '📌'}</span>
+                </div>
+            `).join('');
+            document.querySelectorAll('.tasks-grid .item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const task = allTasks.find(t => t.id === el.dataset.id);
+                    if(task) showRandomTask(task);
+                });
+            });
+        }
+
+        function getRandomTask() {
+            const unsolved = allTasks.filter(t => !t.solved);
+            if(unsolved.length > 0) return unsolved[Math.floor(Math.random() * unsolved.length)];
+            return allTasks[Math.floor(Math.random() * allTasks.length)];
+        }
+
+        function showRandomTask(task) {
+            currentRandomTask = task;
+            document.getElementById('randomExam').innerText = task.exam.toUpperCase();
+            document.getElementById('randomNum').innerText = `Задания ${task.num} типа`;
+            document.getElementById('randomQuestion').innerText = task.text;
+            document.getElementById('randomAnswerInput').value = '';
+            document.getElementById('randomFeedback').style.display = 'none';
+        }
+
+        function checkAnswer() {
+            if(!currentRandomTask) { alert('Сначала получите задание'); return; }
+            const user = document.getElementById('randomAnswerInput').value.trim().toLowerCase();
+            if(!user) { alert('Введите ответ'); return; }
+            const correct = user === String(currentRandomTask.answer).toLowerCase();
+            const fb = document.getElementById('randomFeedback');
+            fb.style.display = 'block';
+            if(correct) {
+                fb.innerHTML = '✅ Верно!'; fb.style.color = '#16a34a';
+                if(!currentRandomTask.solved) {
+                    currentRandomTask.solved = true;
+                    solvedTasks[currentRandomTask.id] = true;
+                    localStorage.setItem('solvedTasks', JSON.stringify(solvedTasks));
+                    renderTasks(currentExam);
+                }
+            } else {
+                fb.innerHTML = `❌ Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626';
+            }
+            if(currentRandomTask.exam === 'oge') {
+                const last = ogeCorrectHistory.length ? ogeCorrectHistory[ogeCorrectHistory.length-1] : 0;
+                ogeCorrectHistory.push(last + (correct ? 1 : 0));
+            } else {
+                const last = egeCorrectHistory.length ? egeCorrectHistory[egeCorrectHistory.length-1] : 0;
+                egeCorrectHistory.push(last + (correct ? 1 : 0));
+            }
+            answerHistory.push({ exam: currentRandomTask.exam, taskNum: currentRandomTask.num, correct: correct });
+            localStorage.setItem('ogeCorrectHistory', JSON.stringify(ogeCorrectHistory));
+            localStorage.setItem('egeCorrectHistory', JSON.stringify(egeCorrectHistory));
+            localStorage.setItem('answerHistory', JSON.stringify(answerHistory));
+            updateChart();
+            updateStats();
+            setTimeout(() => {
+                const newTask = getRandomTask();
+                showRandomTask(newTask);
+            }, 1300);
+        }
+
+        function init() {
+            currentExam = userExam;
+            refreshTasksList();
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.querySelector(`.tabs .tab[data-exam="${currentExam}"]`);
+            if(activeTab) activeTab.classList.add('active');
+            renderTasks(currentExam);
+            initChart();
+            updateStats();
+            showRandomTask(getRandomTask());
+            if(userRole === 'admin') document.getElementById('adminPanel').style.display = 'block';
+            else document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        document.getElementById('getRandomBtn').addEventListener('click', () => showRandomTask(getRandomTask()));
+        document.getElementById('checkRandomBtn').addEventListener('click', checkAnswer);
+        document.getElementById('randomAnswerInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAnswer(); });
+        document.querySelectorAll('.tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentExam = tab.dataset.exam;
+                renderTasks(currentExam);
+                updateStats();
+            });
+        });
+
+        document.getElementById('adminAddBtn').addEventListener('click', () => {
+            const exam = document.getElementById('adminExam').value;
+            const text = document.getElementById('adminTaskText').value.trim();
+            const answer = document.getElementById('adminAnswer').value.trim();
+            const feedbackDiv = document.getElementById('adminFeedback');
+            if (!text || !answer) { feedbackDiv.innerHTML = '❌ Заполните все поля!'; feedbackDiv.style.color = '#dc2626'; return; }
+            if (exam === 'oge') { customOgeTasks.push({ text, answer }); localStorage.setItem("customOgeTasks", JSON.stringify(customOgeTasks)); }
+            else { customEgeTasks.push({ text, answer }); localStorage.setItem("customEgeTasks", JSON.stringify(customEgeTasks)); }
+            refreshTasksList();
+            renderTasks(currentExam);
+            updateStats();
+            feedbackDiv.innerHTML = '✅ Задание добавлено!'; feedbackDiv.style.color = '#16a34a';
+            document.getElementById('adminTaskText').value = '';
+            document.getElementById('adminAnswer').value = '';
+        });
+
+        // MODAL
+        const modal = document.getElementById('authModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalActionBtn = document.getElementById('modalActionBtn');
+        const modalEmail = document.getElementById('modalEmail');
+        const modalPassword = document.getElementById('modalPassword');
+        const modalError = document.getElementById('modalError');
+        const examBtns = document.querySelectorAll('.exam-btn');
+        let selectedExam = 'oge';
+
+        examBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                examBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedExam = this.dataset.exam;
+            });
+        });
+
+        function openModal(mode) {
+            modalError.style.display = 'none';
+            modalEmail.value = ''; modalPassword.value = '';
+            if(mode === 'login') {
+                modalTitle.innerText = 'Войти в аккаунт';
+                modalActionBtn.innerText = 'Войти';
+                document.querySelector('.exam-buttons').style.display = 'none';
+            } else {
+                modalTitle.innerText = 'Создайте аккаунт';
+                modalActionBtn.innerText = 'Создать аккаунт';
+                document.querySelector('.exam-buttons').style.display = 'flex';
+                examBtns.forEach(b => b.classList.remove('active'));
+                document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+                selectedExam = 'oge';
+            }
+            modal.classList.add('active');
+        }
+
+        document.getElementById('openRegisterBtn').addEventListener('click', () => openModal('register'));
+        document.getElementById('loginBtn').addEventListener('click', () => openModal('login'));
+        document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
+
+        modalActionBtn.addEventListener('click', () => {
+            const email = modalEmail.value.trim();
+            const pass = modalPassword.value.trim();
+            if (!email.includes('@') || !email.includes('.')) { modalError.style.display = 'block'; return; }
+            modalError.style.display = 'none';
+            if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
+                userRole = 'admin'; userExam = selectedExam;
+                localStorage.setItem("userRole", 'admin'); localStorage.setItem("userExam", selectedExam);
+                currentExam = selectedExam;
+                refreshTasksList();
+                renderTasks(currentExam); updateStats(); showRandomTask(getRandomTask());
+                document.getElementById('adminPanel').style.display = 'block';
+                alert('Администратор вошёл');
+                modal.classList.remove('active');
+                return;
+            }
+            userRole = 'student'; userExam = selectedExam;
+            localStorage.setItem("userRole", 'student'); localStorage.setItem("userExam", selectedExam);
+            currentExam = selectedExam;
+            refreshTasksList();
+            renderTasks(currentExam); updateStats(); showRandomTask(getRandomTask());
+            document.getElementById('adminPanel').style.display = 'none';
+            alert('Аккаунт ученика создан / вход выполнен');
+            modal.classList.remove('active');
+        });
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
