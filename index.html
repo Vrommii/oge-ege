@@ -281,23 +281,25 @@
             margin-top: 25px;
             padding-top: 10px;
         }
-        .btn-white {
-            background: white;
-            color: #034694;
-            border: 2px solid #034694;
-            padding: 14px 80px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-block;
-            min-width: 320px;
-        }
-        .btn-white:hover {
+        /* НОВАЯ КНОПКА - такого же размера как блок task-card, без обводки, скругление 10 */
+        .btn-generate-variant {
             background: #034694;
             color: white;
-            transform: scale(1.02);
+            border: none;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: block;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(3,70,148,0.2);
+        }
+        .btn-generate-variant:hover {
+            background: #023a7a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(3,70,148,0.3);
         }
         .list-section {
             background: var(--bg-light);
@@ -522,13 +524,14 @@
             .main-nav { justify-content: center; flex-wrap: wrap; }
             .auth-buttons { justify-content: center; }
             .task-text-preview { max-width: 180px; }
-            .btn-random, .btn-white { min-width: 260px; padding: 12px 40px; }
+            .btn-random { min-width: 260px; padding: 12px 40px; }
             .random-section { padding: 25px 20px; }
             .stat-card .value { font-size: 1.2rem; }
             .tagline-main { font-size: 0.9rem; padding: 6px 16px; }
             .tagline-description { font-size: 0.6rem; }
             .content-offset { margin-top: 95px; }
             .tagline-wrapper { top: 70px; }
+            .btn-generate-variant { padding: 15px 20px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -603,7 +606,7 @@
                 <div class="feedback" id="randomFeedback"></div>
             </div>
             <div class="generate-variant-section">
-                <button class="btn-white" id="generateVariantBtn">Сгенерировать вариант</button>
+                <button class="btn-generate-variant" id="generateVariantBtn">Сгенерировать вариант</button>
             </div>
         </section>
 
