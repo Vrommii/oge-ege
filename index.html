@@ -103,7 +103,6 @@
             margin-bottom: 15px;
             font-size: 1rem;
         }
-        /* БЛОК С ЗАДАНИЯМИ - ПОЛУПРОЗРАЧНЫЙ (75% opacity) */
         .random-section {
             background: rgba(141, 219, 248, 0.75);
             border-radius: 28px;
@@ -121,7 +120,6 @@
             color: var(--primary-dark);
             margin-bottom: 20px;
         }
-        /* УДЛИНЁННЫЕ КНОПКИ */
         .btn-random {
             background: #034694;
             color: white;
@@ -206,7 +204,6 @@
             margin-top: 30px;
             padding-top: 15px;
         }
-        /* УДЛИНЁННАЯ БЕЛАЯ КНОПКА */
         .btn-white {
             background: white;
             color: #034694;
@@ -249,7 +246,6 @@
         }
         .tabs .tab.active { color: #034694; border-bottom: 3px solid #034694; }
         
-        /* СПИСОК ЗАДАНИЙ (ВМЕСТО КНОПОК) */
         .tasks-list {
             max-height: 450px;
             overflow-y: auto;
@@ -300,7 +296,8 @@
             text-overflow: ellipsis;
         }
         .task-status {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
         
         .admin-panel {
@@ -376,6 +373,16 @@
             flex: 1;
             text-align: center;
         }
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .stat-card .value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #034694;
+        }
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -442,6 +449,7 @@
             .task-text-preview { max-width: 180px; }
             .btn-random, .btn-white { min-width: 220px; padding: 12px 32px; }
             .random-section { padding: 25px 20px; }
+            .stat-card .value { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -488,11 +496,10 @@
         <div class="stats-grid">
             <div class="stat-card"><div class="label">✅ Лучше всего</div><div class="value" id="bestTask">—</div></div>
             <div class="stat-card"><div class="label">⚠️ Самое сложное</div><div class="value" id="worstTask">—</div></div>
-            <div class="stat-card"><div class="label">📊 Процент решённых</div><div class="value" id="percentSolved">0%</div></div>
+            <div class="stat-card"><div class="label">📊 Процент правильных ответов</div><div class="value" id="percentCorrect">0%</div></div>
         </div>
     </section>
 
-    <!-- ПОЛУПРОЗРАЧНЫЙ БЛОК 75% -->
     <section class="random-section">
         <div class="random-header">
             <h3><i class="fas fa-dice-d6"></i> Рандомное задание</h3>
@@ -523,7 +530,6 @@
             <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
             <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
         </div>
-        <!-- СПИСОК ЗАДАНИЙ ВМЕСТО КНОПОК -->
         <div class="tasks-list" id="tasksList"></div>
     </section>
 
@@ -660,7 +666,7 @@
                     { label: 'ОГЭ', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: true },
                     { label: 'ЕГЭ', data: [], borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: true }
                 ] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Правильные ответы (накоплено)' } } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Накоплено правильных ответов' } } } }
             });
             updateChart();
         }
@@ -676,12 +682,20 @@
             chart.update();
         }
 
-        function updateStats() {
-            const filtered = allTasks.filter(t => t.exam === currentExam);
-            const total = filtered.length;
-            const solvedCount = filtered.filter(t => t.solved).length;
-            document.getElementById('percentSolved').innerText = total > 0 ? Math.round((solvedCount/total)*100) + '%' : '0%';
+        // НОВАЯ ФУНКЦИЯ: считает процент правильных ответов (качество)
+        function calculatePercentCorrect() {
+            const totalAttempts = answerHistory.length;
+            if (totalAttempts === 0) return 0;
+            const correctAttempts = answerHistory.filter(item => item.correct === true).length;
+            return Math.round((correctAttempts / totalAttempts) * 100);
+        }
 
+        function updateStats() {
+            // Процент правильных ответов (качество, а не количество решённых)
+            const percentCorrect = calculatePercentCorrect();
+            document.getElementById('percentCorrect').innerText = percentCorrect + '%';
+
+            // Анализ лучших и худших заданий по качеству ответов
             const taskStats = {};
             answerHistory.forEach(item => {
                 const key = `${item.exam}_${item.taskNum}`;
@@ -700,7 +714,6 @@
             document.getElementById('worstTask').innerText = worst ? worst.replace('_',' ').toUpperCase() + ' ('+Math.round(worstP)+'%)' : '—';
         }
 
-        // ОТРИСОВКА ЗАДАНИЙ В ВИДЕ СПИСКА (НЕ КНОПКИ)
         function renderTasksList(exam) {
             const filtered = allTasks.filter(t => t.exam === exam);
             const container = document.getElementById('tasksList');
