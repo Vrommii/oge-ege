@@ -417,6 +417,25 @@
             font-size: 28px;
             cursor: pointer;
         }
+        .exam-buttons {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .exam-btn {
+            flex:1;
+            padding: 8px;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .exam-btn.active {
+            background: #034694;
+            color: white;
+            border-color: #034694;
+        }
         .error-msg {
             color: #dc2626;
             font-size: 13px;
@@ -531,6 +550,11 @@
         <h3 id="modalTitle">Создайте аккаунт</h3>
         <input type="email" id="modalEmail" placeholder="Email">
         <input type="password" id="modalPassword" placeholder="Пароль">
+        <label style="font-size:14px; color:#555; display:block; margin-top:8px; margin-bottom:4px;">Выберите экзамен:</label>
+        <div class="exam-buttons">
+            <button class="exam-btn active" data-exam="oge">📘 ОГЭ</button>
+            <button class="exam-btn" data-exam="ege">🎓 ЕГЭ</button>
+        </div>
         <div class="error-msg" id="modalError">Введите корректный email (должен содержать @ и .)</div>
         <button class="btn btn-primary" id="modalActionBtn">Создать аккаунт</button>
     </div>
@@ -607,7 +631,7 @@
         let userExam = localStorage.getItem("userExam") || "oge";
         let userRole = localStorage.getItem("userRole") || "student";
 
-        // АККАУНТ АДМИНИСТРАТОРА (скрыт от пользователя)
+        // АККАУНТ АДМИНИСТРАТОРА
         const ADMIN_EMAIL = "admin@it-track.ru";
         const ADMIN_PASSWORD = "admin123";
 
@@ -826,14 +850,24 @@
             setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
         });
 
-        // Модальное окно (без выбора экзамена и без отображения данных админа)
+        // Модальное окно с выбором экзамена
         const modal = document.getElementById('authModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalActionBtn = document.getElementById('modalActionBtn');
         const modalEmail = document.getElementById('modalEmail');
         const modalPassword = document.getElementById('modalPassword');
         const modalError = document.getElementById('modalError');
+        const examBtns = document.querySelectorAll('.exam-btn');
+        let selectedExam = 'oge';
         let currentMode = 'register';
+
+        examBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                examBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedExam = this.dataset.exam;
+            });
+        });
 
         function openModal(mode) {
             currentMode = mode;
@@ -843,9 +877,17 @@
             if(mode === 'login') {
                 modalTitle.innerText = 'Войти в аккаунт';
                 modalActionBtn.innerText = 'Войти';
+                document.querySelector('.exam-buttons').style.display = 'flex';
+                examBtns.forEach(b => b.classList.remove('active'));
+                document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+                selectedExam = 'oge';
             } else {
                 modalTitle.innerText = 'Создать аккаунт';
                 modalActionBtn.innerText = 'Создать аккаунт';
+                document.querySelector('.exam-buttons').style.display = 'flex';
+                examBtns.forEach(b => b.classList.remove('active'));
+                document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+                selectedExam = 'oge';
             }
             modal.classList.add('active');
         }
@@ -864,13 +906,13 @@
             }
             modalError.style.display = 'none';
             
-            // Проверка на администратора (скрытый вход)
+            // Проверка на администратора
             if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
                 userRole = 'admin';
-                userExam = 'oge';
+                userExam = selectedExam;
                 localStorage.setItem("userRole", 'admin');
-                localStorage.setItem("userExam", 'oge');
-                currentExam = 'oge';
+                localStorage.setItem("userExam", selectedExam);
+                currentExam = selectedExam;
                 refreshTasksList();
                 renderTasksList(currentExam); 
                 updateStats(); 
@@ -883,10 +925,10 @@
             
             // Обычный пользователь
             userRole = 'student';
-            userExam = 'oge';
+            userExam = selectedExam;
             localStorage.setItem("userRole", 'student');
-            localStorage.setItem("userExam", 'oge');
-            currentExam = 'oge';
+            localStorage.setItem("userExam", selectedExam);
+            currentExam = selectedExam;
             refreshTasksList();
             renderTasksList(currentExam); 
             updateStats(); 
