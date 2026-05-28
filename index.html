@@ -178,21 +178,24 @@
             margin: 30px 0;
             box-shadow: var(--shadow);
             backdrop-filter: blur(2px);
-        }
-        .random-header {
             text-align: center;
-            margin-bottom: 25px;
         }
         .random-header h3 {
             font-size: 1.6rem;
             color: var(--primary-dark);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+        .random-description {
+            font-size: 0.9rem;
+            color: #034694;
+            margin-bottom: 25px;
+            line-height: 1.4;
         }
         .btn-random {
             background: #034694;
             color: white;
             border: none;
-            padding: 14px 48px;
+            padding: 14px 80px;
             border-radius: 60px;
             font-weight: 700;
             cursor: pointer;
@@ -200,7 +203,7 @@
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(3,70,148,0.3);
             display: inline-block;
-            min-width: 260px;
+            min-width: 320px;
         }
         .btn-random:hover {
             background: #023a7a;
@@ -210,7 +213,8 @@
             background: white;
             padding: 25px;
             border-radius: 24px;
-            margin-top: 15px;
+            margin-top: 25px;
+            text-align: left;
         }
         .task-card .meta {
             display: flex;
@@ -218,6 +222,7 @@
             font-size: 14px;
             margin-bottom: 15px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .task-card .meta span {
             background: #E0F2FE;
@@ -232,12 +237,14 @@
             background: #F8FAFE;
             padding: 18px;
             border-radius: 16px;
+            text-align: left;
         }
         .task-card .answer-area {
             display: flex;
             gap: 10px;
             margin-top: 15px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .task-card .answer-area input {
             flex: 2;
@@ -246,12 +253,13 @@
             border: 2px solid #BAE6FD;
             outline: none;
             font-size: 1rem;
+            min-width: 200px;
         }
         .task-card .answer-area button {
             background: #034694;
             color: white;
             border: none;
-            padding: 12px 32px;
+            padding: 12px 40px;
             border-radius: 60px;
             font-weight: 700;
             cursor: pointer;
@@ -266,27 +274,25 @@
             padding: 12px;
             border-radius: 12px;
             display: none;
+            text-align: center;
         }
         .generate-variant-section {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 15px;
+            margin-top: 25px;
+            padding-top: 10px;
         }
         .btn-white {
             background: white;
             color: #034694;
             border: 2px solid #034694;
-            padding: 14px 48px;
+            padding: 14px 80px;
             border-radius: 60px;
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 260px;
-            justify-content: center;
+            display: inline-block;
+            min-width: 320px;
         }
         .btn-white:hover {
             background: #034694;
@@ -304,6 +310,7 @@
             gap: 20px;
             border-bottom: 2px solid #BAE6FD;
             margin-bottom: 15px;
+            justify-content: center;
         }
         .tabs .tab {
             padding: 10px 0;
@@ -515,7 +522,7 @@
             .main-nav { justify-content: center; flex-wrap: wrap; }
             .auth-buttons { justify-content: center; }
             .task-text-preview { max-width: 180px; }
-            .btn-random, .btn-white { min-width: 220px; padding: 12px 32px; }
+            .btn-random, .btn-white { min-width: 260px; padding: 12px 40px; }
             .random-section { padding: 25px 20px; }
             .stat-card .value { font-size: 1.2rem; }
             .tagline-main { font-size: 0.9rem; padding: 6px 16px; }
@@ -560,28 +567,29 @@
 
 <div class="content-offset" id="mainContent">
     <div class="container">
-        <!-- Hero секция полностью удалена -->
-
         <section class="stats-chart">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                <h3>📈 Динамика успеваемости</h3>
+                <h3>Динамика успеваемости</h3>
                 <span style="font-size:13px; color:#666;">Правильные ответы (ОГЭ — синий, ЕГЭ — красный)</span>
             </div>
             <div class="chart-wrapper">
                 <canvas id="progressChart"></canvas>
             </div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="label">✅ Лучше всего</div><div class="value" id="bestTask">—</div></div>
-                <div class="stat-card"><div class="label">⚠️ Самое сложное</div><div class="value" id="worstTask">—</div></div>
-                <div class="stat-card"><div class="label">📊 Процент правильных ответов</div><div class="value" id="percentCorrect">0%</div></div>
+                <div class="stat-card"><div class="label">Лучше всего</div><div class="value" id="bestTask">—</div></div>
+                <div class="stat-card"><div class="label">Самое сложное</div><div class="value" id="worstTask">—</div></div>
+                <div class="stat-card"><div class="label">Процент правильных ответов</div><div class="value" id="percentCorrect">0%</div></div>
             </div>
         </section>
 
         <section class="random-section">
             <div class="random-header">
-                <h3><i class="fas fa-dice-d6"></i> Рандомное задание</h3>
-                <button class="btn-random" id="getRandomBtn">✨ Выдать случайное задание</button>
+                <h3>Рандомное задание ОГЭ/ЕГЭ</h3>
+                <div class="random-description">
+                    Нажми на кнопку - получи случайную задачу по информатике! Адаптивный трек меняет сложность в зависимости от твоих ответов
+                </div>
             </div>
+            <button class="btn-random" id="getRandomBtn">Выдать случайное задание</button>
             <div class="task-card" id="randomTaskCard">
                 <div class="meta">
                     <span id="randomExamBadge" style="background:#034694; color:white;">ОГЭ</span>
@@ -590,19 +598,17 @@
                 <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
                 <div class="answer-area">
                     <input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ...">
-                    <button id="checkRandomBtn">Проверить →</button>
+                    <button id="checkRandomBtn">Проверить</button>
                 </div>
                 <div class="feedback" id="randomFeedback"></div>
             </div>
             <div class="generate-variant-section">
-                <button class="btn-white" id="generateVariantBtn">
-                    <i class="fas fa-layer-group"></i> Сгенерировать вариант
-                </button>
+                <button class="btn-white" id="generateVariantBtn">Сгенерировать вариант</button>
             </div>
         </section>
 
         <section class="list-section">
-            <h3>📚 Все задания по типам</h3>
+            <h3>Все задания по типам</h3>
             <div class="tabs">
                 <div class="tab active" data-exam="oge">ОГЭ (16 заданий)</div>
                 <div class="tab" data-exam="ege">ЕГЭ (27 заданий)</div>
@@ -611,7 +617,7 @@
         </section>
 
         <section class="admin-panel" id="adminPanel">
-            <h3>🛠 Панель администратора — добавление заданий</h3>
+            <h3>Панель администратора — добавление заданий</h3>
             <div class="row">
                 <select id="adminExam">
                     <option value="oge">ОГЭ</option>
@@ -622,7 +628,7 @@
             <div class="row">
                 <textarea id="adminTaskText" placeholder="Текст задания"></textarea>
             </div>
-            <button class="btn-success" id="adminAddBtn">➕ Добавить задание</button>
+            <button class="btn-success" id="adminAddBtn">Добавить задание</button>
             <div id="adminFeedback" style="margin-top:10px; font-weight:bold;"></div>
         </section>
     </div>
@@ -636,8 +642,8 @@
         <input type="password" id="modalPassword" placeholder="Пароль">
         <label style="font-size:14px; color:#555; display:block; margin-top:8px; margin-bottom:4px;">Выберите экзамен:</label>
         <div class="exam-buttons">
-            <button class="exam-btn active" data-exam="oge">📘 ОГЭ</button>
-            <button class="exam-btn" data-exam="ege">🎓 ЕГЭ</button>
+            <button class="exam-btn active" data-exam="oge">ОГЭ</button>
+            <button class="exam-btn" data-exam="ege">ЕГЭ</button>
         </div>
         <div class="error-msg" id="modalError">Введите корректный email (должен содержать @ и .)</div>
         <button class="btn btn-primary" id="modalActionBtn">Создать аккаунт</button>
@@ -812,7 +818,7 @@
                         <span class="task-num">Задание ${t.num}</span>
                         <span class="task-text-preview">${t.text.length > 60 ? t.text.substring(0, 60) + '...' : t.text}</span>
                     </div>
-                    <div class="task-status">${t.solved ? '✅ Решено' : '📌 Не решено'}</div>
+                    <div class="task-status">${t.solved ? 'Решено' : 'Не решено'}</div>
                 </div>
             `).join('');
             document.querySelectorAll('.task-list-item').forEach(el => {
@@ -841,10 +847,10 @@
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
             const variantTasks = shuffled.slice(0, Math.min(5, shuffled.length));
-            let variantText = "🎯 СГЕНЕРИРОВАННЫЙ ВАРИАНТ (5 заданий):\n\n";
+            let variantText = "СГЕНЕРИРОВАННЫЙ ВАРИАНТ (5 заданий):\n\n";
             variantTasks.forEach((task, idx) => {
                 variantText += `${idx+1}. [${task.exam.toUpperCase()} ${task.num}] ${task.text}\n`;
-                variantText += `   ➜ Ответ: ${task.answer}\n\n`;
+                variantText += `   Ответ: ${task.answer}\n\n`;
             });
             alert(variantText);
         }
@@ -870,7 +876,7 @@
             const fb = document.getElementById('randomFeedback');
             fb.style.display = 'block';
             if(correct) {
-                fb.innerHTML = '✅ Верно! Отлично!'; fb.style.color = '#16a34a';
+                fb.innerHTML = 'Верно! Отлично!'; fb.style.color = '#16a34a';
                 fb.style.background = '#D1FAE5';
                 if(!currentRandomTask.solved) {
                     currentRandomTask.solved = true;
@@ -879,7 +885,7 @@
                     renderTasksList(currentExam);
                 }
             } else {
-                fb.innerHTML = `❌ Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626';
+                fb.innerHTML = `Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626';
                 fb.style.background = '#FEE2E2';
             }
             if(currentRandomTask.exam === 'oge') {
@@ -935,13 +941,13 @@
             const text = document.getElementById('adminTaskText').value.trim();
             const answer = document.getElementById('adminAnswer').value.trim();
             const feedbackDiv = document.getElementById('adminFeedback');
-            if (!text || !answer) { feedbackDiv.innerHTML = '❌ Заполните все поля!'; feedbackDiv.style.color = '#dc2626'; return; }
+            if (!text || !answer) { feedbackDiv.innerHTML = 'Заполните все поля!'; feedbackDiv.style.color = '#dc2626'; return; }
             if (exam === 'oge') { customOgeTasks.push({ text, answer }); localStorage.setItem("customOgeTasks", JSON.stringify(customOgeTasks)); }
             else { customEgeTasks.push({ text, answer }); localStorage.setItem("customEgeTasks", JSON.stringify(customEgeTasks)); }
             refreshTasksList();
             renderTasksList(currentExam);
             updateStats();
-            feedbackDiv.innerHTML = '✅ Задание успешно добавлено!'; feedbackDiv.style.color = '#16a34a';
+            feedbackDiv.innerHTML = 'Задание успешно добавлено!'; feedbackDiv.style.color = '#16a34a';
             document.getElementById('adminTaskText').value = '';
             document.getElementById('adminAnswer').value = '';
             setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
@@ -1015,7 +1021,7 @@
                 updateStats(); 
                 showRandomTask(getRandomTask());
                 document.getElementById('adminPanel').style.display = 'block';
-                alert('✅ Добро пожаловать, администратор!');
+                alert('Добро пожаловать, администратор!');
                 modal.classList.remove('active');
                 return;
             }
@@ -1032,9 +1038,9 @@
             document.getElementById('adminPanel').style.display = 'none';
             
             if(currentMode === 'register') {
-                alert('✅ Аккаунт успешно создан!');
+                alert('Аккаунт успешно создан!');
             } else {
-                alert('✅ Вход выполнен успешно!');
+                alert('Вход выполнен успешно!');
             }
             modal.classList.remove('active');
         });
