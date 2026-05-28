@@ -11,7 +11,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, arrayUnion, arrayRemove, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPQ6kpEqMUSH0SlgkM3dLz_8joZEtv5MY",
@@ -45,6 +45,7 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
+        window.updateProfile = updateProfile;
         
         console.log("Firebase инициализирован успешно!");
     </script>
@@ -63,6 +64,7 @@
             --bg-light: #F0F9FF;
             --white: #ffffff;
             --shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --input-bg: #8DD8F7;
         }
         body {
             background: #F8FAFE;
@@ -311,6 +313,15 @@
             outline: none;
             font-size: 1rem;
             min-width: 200px;
+            background: #8DD8F7;
+        }
+        .task-card .answer-area input:focus {
+            border-color: #034694;
+            background: #a8e0f9;
+        }
+        .task-card .answer-area input::placeholder {
+            color: #034694;
+            opacity: 0.7;
         }
         .task-card .answer-area button {
             background: #034694;
@@ -522,6 +533,7 @@
             font-weight: 800;
             color: #034694;
         }
+        /* Модальное окно для входа/регистрации */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -555,6 +567,53 @@
             right: 20px;
             font-size: 28px;
             cursor: pointer;
+        }
+        /* Модальное окно для выбора экзамена в профиле */
+        .profile-modal {
+            max-width: 350px;
+        }
+        .profile-modal h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #034694;
+        }
+        .profile-exam-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .profile-exam-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            border: 2px solid #034694;
+            background: white;
+            color: #034694;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .profile-exam-btn.active {
+            background: #034694;
+            color: white;
+        }
+        .profile-exam-btn:hover {
+            transform: scale(1.02);
+        }
+        .profile-save-btn {
+            background: #034694;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .profile-save-btn:hover {
+            background: #023a7a;
         }
         .exam-buttons {
             display: flex;
@@ -702,6 +761,7 @@
     </div>
 </div>
 
+<!-- Модальное окно для входа/регистрации -->
 <div class="modal-overlay" id="authModal">
     <div class="modal">
         <span class="close-btn" id="closeModalBtn">&times;</span>
@@ -715,6 +775,19 @@
         </div>
         <div class="error-msg" id="modalError">Введите корректный email (должен содержать @ и .)</div>
         <button class="btn btn-primary" id="modalActionBtn">Создать аккаунт</button>
+    </div>
+</div>
+
+<!-- Модальное окно для выбора экзамена в профиле -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal profile-modal">
+        <span class="close-btn" id="closeProfileModalBtn">&times;</span>
+        <h3><i class="fas fa-graduation-cap"></i> Выберите экзамен</h3>
+        <div class="profile-exam-buttons">
+            <button class="profile-exam-btn" data-exam="oge" id="profileExamOge">ОГЭ</button>
+            <button class="profile-exam-btn" data-exam="ege" id="profileExamEge">ЕГЭ</button>
+        </div>
+        <button class="profile-save-btn" id="saveExamBtn">Сохранить изменения</button>
     </div>
 </div>
 
@@ -1010,6 +1083,21 @@
         }, 1500);
     }
 
+    async function updateUserExam(newExam) {
+        userExam = newExam;
+        currentExam = newExam;
+        if (currentUser) {
+            await saveUserData(currentUser.uid);
+        }
+        // Обновляем активную вкладку
+        document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+        const activeTab = document.querySelector(`.tabs .tab[data-exam="${currentExam}"]`);
+        if(activeTab) activeTab.classList.add('active');
+        renderTasksList(currentExam);
+        updateStats();
+        showRandomTask(getRandomTask());
+    }
+
     async function init() {
         currentExam = userExam;
         refreshTasksList();
@@ -1103,14 +1191,14 @@
         setTimeout(() => { feedbackDiv.innerHTML = ''; }, 2500);
     });
 
-    // Модальное окно
-    const modal = document.getElementById('authModal');
+    // Модальное окно для входа/регистрации
+    const authModal = document.getElementById('authModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalActionBtn = document.getElementById('modalActionBtn');
     const modalEmail = document.getElementById('modalEmail');
     const modalPassword = document.getElementById('modalPassword');
     const modalError = document.getElementById('modalError');
-    const examBtns = document.querySelectorAll('.exam-btn');
+    const examBtns = document.querySelectorAll('#authModal .exam-btn');
     let selectedExam = 'oge';
     let currentMode = 'register';
 
@@ -1122,7 +1210,7 @@
         });
     });
 
-    function openModal(mode) {
+    function openAuthModal(mode) {
         currentMode = mode;
         modalError.style.display = 'none';
         modalEmail.value = '';
@@ -1130,26 +1218,73 @@
         if(mode === 'login') {
             modalTitle.innerText = 'Войти в аккаунт';
             modalActionBtn.innerText = 'Войти';
-            document.querySelector('.exam-buttons').style.display = 'flex';
+            document.querySelector('#authModal .exam-buttons').style.display = 'flex';
             examBtns.forEach(b => b.classList.remove('active'));
-            document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+            document.querySelector('#authModal .exam-btn[data-exam="oge"]').classList.add('active');
             selectedExam = 'oge';
         } else {
             modalTitle.innerText = 'Создать аккаунт';
             modalActionBtn.innerText = 'Создать аккаунт';
-            document.querySelector('.exam-buttons').style.display = 'flex';
+            document.querySelector('#authModal .exam-buttons').style.display = 'flex';
             examBtns.forEach(b => b.classList.remove('active'));
-            document.querySelector('.exam-btn[data-exam="oge"]').classList.add('active');
+            document.querySelector('#authModal .exam-btn[data-exam="oge"]').classList.add('active');
             selectedExam = 'oge';
         }
-        modal.classList.add('active');
+        authModal.classList.add('active');
     }
 
-    document.getElementById('accountIconBtn').addEventListener('click', () => openModal('login'));
-    document.getElementById('openRegisterBtn').addEventListener('click', () => openModal('register'));
-    document.getElementById('loginBtn').addEventListener('click', () => openModal('login'));
-    document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
-    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
+    // Модальное окно для выбора экзамена в профиле
+    const profileModal = document.getElementById('profileModal');
+    const profileExamOge = document.getElementById('profileExamOge');
+    const profileExamEge = document.getElementById('profileExamEge');
+    let profileSelectedExam = 'oge';
+
+    function openProfileModal() {
+        profileSelectedExam = userExam;
+        if (profileSelectedExam === 'oge') {
+            profileExamOge.classList.add('active');
+            profileExamEge.classList.remove('active');
+        } else {
+            profileExamEge.classList.add('active');
+            profileExamOge.classList.remove('active');
+        }
+        profileModal.classList.add('active');
+    }
+
+    profileExamOge.addEventListener('click', () => {
+        profileSelectedExam = 'oge';
+        profileExamOge.classList.add('active');
+        profileExamEge.classList.remove('active');
+    });
+
+    profileExamEge.addEventListener('click', () => {
+        profileSelectedExam = 'ege';
+        profileExamEge.classList.add('active');
+        profileExamOge.classList.remove('active');
+    });
+
+    document.getElementById('saveExamBtn').addEventListener('click', async () => {
+        await updateUserExam(profileSelectedExam);
+        profileModal.classList.remove('active');
+        alert(`Экзамен изменён на ${profileSelectedExam === 'oge' ? 'ОГЭ' : 'ЕГЭ'}!`);
+    });
+
+    document.getElementById('closeProfileModalBtn').addEventListener('click', () => profileModal.classList.remove('active'));
+    profileModal.addEventListener('click', (e) => { if(e.target === profileModal) profileModal.classList.remove('active'); });
+
+    // Кнопка иконки профиля открывает модальное окно выбора экзамена
+    document.getElementById('accountIconBtn').addEventListener('click', () => {
+        if (currentUser) {
+            openProfileModal();
+        } else {
+            openAuthModal('login');
+        }
+    });
+    
+    document.getElementById('openRegisterBtn').addEventListener('click', () => openAuthModal('register'));
+    document.getElementById('loginBtn').addEventListener('click', () => openAuthModal('login'));
+    document.getElementById('closeModalBtn').addEventListener('click', () => authModal.classList.remove('active'));
+    authModal.addEventListener('click', (e) => { if(e.target === authModal) authModal.classList.remove('active'); });
 
     modalActionBtn.addEventListener('click', async () => {
         const email = modalEmail.value.trim();
@@ -1164,7 +1299,7 @@
             const result = await login(email, pass);
             if(result.success) {
                 alert('Вход выполнен успешно!');
-                modal.classList.remove('active');
+                authModal.classList.remove('active');
             } else {
                 modalError.style.display = 'block';
                 modalError.innerText = result.error;
@@ -1173,7 +1308,7 @@
             const result = await register(email, pass, selectedExam);
             if(result.success) {
                 alert('Аккаунт успешно создан!');
-                modal.classList.remove('active');
+                authModal.classList.remove('active');
             } else {
                 modalError.style.display = 'block';
                 modalError.innerText = result.error;
@@ -1196,6 +1331,11 @@
             updateStats();
             updateChart();
             showRandomTask(getRandomTask());
+            
+            // Обновляем активную вкладку в соответствии с выбранным экзаменом
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.querySelector(`.tabs .tab[data-exam="${currentExam}"]`);
+            if(activeTab) activeTab.classList.add('active');
             
             if(user.email === ADMIN_EMAIL) {
                 userRole = 'admin';
@@ -1222,6 +1362,9 @@
             updateStats();
             updateChart();
             showRandomTask(getRandomTask());
+            
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.tabs .tab[data-exam="oge"]').classList.add('active');
         }
     });
 
