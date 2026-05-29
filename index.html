@@ -122,6 +122,7 @@
         .number-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #034694; }
         .number-card .num { font-size: 1.3rem; font-weight: 800; color: #034694; }
         .number-card .count { font-size: 0.7rem; color: #666; margin-top: 5px; }
+        .number-card .success-rate { font-size: 0.65rem; color: #034694; margin-top: 3px; }
         .number-card.solved { background: #D1FAE5; border-color: #10B981; }
         .number-card.loading { opacity: 0.5; pointer-events: none; }
         
@@ -167,8 +168,10 @@
         .stat-card { background: #F1F5F9; padding: 12px 18px; border-radius: 20px; flex: 1; text-align: center; }
         .stat-card .value { font-size: 1.6rem; font-weight: 800; color: #034694; }
         
-        footer { background: white; padding: 30px 0; margin-top: 40px; border-top: 1px solid #E2E8F0; }
-        .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+        footer { background: white; padding: 30px 0; margin-top: 40px; border-top: 1px solid #E2E8F0; text-align: center; }
+        .footer-contacts { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .footer-contacts a { color: #034694; text-decoration: none; font-size: 1rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .footer-contacts a:hover { color: #023a7a; transform: translateY(-2px); }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.2s; z-index: 1000; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
@@ -179,7 +182,10 @@
         .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #034694; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        @media (max-width: 768px) { .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); } }
+        @media (max-width: 768px) { 
+            .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+            .footer-contacts { flex-direction: column; align-items: center; gap: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -350,7 +356,16 @@
     </div>
 </div>
 
-<footer><div class="container footer-inner"><div class="col"><h4>О сервисе</h4><a href="#">Как это работает</a></div><div class="col"><h4>Помощь</h4><a href="#">Контакты</a></div></div></footer>
+<footer>
+    <div class="container">
+        <div class="footer-contacts">
+            <a href="mailto:support@it-track.ru"><i class="fas fa-envelope"></i> support@it-track.ru</a>
+            <a href="tel:+78001234567"><i class="fas fa-phone-alt"></i> 8 (800) 123-45-67</a>
+            <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            <a href="#"><i class="fab fa-vk"></i> ВКонтакте</a>
+        </div>
+    </div>
+</footer>
 
 <script type="module">
     import { getAuth, signOut as firebaseSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -360,11 +375,13 @@
     const db = window.db;
     const signOut = firebaseSignOut;
     
-    // КЭШ ЗАДАНИЙ - для быстрой загрузки
     const tasksCache = new Map();
     let allTasksCache = null;
     let lastCacheUpdate = 0;
-    const CACHE_TTL = 60000; // 1 минута кэш
+    const CACHE_TTL = 60000;
+    
+    // Статистика успеваемости по каждому номеру задания
+    let taskSuccessStats = {}; // { "oge_1": { total: 5, correct: 3, successRate: 60 }, ... }
     
     const initialTasks = {
         oge: {
@@ -420,6 +437,75 @@
             reader.onload = () => resolve(reader.result);
             reader.onerror = error => reject(error);
         });
+    }
+    
+    // Обновление статистики успеваемости по каждому номеру задания
+    function updateTaskSuccessStats() {
+        taskSuccessStats = {};
+        for (const record of answerHistory) {
+            const key = `${record.exam}_${record.num}`;
+            if (!taskSuccessStats[key]) {
+                taskSuccessStats[key] = { total: 0, correct: 0, successRate: 0 };
+            }
+            taskSuccessStats[key].total++;
+            if (record.correct) taskSuccessStats[key].correct++;
+            taskSuccessStats[key].successRate = (taskSuccessStats[key].correct / taskSuccessStats[key].total) * 100;
+        }
+    }
+    
+    // Адаптивный выбор задания с весами (хуже решаемые задания имеют больший вес)
+    async function getAdaptiveRandomTask() {
+        const allTasks = await getAllTasksForRandom();
+        // Исключаем задания для самопроверки из адаптивного выбора
+        const validTasks = allTasks.filter(t => !t.isSelfCheck);
+        
+        if (validTasks.length === 0) return null;
+        
+        // Обновляем статистику
+        updateTaskSuccessStats();
+        
+        // Вычисляем веса для каждого задания (обратная пропорция к успеваемости)
+        const tasksWithWeights = validTasks.map(task => {
+            const key = `${task.exam}_${task.num}`;
+            const stats = taskSuccessStats[key];
+            let weight = 1; // базовый вес
+            
+            if (stats && stats.total >= 2) {
+                // Чем ниже процент успеха, тем больше вес
+                // Минимальный вес 0.5, максимальный 5
+                const successRate = stats.successRate;
+                if (successRate < 30) weight = 5;
+                else if (successRate < 50) weight = 3;
+                else if (successRate < 70) weight = 1.5;
+                else weight = 0.7;
+            } else if (stats && stats.total === 1) {
+                // Если была только одна попытка
+                weight = stats.correct === 1 ? 0.8 : 2;
+            } else {
+                // Новое задание - средний вес
+                weight = 1.2;
+            }
+            
+            // Дополнительно: если задание уже решено много раз, но всё ещё ошибается
+            if (stats && stats.total > 5 && stats.successRate < 50) {
+                weight *= 1.5;
+            }
+            
+            return { task, weight };
+        });
+        
+        // Взвешенный случайный выбор
+        const totalWeight = tasksWithWeights.reduce((sum, item) => sum + item.weight, 0);
+        let random = Math.random() * totalWeight;
+        
+        for (const item of tasksWithWeights) {
+            if (random < item.weight) {
+                return item.task;
+            }
+            random -= item.weight;
+        }
+        
+        return tasksWithWeights[0]?.task || null;
     }
     
     async function loadTasksFromFirestore(exam, num) {
@@ -496,11 +582,14 @@
     }
     
     async function getRandomTaskForRandomizer() {
+        // Используем адаптивный алгоритм
+        const task = await getAdaptiveRandomTask();
+        if (task) return task;
+        
+        // Fallback: обычный случайный выбор
         const allTasks = await getAllTasksForRandom();
-        const unsolved = allTasks.filter(t => !t.solved && !t.isSelfCheck);
-        if (unsolved.length > 0) return unsolved[Math.floor(Math.random() * unsolved.length)];
-        const nonSelfCheck = allTasks.filter(t => !t.isSelfCheck);
-        if (nonSelfCheck.length > 0) return nonSelfCheck[Math.floor(Math.random() * nonSelfCheck.length)];
+        const validTasks = allTasks.filter(t => !t.isSelfCheck);
+        if (validTasks.length > 0) return validTasks[Math.floor(Math.random() * validTasks.length)];
         return allTasks[0];
     }
     
@@ -572,6 +661,10 @@
         }
         answerHistory.push({ exam: currentRandomTask.exam, num: currentRandomTask.num, correct: isCorrect });
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { answerHistory, ogeCorrectHistory, egeCorrectHistory }, { merge: true });
+        
+        // Обновляем статистику для адаптивного алгоритма
+        updateTaskSuccessStats();
+        
         updateChart();
         updateStats();
         setTimeout(() => updateRandomTask(), 1500);
@@ -639,6 +732,8 @@
     async function checkWholeVariant() {
         let correctCount = 0;
         let totalCheckable = 0;
+        const newCorrectAnswers = [];
+        
         for (let i = 0; i < currentVariantTasks.length; i++) {
             const task = currentVariantTasks[i];
             if (task.isSelfCheck) continue;
@@ -656,13 +751,35 @@
                         solvedTasks[`${task.exam}_${task.num}_${task.id}`] = true;
                         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { solvedTasks }, { merge: true });
                     }
+                    newCorrectAnswers.push({ exam: task.exam, num: task.num, correct: true });
                 } else if (userAnswer !== "") {
                     feedbackDiv.innerHTML = `❌ Неверно. Правильный ответ: ${task.answer}`;
                     feedbackDiv.style.color = '#dc2626';
                     feedbackDiv.style.display = 'block';
+                    newCorrectAnswers.push({ exam: task.exam, num: task.num, correct: false });
                 }
             }
         }
+        
+        // Обновляем историю ответов
+        for (const ans of newCorrectAnswers) {
+            answerHistory.push(ans);
+            if (ans.exam === 'oge') {
+                const last = ogeCorrectHistory.length ? ogeCorrectHistory[ogeCorrectHistory.length-1] : 0;
+                ogeCorrectHistory.push(last + (ans.correct ? 1 : 0));
+            } else {
+                const last = egeCorrectHistory.length ? egeCorrectHistory[egeCorrectHistory.length-1] : 0;
+                egeCorrectHistory.push(last + (ans.correct ? 1 : 0));
+            }
+        }
+        
+        if (currentUser && newCorrectAnswers.length > 0) {
+            await setDoc(doc(db, "users", currentUser.uid), { solvedTasks, answerHistory, ogeCorrectHistory, egeCorrectHistory }, { merge: true });
+        }
+        
+        // Обновляем статистику для адаптивного алгоритма
+        updateTaskSuccessStats();
+        
         const resultDiv = document.getElementById('variantResult');
         if (totalCheckable === 0) {
             resultDiv.innerHTML = `📖 В этом варианте только задания для самостоятельной проверки. Сверьтесь с ответами в каждом задании.`;
@@ -678,6 +795,7 @@
         await renderNumbersGrid();
         updateStats();
         updateChart();
+        updateRandomTask();
     }
     
     async function renderNumbersGrid() {
@@ -689,14 +807,31 @@
         
         const tasksData = await loadAllTasksForExam(userExam);
         
+        // Обновляем статистику для отображения процента успеха
+        updateTaskSuccessStats();
+        
         grid.innerHTML = '';
         for (let num = 1; num <= maxNum; num++) {
             const tasks = tasksData[num] || [];
             const solvedCount = tasks.filter(t => solvedTasks[`${userExam}_${num}_${t.id}`]).length;
             const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
+            
+            const key = `${userExam}_${num}`;
+            const stats = taskSuccessStats[key];
+            let successRateHtml = '';
+            if (stats && stats.total >= 2) {
+                const rate = Math.round(stats.successRate);
+                const color = rate < 50 ? '#dc2626' : (rate < 70 ? '#F59E0B' : '#10B981');
+                successRateHtml = `<div class="success-rate" style="color:${color};">📊 ${rate}%</div>`;
+            } else if (stats && stats.total === 1) {
+                const rate = stats.correct === 1 ? 100 : 0;
+                successRateHtml = `<div class="success-rate" style="color:${rate === 100 ? '#10B981' : '#dc2626'};">📊 ${rate}%</div>`;
+            }
+            
             grid.innerHTML += `<div class="number-card ${isFullySolved ? 'solved' : ''}" data-num="${num}">
                 <div class="num">№${num}</div>
                 <div class="count">${solvedCount}/${tasks.length}</div>
+                ${successRateHtml}
             </div>`;
         }
         
@@ -904,6 +1039,7 @@
         await initInitialTasks();
         const ctx = document.getElementById('progressChart').getContext('2d');
         chart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'ОГЭ', data: [], borderColor: '#3B82F6', fill: true }, { label: 'ЕГЭ', data: [], borderColor: '#EF4444', fill: true }] }, options: { responsive: true, maintainAspectRatio: false } });
+        updateTaskSuccessStats();
         await renderNumbersGrid();
         await updateRandomTask();
         updateStats();
@@ -965,6 +1101,7 @@
                 userExam = data.userExam || "oge";
                 includeOge = data.includeOge || false;
             }
+            updateTaskSuccessStats();
             if (userExam === 'oge') {
                 document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
                 document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive';
@@ -995,6 +1132,7 @@
             document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
             document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive';
             document.getElementById('ogeToggle').style.display = 'none';
+            updateTaskSuccessStats();
             await renderNumbersGrid();
             await updateRandomTask();
             updateStats();
