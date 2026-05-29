@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query, where, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -42,8 +41,6 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
-        
-        console.log("Firebase инициализирован!");
     </script>
     
     <style>
@@ -58,7 +55,6 @@
         body { background: #F8FAFE; color: #0F172A; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
-        /* Header */
         header { background: var(--white); box-shadow: var(--shadow); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
         .header-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; position: relative; }
         .logo-area { display: flex; align-items: center; gap: 12px; width: 120px; }
@@ -79,7 +75,6 @@
         .logout-btn:hover { background: #b91c1c; }
         .user-email { font-size: 12px; color: #666; background: #f1f5f9; padding: 5px 12px; border-radius: 20px; }
         
-        /* Tagline */
         .tagline-wrapper { position: fixed; top: 80px; left: 0; right: 0; z-index: 99; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
         .tagline-wrapper.hide { opacity: 0; transform: translateY(-100%); visibility: hidden; }
         .tagline-block { text-align: center; margin: 0 auto; max-width: 1200px; padding: 0 20px; }
@@ -87,7 +82,6 @@
         .tagline-description { background: rgba(141, 216, 247, 0.75); color: #034694; padding: 8px 20px; border-radius: 10px; max-width: 950px; margin: 8px auto 0; font-size: 0.7rem; line-height: 1.4; backdrop-filter: blur(2px); }
         .content-offset { margin-top: 110px; }
         
-        /* Random Section */
         .random-section { background: rgba(141, 219, 248, 0.75); border-radius: 28px; padding: 35px 30px; margin: 30px 0; text-align: center; }
         .random-header h3 { font-size: 1.6rem; color: var(--primary-dark); margin-bottom: 15px; }
         .random-description { font-size: 0.9rem; color: #034694; margin-bottom: 25px; }
@@ -108,7 +102,6 @@
         .btn-generate-variant { background: white; color: #034694; border: none; padding: 20px 40px; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 25px; }
         .btn-generate-variant:hover { background: #f0f0f0; transform: translateY(-2px); }
         
-        /* Вариант */
         .variant-section { background: white; border-radius: 24px; padding: 25px; margin-top: 25px; text-align: left; }
         .variant-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 15px; }
         .variant-header h4 { color: #034694; font-size: 1.2rem; margin: 0; }
@@ -124,13 +117,13 @@
         .check-variant-btn { background: #10B981; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; }
         .variant-result { margin-top: 15px; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; display: none; }
         
-        /* Сетка номеров */
-        .numbers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .numbers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; margin-bottom: 30px; }
         .number-card { background: white; border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.2s; border: 2px solid #BAE6FD; }
         .number-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #034694; }
         .number-card .num { font-size: 1.3rem; font-weight: 800; color: #034694; }
         .number-card .count { font-size: 0.7rem; color: #666; margin-top: 5px; }
         .number-card.solved { background: #D1FAE5; border-color: #10B981; }
+        .number-card.loading { opacity: 0.5; pointer-events: none; }
         
         .exam-selector { display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; }
         .exam-btn-main { padding: 12px 40px; font-size: 1.2rem; border-radius: 60px; border: none; cursor: pointer; font-weight: 700; transition: 0.2s; }
@@ -143,7 +136,6 @@
         .toggle-switch label { font-weight: 600; color: #034694; cursor: pointer; }
         .toggle-switch input { width: 20px; height: 20px; cursor: pointer; }
         
-        /* Модальное окно */
         .tasks-modal { max-width: 700px; max-height: 80vh; overflow-y: auto; }
         .task-item { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #034694; }
         .task-item.self-check { border-left-color: #F59E0B; background: #FFFBEB; }
@@ -156,12 +148,10 @@
         .btn-small { padding: 5px 12px; font-size: 0.8rem; border-radius: 20px; border: none; cursor: pointer; }
         .solve-btn { background: #10B981; color: white; }
         .delete-btn { background: #dc2626; color: white; }
-        .show-solution-btn { background: #034694; color: white; }
         .add-task-btn { background: #034694; color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; }
         .add-task-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; }
         .add-task-form textarea, .add-task-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1.5px solid #BAE6FD; border-radius: 12px; outline: none; }
         .add-task-form .checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .add-task-form .checkbox-row label { margin: 0; }
         
         .admin-panel { background: white; border-radius: 24px; padding: 20px; margin: 20px 0; border: 2px dashed var(--primary-light); display: none; }
         .admin-panel .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -186,7 +176,10 @@
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; }
         .modal h3 { color: #034694; margin-bottom: 10px; }
         
-        @media (max-width: 768px) { .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); } }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #034694; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) { .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); } }
     </style>
 </head>
 <body>
@@ -263,7 +256,9 @@
                 <label>🔀 Добавлять случайные задания из ОГЭ</label>
                 <input type="checkbox" id="includeOgeCheckbox">
             </div>
-            <div class="numbers-grid" id="numbersGrid"></div>
+            <div class="numbers-grid" id="numbersGrid">
+                <div class="loading-spinner"></div> Загрузка заданий...
+            </div>
         </section>
 
         <section class="admin-panel" id="adminPanel">
@@ -306,7 +301,6 @@
     </div>
 </div>
 
-<!-- Модальное окно для заданий -->
 <div class="modal-overlay" id="tasksModal">
     <div class="modal tasks-modal">
         <span class="close-btn" id="closeTasksModalBtn">&times;</span>
@@ -330,7 +324,6 @@
     </div>
 </div>
 
-<!-- Модальные окна -->
 <div class="modal-overlay" id="authModal">
     <div class="modal"><span class="close-btn" id="closeModalBtn">&times;</span>
         <h3 id="modalTitleAuth">Создайте аккаунт</h3>
@@ -367,16 +360,40 @@
     const db = window.db;
     const signOut = firebaseSignOut;
     
-    // Начальные задания
+    // КЭШ ЗАДАНИЙ - для быстрой загрузки
+    const tasksCache = new Map();
+    let allTasksCache = null;
+    let lastCacheUpdate = 0;
+    const CACHE_TTL = 60000; // 1 минута кэш
+    
     const initialTasks = {
         oge: {
             1: [{ text: "Статья содержит 8 страниц, на каждой 40 строк по 64 символа. Кодировка Unicode (16 бит на символ). Определите информационный объём статьи в Кбайтах.", answer: "40", solution: "8*40*64*16 бит = 327680 бит = 40 Кбайт", imageUrl: "", fileData: "", isSelfCheck: false }],
             2: [{ text: "От разведчика получено сообщение: 1100110. Буквы: А(00), Б(01), В(10), Г(11). Расшифруйте.", answer: "ВГА", solution: "Разбиваем на пары: 11=Г, 00=А, 11=Г, 0 - не хватает", imageUrl: "", fileData: "", isSelfCheck: false }],
-            3: [{ text: "Для какого числа X ложно выражение: (X > 5) ИЛИ НЕ (X > 3)? Варианты: 6, 5, 4, 3", answer: "4", solution: "Подставляем X=4: (4>5)=false, НЕ(4>3)=false, false ИЛИ false = false", imageUrl: "", fileData: "", isSelfCheck: false }]
+            3: [{ text: "Для какого числа X ложно выражение: (X > 5) ИЛИ НЕ (X > 3)? Варианты: 6, 5, 4, 3", answer: "4", solution: "Подставляем X=4: (4>5)=false, НЕ(4>3)=false, false ИЛИ false = false", imageUrl: "", fileData: "", isSelfCheck: false }],
+            4: [{ text: "Между пунктами A, B, C, D, E построены дороги. Найдите длину кратчайшего пути между A и E.", answer: "6", solution: "Кратчайший путь: A→C→E = 2+4=6", imageUrl: "", fileData: "", isSelfCheck: false }],
+            5: [{ text: "У исполнителя Альфа команды: +1 и *2. Сколько разных чисел можно получить из 2 с помощью программы из 3 команд?", answer: "4", solution: "2→3→4→5, 2→3→6→7, 2→4→5→6, 2→4→8→9... Всего 4 уникальных", imageUrl: "", fileData: "", isSelfCheck: false }],
+            6: [{ text: "Определите значение b после выполнения: a:=5; b:=7; if a>b then b:=b+3 else b:=b-3;", answer: "4", solution: "a=5, b=7, a>b? нет, b=7-3=4", imageUrl: "", fileData: "", isSelfCheck: false }],
+            7: [{ text: "Файл размером 16 Кбайт передаётся со скоростью 4096 бит/с. Определите время передачи в секундах.", answer: "32", solution: "16 Кбайт = 131072 бит, 131072/4096=32", imageUrl: "", fileData: "", isSelfCheck: false }],
+            8: [{ text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231", solution: "Самый частотный запрос даёт больше страниц", imageUrl: "", fileData: "", isSelfCheck: false }],
+            9: [{ text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5", solution: "Подсчёт всех возможных маршрутов", imageUrl: "", fileData: "", isSelfCheck: false }],
+            10: [{ text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны", solution: "101101₂ = 45₁₀, числа равны", imageUrl: "", fileData: "", isSelfCheck: false }],
+            11: [{ text: "Пользователь перешёл из C:\\Документы в D:\\Учёба\\Информатика. Какой путь стал текущим?", answer: "D:\\Учёба\\Информатика", solution: "Новый путь становится текущим", imageUrl: "", fileData: "", isSelfCheck: false }],
+            12: [{ text: "Определите значение переменной s после выполнения: s=0; for i=1 to 5: s=s+i", answer: "15", solution: "1+2+3+4+5=15", imageUrl: "", fileData: "", isSelfCheck: false }],
+            13: [{ text: "В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно значение ячейки A4, если A1=5, A2=7, A3=10?", answer: "10", solution: "Сумма = 8*4=32, A4=32-5-7-10=10", imageUrl: "", fileData: "", isSelfCheck: false }],
+            14: [{ text: "Переведите число 101010₂ в десятичную систему счисления.", answer: "42", solution: "32+8+2=42", imageUrl: "", fileData: "", isSelfCheck: false }],
+            15: [{ text: "Чертёжник: Сместиться на (2,3). Повтори 3 раза: (1,-2). Конечная точка?", answer: "5,-3", solution: "x: 2+3*1=5, y: 3+3*(-2)=-3", imageUrl: "", fileData: "", isSelfCheck: false }],
+            16: [{ text: "a=5; b=2; while a>0: a-=b; print(a) — что будет выведено?", answer: "3", solution: "a=5-2=3, 3>0 → 3", imageUrl: "", fileData: "", isSelfCheck: false }]
         },
         ege: {
             1: [{ text: "Сколько путей из A в L на схеме дорог?", answer: "8", solution: "Подсчёт количества путей: A→B→D→L, A→B→E→L и т.д. Всего 8 путей", imageUrl: "", fileData: "", isSelfCheck: false }],
-            2: [{ text: "Функция F = (¬x∧y)∨(x∧¬y). Сколько единиц в таблице истинности?", answer: "2", solution: "Это XOR - даёт 1 при разных значениях: (0,1) и (1,0) → 2 единицы", imageUrl: "", fileData: "", isSelfCheck: false }]
+            2: [{ text: "Функция F = (¬x∧y)∨(x∧¬y). Сколько единиц в таблице истинности?", answer: "2", solution: "Это XOR - даёт 1 при разных значениях: (0,1) и (1,0) → 2 единицы", imageUrl: "", fileData: "", isSelfCheck: false }],
+            3: [{ text: "Найдите количество потомков Иванова в БД.", answer: "3", solution: "По схеме БД потомки - это все связанные записи", imageUrl: "", fileData: "", isSelfCheck: false }],
+            4: [{ text: "Для букв А(0), Б(10), В(110). Найдите кратчайший код для Г.", answer: "111", solution: "Построение дерева Хаффмана", imageUrl: "", fileData: "", isSelfCheck: false }],
+            5: [{ text: "Чертёжник: (3,2), повторить 2: (-1,4). Конечная точка?", answer: "1,10", solution: "x: 3+2*(-1)=1, y: 2+2*4=10", imageUrl: "", fileData: "", isSelfCheck: false }],
+            6: [{ text: "s=0; for i=1 to 5: s=s+i. Чему равно s?", answer: "15", solution: "1+2+3+4+5=15", imageUrl: "", fileData: "", isSelfCheck: false }],
+            7: [{ text: "Скорость 128000 бит/с, время 10 с. Объём в Кбайтах?", answer: "160", solution: "128000*10=1280000 бит=160000 байт=160 Кбайт", imageUrl: "", fileData: "", isSelfCheck: false }],
+            8: [{ text: "Сколько слов длины 4 из букв {A,B,C}?", answer: "81", solution: "3^4=81", imageUrl: "", fileData: "", isSelfCheck: false }]
         }
     };
     
@@ -394,28 +411,55 @@
     let currentVariantTasks = [];
     let pendingFileData = null;
     let pendingFileName = "";
+    let isLoading = false;
     
-    // Загрузка заданий
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+    
     async function loadTasksFromFirestore(exam, num) {
+        const cacheKey = `${exam}_${num}`;
+        if (tasksCache.has(cacheKey)) {
+            return tasksCache.get(cacheKey);
+        }
         try {
             const q = query(collection(db, "tasks"), where("exam", "==", exam), where("num", "==", num));
             const querySnapshot = await getDocs(q);
             const tasks = [];
             querySnapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() }); });
+            tasksCache.set(cacheKey, tasks);
             return tasks;
         } catch (error) { console.error("Ошибка загрузки:", error); return []; }
+    }
+    
+    async function loadAllTasksForExam(exam) {
+        const maxNum = exam === 'oge' ? 16 : 27;
+        const results = {};
+        for (let num = 1; num <= maxNum; num++) {
+            results[num] = await loadTasksFromFirestore(exam, num);
+        }
+        return results;
     }
     
     async function saveTaskToFirestore(exam, num, text, answer, solution, imageUrl, fileData, fileName, isSelfCheck) {
         try {
             await addDoc(collection(db, "tasks"), { exam, num, text, answer, solution, imageUrl, fileData, fileName, isSelfCheck, createdAt: new Date().toISOString() });
+            tasksCache.delete(`${exam}_${num}`);
             return true;
         } catch (error) { console.error("Ошибка сохранения:", error); return false; }
     }
     
-    async function deleteTaskFromFirestore(taskId) {
-        try { await deleteDoc(doc(db, "tasks", taskId)); return true; } 
-        catch (error) { console.error("Ошибка удаления:", error); return false; }
+    async function deleteTaskFromFirestore(taskId, exam, num) {
+        try { 
+            await deleteDoc(doc(db, "tasks", taskId));
+            tasksCache.delete(`${exam}_${num}`);
+            return true;
+        } catch (error) { console.error("Ошибка удаления:", error); return false; }
     }
     
     async function initInitialTasks() {
@@ -431,16 +475,12 @@
         }
     }
     
-    function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    }
-    
     async function getAllTasksForRandom() {
+        const now = Date.now();
+        if (allTasksCache && (now - lastCacheUpdate) < CACHE_TTL) {
+            return allTasksCache;
+        }
+        
         const allTasks = [];
         const examsToCheck = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
         for (const exam of examsToCheck) {
@@ -450,6 +490,8 @@
                 tasks.forEach(t => allTasks.push({ ...t, exam, num, solved: solvedTasks[`${exam}_${num}_${t.id}`] || false }));
             }
         }
+        allTasksCache = allTasks;
+        lastCacheUpdate = now;
         return allTasks;
     }
     
@@ -457,7 +499,9 @@
         const allTasks = await getAllTasksForRandom();
         const unsolved = allTasks.filter(t => !t.solved && !t.isSelfCheck);
         if (unsolved.length > 0) return unsolved[Math.floor(Math.random() * unsolved.length)];
-        return allTasks.filter(t => !t.isSelfCheck)[Math.floor(Math.random() * allTasks.length)];
+        const nonSelfCheck = allTasks.filter(t => !t.isSelfCheck);
+        if (nonSelfCheck.length > 0) return nonSelfCheck[Math.floor(Math.random() * nonSelfCheck.length)];
+        return allTasks[0];
     }
     
     async function updateRandomTask() {
@@ -466,11 +510,7 @@
             currentRandomTask = task;
             document.getElementById('randomExamBadge').innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
             document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
-            if (task.isSelfCheck) {
-                document.getElementById('randomSelfCheckBadge').style.display = 'inline-block';
-            } else {
-                document.getElementById('randomSelfCheckBadge').style.display = 'none';
-            }
+            document.getElementById('randomSelfCheckBadge').style.display = task.isSelfCheck ? 'inline-block' : 'none';
             document.getElementById('randomQuestion').innerHTML = task.text;
             const fileContainer = document.getElementById('randomFileContainer');
             fileContainer.innerHTML = '';
@@ -540,7 +580,7 @@
     async function generateVariantAndDisplay() {
         const variantSection = document.getElementById('variantSection');
         const variantContainer = document.getElementById('variantQuestions');
-        variantContainer.innerHTML = '';
+        variantContainer.innerHTML = '<div class="loading-spinner"></div> Генерация варианта...';
         
         const examsToUse = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
         const allTasks = [];
@@ -562,6 +602,7 @@
         });
         
         currentVariantTasks = allTasks;
+        variantContainer.innerHTML = '';
         
         if (allTasks.length === 0) {
             variantContainer.innerHTML = '<p>Нет заданий для генерации варианта</p>';
@@ -602,22 +643,24 @@
             const task = currentVariantTasks[i];
             if (task.isSelfCheck) continue;
             totalCheckable++;
-            const userAnswer = document.getElementById(`variantAnswer_${i}`).value.trim().toLowerCase();
+            const userAnswer = document.getElementById(`variantAnswer_${i}`)?.value.trim().toLowerCase() || "";
             const isCorrect = userAnswer === String(task.answer).toLowerCase();
             const feedbackDiv = document.getElementById(`variantFeedback_${i}`);
-            if (isCorrect) {
-                feedbackDiv.innerHTML = '✅ Верно!';
-                feedbackDiv.style.color = '#16a34a';
-                feedbackDiv.style.display = 'block';
-                correctCount++;
-                if (!solvedTasks[`${task.exam}_${task.num}_${task.id}`]) {
-                    solvedTasks[`${task.exam}_${task.num}_${task.id}`] = true;
-                    if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { solvedTasks }, { merge: true });
+            if (feedbackDiv) {
+                if (isCorrect && userAnswer !== "") {
+                    feedbackDiv.innerHTML = '✅ Верно!';
+                    feedbackDiv.style.color = '#16a34a';
+                    feedbackDiv.style.display = 'block';
+                    correctCount++;
+                    if (!solvedTasks[`${task.exam}_${task.num}_${task.id}`]) {
+                        solvedTasks[`${task.exam}_${task.num}_${task.id}`] = true;
+                        if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { solvedTasks }, { merge: true });
+                    }
+                } else if (userAnswer !== "") {
+                    feedbackDiv.innerHTML = `❌ Неверно. Правильный ответ: ${task.answer}`;
+                    feedbackDiv.style.color = '#dc2626';
+                    feedbackDiv.style.display = 'block';
                 }
-            } else if (userAnswer !== "") {
-                feedbackDiv.innerHTML = `❌ Неверно. Правильный ответ: ${task.answer}`;
-                feedbackDiv.style.color = '#dc2626';
-                feedbackDiv.style.display = 'block';
             }
         }
         const resultDiv = document.getElementById('variantResult');
@@ -638,11 +681,17 @@
     }
     
     async function renderNumbersGrid() {
-        const maxNum = userExam === 'oge' ? 16 : 27;
+        if (isLoading) return;
+        isLoading = true;
         const grid = document.getElementById('numbersGrid');
+        const maxNum = userExam === 'oge' ? 16 : 27;
+        grid.innerHTML = '<div class="loading-spinner"></div> Загрузка заданий...';
+        
+        const tasksData = await loadAllTasksForExam(userExam);
+        
         grid.innerHTML = '';
         for (let num = 1; num <= maxNum; num++) {
-            const tasks = await loadTasksFromFirestore(userExam, num);
+            const tasks = tasksData[num] || [];
             const solvedCount = tasks.filter(t => solvedTasks[`${userExam}_${num}_${t.id}`]).length;
             const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
             grid.innerHTML += `<div class="number-card ${isFullySolved ? 'solved' : ''}" data-num="${num}">
@@ -650,9 +699,11 @@
                 <div class="count">${solvedCount}/${tasks.length}</div>
             </div>`;
         }
+        
         document.querySelectorAll('.number-card').forEach(card => {
             card.addEventListener('click', () => openTasksModal(userExam, parseInt(card.dataset.num)));
         });
+        isLoading = false;
     }
     
     async function openTasksModal(exam, num) {
@@ -712,7 +763,7 @@
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 if (confirm('Удалить задание?')) {
-                    await deleteTaskFromFirestore(btn.dataset.id);
+                    await deleteTaskFromFirestore(btn.dataset.id, exam, num);
                     await openTasksModal(exam, num);
                     await renderNumbersGrid();
                     await updateRandomTask();
@@ -721,7 +772,6 @@
         });
     }
     
-    // Обработчики
     document.getElementById('variantHeader')?.addEventListener('click', () => {
         const content = document.getElementById('variantContent');
         const icon = document.getElementById('variantToggleIcon');
@@ -860,7 +910,6 @@
         updateChart();
     }
     
-    // Переключение экзамена
     document.getElementById('ogeMainBtn')?.addEventListener('click', async () => {
         userExam = 'oge';
         document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
@@ -885,11 +934,11 @@
     
     document.getElementById('includeOgeCheckbox')?.addEventListener('change', async (e) => {
         includeOge = e.target.checked;
+        allTasksCache = null;
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { includeOge }, { merge: true });
         await updateRandomTask();
     });
     
-    // Аутентификация
     async function register(email, password, exam) {
         try { const userCredential = await window.createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { userExam: exam, includeOge: false, solvedTasks: {}, answerHistory: [], ogeCorrectHistory: [], egeCorrectHistory: [] }); return { success: true }; } 
         catch (error) { return { success: false, error: error.message }; }
@@ -953,7 +1002,6 @@
         }
     });
     
-    // Обработчики
     window.addEventListener('scroll', () => { document.getElementById('taglineWrapper')?.classList.toggle('hide', window.scrollY > 50); });
     document.getElementById('getRandomBtn')?.addEventListener('click', updateRandomTask);
     document.getElementById('checkRandomBtn')?.addEventListener('click', checkRandomAnswer);
@@ -961,7 +1009,6 @@
     document.getElementById('checkVariantBtn')?.addEventListener('click', checkWholeVariant);
     document.getElementById('closeTasksModalBtn')?.addEventListener('click', () => document.getElementById('tasksModal').classList.remove('active'));
     
-    // Модалки аутентификации
     const authModal = document.getElementById('authModal');
     const profileModal = document.getElementById('profileModal');
     let selectedExam = 'oge', currentMode = 'register';
