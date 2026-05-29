@@ -106,7 +106,16 @@
         .btn-generate-variant { background: white; color: #034694; border: none; padding: 20px 40px; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 25px; }
         .btn-generate-variant:hover { background: #f0f0f0; transform: translateY(-2px); }
         
-        /* Выбор экзамена и типа */
+        /* Блок с вариантом */
+        .variant-section { background: white; border-radius: 24px; padding: 25px; margin-top: 25px; text-align: left; display: none; }
+        .variant-section h4 { color: #034694; margin-bottom: 15px; font-size: 1.2rem; }
+        .variant-questions { display: flex; flex-direction: column; gap: 20px; }
+        .variant-question-item { background: #F8FAFE; padding: 15px; border-radius: 16px; border-left: 4px solid #034694; }
+        .variant-question-item .question-text { font-weight: 500; margin-bottom: 8px; }
+        .variant-question-item .question-answer { font-size: 0.85rem; color: #10B981; margin-top: 8px; display: none; }
+        .show-answers-btn { background: #034694; color: white; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        
+        /* Выбор экзамена */
         .exam-selector { display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; }
         .exam-btn-main { padding: 12px 40px; font-size: 1.2rem; border-radius: 60px; border: none; cursor: pointer; font-weight: 700; transition: 0.2s; }
         .exam-btn-main.oge-active { background: #034694; color: white; box-shadow: 0 4px 12px rgba(3,70,148,0.3); }
@@ -114,15 +123,15 @@
         .exam-btn-main.ege-active { background: #EF4444; color: white; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
         .exam-btn-main.ege-inactive { background: #ccc; color: #666; }
         
-        /* Сетка типов заданий */
-        .types-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .type-card { background: white; border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; border: 2px solid #BAE6FD; }
-        .type-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #034694; }
-        .type-card .type-num { font-size: 1.6rem; font-weight: 800; color: #034694; }
-        .type-card .type-count { font-size: 0.75rem; color: #666; margin-top: 5px; }
-        .type-card.solved { background: #D1FAE5; border-color: #10B981; }
+        /* Сетка номеров заданий */
+        .numbers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .number-card { background: white; border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.2s; border: 2px solid #BAE6FD; }
+        .number-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #034694; }
+        .number-card .num { font-size: 1.3rem; font-weight: 800; color: #034694; }
+        .number-card .count { font-size: 0.7rem; color: #666; margin-top: 5px; }
+        .number-card.solved { background: #D1FAE5; border-color: #10B981; }
         
-        /* Список заданий конкретного типа */
+        /* Модальное окно */
         .tasks-modal { max-width: 700px; max-height: 80vh; overflow-y: auto; }
         .tasks-list { margin-top: 20px; }
         .task-item { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #034694; }
@@ -157,7 +166,12 @@
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; }
         .modal h3 { color: #034694; margin-bottom: 10px; }
         
-        @media (max-width: 768px) { .types-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); } }
+        /* Чекбокс */
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; background: white; padding: 15px 20px; border-radius: 16px; margin-top: 15px; }
+        .toggle-switch label { font-weight: 600; color: #034694; cursor: pointer; }
+        .toggle-switch input { width: 20px; height: 20px; cursor: pointer; }
+        
+        @media (max-width: 768px) { .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); } }
     </style>
 </head>
 <body>
@@ -202,21 +216,35 @@
             <div class="random-description">Нажми на кнопку - получи случайную задачу! Адаптивный трек меняет сложность в зависимости от твоих ответов</div></div>
             <button class="btn-random" id="getRandomBtn">Выдать случайное задание</button>
             <div class="task-card" id="randomTaskCard">
-                <div class="meta"><span id="randomExamBadge">ОГЭ</span><span id="randomNumBadge">Задание</span></div>
+                <div class="meta"><span id="randomExamBadge">ОГЭ</span><span id="randomNumBadge">Задание №1</span></div>
                 <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
                 <div class="answer-area"><input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ..."><button id="checkRandomBtn">Проверить</button></div>
                 <div class="feedback" id="randomFeedback"></div>
             </div>
             <button class="btn-generate-variant" id="generateVariantBtn">Сгенерировать вариант</button>
+            
+            <!-- Блок для отображения сгенерированного варианта -->
+            <div class="variant-section" id="variantSection">
+                <h4><i class="fas fa-list"></i> Сгенерированный вариант (по 1 заданию из каждого номера)</h4>
+                <div class="variant-questions" id="variantQuestions"></div>
+                <button class="show-answers-btn" id="showAnswersBtn">Показать ответы</button>
+            </div>
         </section>
 
         <section class="list-section">
-            <h3>Выберите экзамен и тип задания</h3>
+            <h3>Выберите экзамен и номер задания</h3>
             <div class="exam-selector">
                 <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ</button>
                 <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ</button>
             </div>
-            <div class="types-grid" id="typesGrid"></div>
+            
+            <!-- Чекбокс для выбора случайных заданий из ОГЭ (если выбран ЕГЭ) -->
+            <div class="toggle-switch" id="ogeToggle" style="display: none;">
+                <label>🔀 Добавлять случайные задания из ОГЭ</label>
+                <input type="checkbox" id="includeOgeCheckbox">
+            </div>
+            
+            <div class="numbers-grid" id="numbersGrid"></div>
         </section>
 
         <section class="admin-panel" id="adminPanel">
@@ -226,7 +254,7 @@
                     <option value="oge">ОГЭ</option>
                     <option value="ege">ЕГЭ</option>
                 </select>
-                <input type="number" id="adminTaskType" placeholder="Номер типа задания (1-27)" min="1" max="27">
+                <input type="number" id="adminTaskNum" placeholder="Номер задания (1-16 для ОГЭ, 1-27 для ЕГЭ)" min="1" max="27">
             </div>
             <div class="row">
                 <textarea id="adminTaskText" placeholder="Текст задания"></textarea>
@@ -234,20 +262,20 @@
             <div class="row">
                 <input type="text" id="adminAnswer" placeholder="Правильный ответ">
             </div>
-            <button class="btn-success" id="adminAddBtn">➕ Добавить задание к указанному типу</button>
+            <button class="btn-success" id="adminAddBtn">➕ Добавить задание</button>
             <div id="adminFeedback" style="margin-top:10px; font-weight:bold;"></div>
         </section>
     </div>
 </div>
 
-<!-- Модальное окно для заданий конкретного типа -->
+<!-- Модальное окно для заданий конкретного номера -->
 <div class="modal-overlay" id="tasksModal">
     <div class="modal tasks-modal">
         <span class="close-btn" id="closeTasksModalBtn">&times;</span>
-        <h3 id="modalTitle">Задания типа <span id="modalTypeNum"></span></h3>
+        <h3>Задания №<span id="modalNum"></span></h3>
         <div id="tasksListContainer"></div>
         <div id="addTaskForm" style="display:none;" class="add-task-form">
-            <h4>Добавить задание в этот тип</h4>
+            <h4>Добавить задание в этот номер</h4>
             <textarea id="newTaskText" rows="3" placeholder="Текст задания..."></textarea>
             <input type="text" id="newTaskAnswer" placeholder="Правильный ответ">
             <button id="submitNewTaskBtn" class="add-task-btn">➕ Добавить задание</button>
@@ -347,6 +375,7 @@
     
     let currentUser = null;
     let userExam = "oge";
+    let includeOge = false;
     let solvedTasks = {};
     let answerHistory = [];
     let ogeCorrectHistory = [];
@@ -354,12 +383,12 @@
     let chart = null;
     let currentRandomTask = null;
     let currentModalExam = "oge";
-    let currentModalType = 1;
+    let currentModalNum = 1;
     
     // Загрузка заданий из Firestore
-    async function loadTasksFromFirestore(exam, type) {
+    async function loadTasksFromFirestore(exam, num) {
         try {
-            const q = query(collection(db, "tasks"), where("exam", "==", exam), where("type", "==", type));
+            const q = query(collection(db, "tasks"), where("exam", "==", exam), where("num", "==", num));
             const querySnapshot = await getDocs(q);
             const tasks = [];
             querySnapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() }); });
@@ -367,9 +396,9 @@
         } catch (error) { console.error("Ошибка загрузки:", error); return []; }
     }
     
-    async function saveTaskToFirestore(exam, type, text, answer) {
+    async function saveTaskToFirestore(exam, num, text, answer) {
         try {
-            await addDoc(collection(db, "tasks"), { exam, type, text, answer, createdAt: new Date().toISOString() });
+            await addDoc(collection(db, "tasks"), { exam, num, text, answer, createdAt: new Date().toISOString() });
             return true;
         } catch (error) { console.error("Ошибка сохранения:", error); return false; }
     }
@@ -381,12 +410,12 @@
     
     // Инициализация начальных заданий
     async function initInitialTasks() {
-        for (const [exam, types] of Object.entries(initialTasks)) {
-            for (const [type, tasks] of Object.entries(types)) {
-                const existing = await loadTasksFromFirestore(exam, parseInt(type));
+        for (const [exam, nums] of Object.entries(initialTasks)) {
+            for (const [num, tasks] of Object.entries(nums)) {
+                const existing = await loadTasksFromFirestore(exam, parseInt(num));
                 if (existing.length === 0) {
                     for (const task of tasks) {
-                        await saveTaskToFirestore(exam, parseInt(type), task.text, task.answer);
+                        await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer);
                     }
                 }
             }
@@ -396,10 +425,13 @@
     // Получение всех заданий для рандомайзера
     async function getAllTasksForRandom() {
         const allTasks = [];
-        for (const exam of ["oge", "ege"]) {
-            for (let type = 1; type <= (exam === "oge" ? 16 : 27); type++) {
-                const tasks = await loadTasksFromFirestore(exam, type);
-                tasks.forEach(t => allTasks.push({ ...t, exam, type, solved: solvedTasks[`${exam}_${type}_${t.id}`] || false }));
+        const examsToCheck = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
+        
+        for (const exam of examsToCheck) {
+            const maxNum = exam === 'oge' ? 16 : 27;
+            for (let num = 1; num <= maxNum; num++) {
+                const tasks = await loadTasksFromFirestore(exam, num);
+                tasks.forEach(t => allTasks.push({ ...t, exam, num, solved: solvedTasks[`${exam}_${num}_${t.id}`] || false }));
             }
         }
         return allTasks;
@@ -417,7 +449,7 @@
         if (task) {
             currentRandomTask = task;
             document.getElementById('randomExamBadge').innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
-            document.getElementById('randomNumBadge').innerHTML = `Тип ${task.type}`;
+            document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
             document.getElementById('randomQuestion').innerHTML = task.text;
             document.getElementById('randomAnswerInput').value = '';
             document.getElementById('randomFeedback').style.display = 'none';
@@ -435,9 +467,9 @@
             fb.innerHTML = 'Верно! Отлично!'; fb.style.color = '#16a34a'; fb.style.background = '#D1FAE5';
             if (!currentRandomTask.solved) {
                 currentRandomTask.solved = true;
-                solvedTasks[`${currentRandomTask.exam}_${currentRandomTask.type}_${currentRandomTask.id}`] = true;
+                solvedTasks[`${currentRandomTask.exam}_${currentRandomTask.num}_${currentRandomTask.id}`] = true;
                 if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { solvedTasks }, { merge: true });
-                await renderTypesGrid();
+                await renderNumbersGrid();
             }
         } else {
             fb.innerHTML = `Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626'; fb.style.background = '#FEE2E2';
@@ -449,40 +481,93 @@
             const last = egeCorrectHistory.length ? egeCorrectHistory[egeCorrectHistory.length-1] : 0;
             egeCorrectHistory.push(last + (isCorrect ? 1 : 0));
         }
-        answerHistory.push({ exam: currentRandomTask.exam, type: currentRandomTask.type, correct: isCorrect });
+        answerHistory.push({ exam: currentRandomTask.exam, num: currentRandomTask.num, correct: isCorrect });
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { answerHistory, ogeCorrectHistory, egeCorrectHistory }, { merge: true });
         updateChart();
         updateStats();
         setTimeout(() => updateRandomTask(), 1500);
     }
     
-    async function renderTypesGrid() {
-        const maxTypes = userExam === 'oge' ? 16 : 27;
-        const grid = document.getElementById('typesGrid');
-        grid.innerHTML = '';
-        for (let type = 1; type <= maxTypes; type++) {
-            const tasks = await loadTasksFromFirestore(userExam, type);
-            const solvedCount = tasks.filter(t => solvedTasks[`${userExam}_${type}_${t.id}`]).length;
-            const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
-            grid.innerHTML += `<div class="type-card ${isFullySolved ? 'solved' : ''}" data-type="${type}">
-                <div class="type-num">Тип ${type}</div>
-                <div class="type-count">${solvedCount}/${tasks.length}</div>
-            </div>`;
+    // Генерация варианта (по одному заданию из каждого номера)
+    async function generateVariantAndDisplay() {
+        const variantSection = document.getElementById('variantSection');
+        const variantContainer = document.getElementById('variantQuestions');
+        variantContainer.innerHTML = '';
+        
+        const examsToUse = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
+        const allTasks = [];
+        
+        for (const exam of examsToUse) {
+            const maxNum = exam === 'oge' ? 16 : 27;
+            for (let num = 1; num <= maxNum; num++) {
+                const tasks = await loadTasksFromFirestore(exam, num);
+                if (tasks.length > 0) {
+                    const randomTask = tasks[Math.floor(Math.random() * tasks.length)];
+                    allTasks.push({ ...randomTask, exam, num });
+                }
+            }
         }
-        document.querySelectorAll('.type-card').forEach(card => {
-            card.addEventListener('click', () => openTasksModal(userExam, parseInt(card.dataset.type)));
+        
+        // Сортируем по экзамену и номеру
+        allTasks.sort((a, b) => {
+            if (a.exam !== b.exam) return a.exam === 'oge' ? -1 : 1;
+            return a.num - b.num;
+        });
+        
+        if (allTasks.length === 0) {
+            variantContainer.innerHTML = '<p>Нет заданий для генерации варианта</p>';
+        } else {
+            allTasks.forEach(task => {
+                variantContainer.innerHTML += `
+                    <div class="variant-question-item" data-task-id="${task.id}" data-exam="${task.exam}" data-num="${task.num}" data-answer="${task.answer}">
+                        <div class="question-text"><strong>${task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ'} №${task.num}</strong><br>${task.text}</div>
+                        <div class="question-answer">✅ Ответ: ${task.answer}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        variantSection.style.display = 'block';
+        
+        // Обработчик кнопки показа ответов
+        const showAnswersBtn = document.getElementById('showAnswersBtn');
+        const newBtn = showAnswersBtn.cloneNode(true);
+        showAnswersBtn.parentNode.replaceChild(newBtn, showAnswersBtn);
+        newBtn.addEventListener('click', () => {
+            document.querySelectorAll('.question-answer').forEach(el => {
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            });
+            newBtn.innerText = newBtn.innerText === 'Показать ответы' ? 'Скрыть ответы' : 'Показать ответы';
         });
     }
     
-    async function openTasksModal(exam, type) {
+    async function renderNumbersGrid() {
+        const maxNum = userExam === 'oge' ? 16 : 27;
+        const grid = document.getElementById('numbersGrid');
+        grid.innerHTML = '';
+        for (let num = 1; num <= maxNum; num++) {
+            const tasks = await loadTasksFromFirestore(userExam, num);
+            const solvedCount = tasks.filter(t => solvedTasks[`${userExam}_${num}_${t.id}`]).length;
+            const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
+            grid.innerHTML += `<div class="number-card ${isFullySolved ? 'solved' : ''}" data-num="${num}">
+                <div class="num">№${num}</div>
+                <div class="count">${solvedCount}/${tasks.length}</div>
+            </div>`;
+        }
+        document.querySelectorAll('.number-card').forEach(card => {
+            card.addEventListener('click', () => openTasksModal(userExam, parseInt(card.dataset.num)));
+        });
+    }
+    
+    async function openTasksModal(exam, num) {
         currentModalExam = exam;
-        currentModalType = type;
-        document.getElementById('modalTypeNum').innerText = type;
-        const tasks = await loadTasksFromFirestore(exam, type);
+        currentModalNum = num;
+        document.getElementById('modalNum').innerText = num;
+        const tasks = await loadTasksFromFirestore(exam, num);
         const container = document.getElementById('tasksListContainer');
         container.innerHTML = '';
         for (const task of tasks) {
-            const isSolved = solvedTasks[`${exam}_${type}_${task.id}`] || false;
+            const isSolved = solvedTasks[`${exam}_${num}_${task.id}`] || false;
             container.innerHTML += `<div class="task-item" data-id="${task.id}">
                 <div class="task-text">${task.text}</div>
                 <div class="task-answer">Ответ: ${task.answer}</div>
@@ -505,10 +590,10 @@
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const taskId = btn.dataset.id;
-                solvedTasks[`${exam}_${type}_${taskId}`] = true;
+                solvedTasks[`${exam}_${num}_${taskId}`] = true;
                 if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { solvedTasks }, { merge: true });
-                await openTasksModal(exam, type);
-                await renderTypesGrid();
+                await openTasksModal(exam, num);
+                await renderNumbersGrid();
                 await updateRandomTask();
                 updateStats();
             });
@@ -518,8 +603,8 @@
                 e.stopPropagation();
                 if (confirm('Удалить задание?')) {
                     await deleteTaskFromFirestore(btn.dataset.id);
-                    await openTasksModal(exam, type);
-                    await renderTypesGrid();
+                    await openTasksModal(exam, num);
+                    await renderNumbersGrid();
                     await updateRandomTask();
                 }
             });
@@ -535,13 +620,13 @@
         const text = document.getElementById('newTaskText').value.trim();
         const answer = document.getElementById('newTaskAnswer').value.trim();
         if (!text || !answer) { alert('Заполните все поля'); return; }
-        await saveTaskToFirestore(currentModalExam, currentModalType, text, answer);
+        await saveTaskToFirestore(currentModalExam, currentModalNum, text, answer);
         document.getElementById('newTaskText').value = '';
         document.getElementById('newTaskAnswer').value = '';
         document.getElementById('addTaskForm').style.display = 'none';
         document.getElementById('showAddFormBtn').style.display = 'block';
-        await openTasksModal(currentModalExam, currentModalType);
-        await renderTypesGrid();
+        await openTasksModal(currentModalExam, currentModalNum);
+        await renderNumbersGrid();
         await updateRandomTask();
     });
     
@@ -561,7 +646,7 @@
         const correct = answerHistory.filter(a => a.correct).length;
         document.getElementById('percentCorrect').innerText = total ? Math.round(correct/total*100) + '%' : '0%';
         const taskStats = {};
-        answerHistory.forEach(a => { const k = `${a.exam}_${a.type}`; if (!taskStats[k]) taskStats[k] = { total:0, correct:0 }; taskStats[k].total++; if (a.correct) taskStats[k].correct++; });
+        answerHistory.forEach(a => { const k = `${a.exam}_${a.num}`; if (!taskStats[k]) taskStats[k] = { total:0, correct:0 }; taskStats[k].total++; if (a.correct) taskStats[k].correct++; });
         let best = null, bestP=-1, worst=null, worstP=101;
         for (const [k,s] of Object.entries(taskStats)) {
             if (s.total < 2) continue;
@@ -573,18 +658,11 @@
         document.getElementById('worstTask').innerText = worst ? worst.toUpperCase() + ` (${Math.round(worstP)}%)` : '—';
     }
     
-    async function generateVariant() {
-        const tasks = await getAllTasksForRandom();
-        const shuffled = [...tasks].sort(() => Math.random() - 0.5);
-        const variant = shuffled.slice(0, 5);
-        alert(variant.map((t,i) => `${i+1}. [${t.exam.toUpperCase()} тип ${t.type}] ${t.text}\n   Ответ: ${t.answer}`).join('\n\n'));
-    }
-    
     async function init() {
         await initInitialTasks();
         const ctx = document.getElementById('progressChart').getContext('2d');
         chart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'ОГЭ', data: [], borderColor: '#3B82F6', fill: true }, { label: 'ЕГЭ', data: [], borderColor: '#EF4444', fill: true }] }, options: { responsive: true, maintainAspectRatio: false } });
-        await renderTypesGrid();
+        await renderNumbersGrid();
         await updateRandomTask();
         updateStats();
         updateChart();
@@ -595,43 +673,57 @@
         userExam = 'oge';
         document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
         document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive';
+        document.getElementById('ogeToggle').style.display = 'none';
+        includeOge = false;
+        document.getElementById('includeOgeCheckbox').checked = false;
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { userExam }, { merge: true });
-        await renderTypesGrid();
+        await renderNumbersGrid();
+        await updateRandomTask();
     });
+    
     document.getElementById('egeMainBtn').addEventListener('click', async () => {
         userExam = 'ege';
         document.getElementById('egeMainBtn').className = 'exam-btn-main ege-active';
         document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-inactive';
+        document.getElementById('ogeToggle').style.display = 'flex';
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { userExam }, { merge: true });
-        await renderTypesGrid();
+        await renderNumbersGrid();
+        await updateRandomTask();
     });
     
-    // Панель администратора - добавление задания к конкретному типу
+    document.getElementById('includeOgeCheckbox').addEventListener('change', async (e) => {
+        includeOge = e.target.checked;
+        if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { includeOge }, { merge: true });
+        await updateRandomTask();
+    });
+    
+    // Панель администратора
     document.getElementById('adminAddBtn').addEventListener('click', async () => {
         const exam = document.getElementById('adminExam').value;
-        const type = parseInt(document.getElementById('adminTaskType').value);
+        const num = parseInt(document.getElementById('adminTaskNum').value);
         const text = document.getElementById('adminTaskText').value.trim();
         const answer = document.getElementById('adminAnswer').value.trim();
         const feedback = document.getElementById('adminFeedback');
-        if (!text || !answer || !type || type < 1 || type > (exam === 'oge' ? 16 : 27)) {
-            feedback.innerHTML = '❌ Заполните все поля корректно! Тип должен быть от 1 до ' + (exam === 'oge' ? 16 : 27);
+        const maxNum = exam === 'oge' ? 16 : 27;
+        if (!text || !answer || !num || num < 1 || num > maxNum) {
+            feedback.innerHTML = `❌ Заполните все поля! Номер от 1 до ${maxNum}`;
             feedback.style.color = '#dc2626';
             return;
         }
-        await saveTaskToFirestore(exam, type, text, answer);
-        feedback.innerHTML = '✅ Задание добавлено к типу ' + type + '!';
+        await saveTaskToFirestore(exam, num, text, answer);
+        feedback.innerHTML = '✅ Задание добавлено!';
         feedback.style.color = '#16a34a';
         document.getElementById('adminTaskText').value = '';
         document.getElementById('adminAnswer').value = '';
-        document.getElementById('adminTaskType').value = '';
-        if (userExam === exam) await renderTypesGrid();
+        document.getElementById('adminTaskNum').value = '';
+        if (userExam === exam) await renderNumbersGrid();
         await updateRandomTask();
         setTimeout(() => { feedback.innerHTML = ''; }, 3000);
     });
     
     // Аутентификация
     async function register(email, password, exam) {
-        try { const userCredential = await window.createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { userExam: exam, solvedTasks: {}, answerHistory: [], ogeCorrectHistory: [], egeCorrectHistory: [] }); return { success: true }; } 
+        try { const userCredential = await window.createUserWithEmailAndPassword(auth, email, password); await setDoc(doc(db, "users", userCredential.user.uid), { userExam: exam, includeOge: false, solvedTasks: {}, answerHistory: [], ogeCorrectHistory: [], egeCorrectHistory: [] }); return { success: true }; } 
         catch (error) { return { success: false, error: error.message }; }
     }
     async function login(email, password) {
@@ -654,20 +746,24 @@
                 ogeCorrectHistory = data.ogeCorrectHistory || [];
                 egeCorrectHistory = data.egeCorrectHistory || [];
                 userExam = data.userExam || "oge";
+                includeOge = data.includeOge || false;
             }
             if (userExam === 'oge') {
                 document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
                 document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive';
+                document.getElementById('ogeToggle').style.display = 'none';
             } else {
                 document.getElementById('egeMainBtn').className = 'exam-btn-main ege-active';
                 document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-inactive';
+                document.getElementById('ogeToggle').style.display = 'flex';
+                document.getElementById('includeOgeCheckbox').checked = includeOge;
             }
             if (user.email === 'admin@it-track.ru') {
                 document.getElementById('adminPanel').style.display = 'block';
             } else {
                 document.getElementById('adminPanel').style.display = 'none';
             }
-            await renderTypesGrid();
+            await renderNumbersGrid();
             await updateRandomTask();
             updateStats();
             updateChart();
@@ -678,9 +774,11 @@
             document.getElementById('adminPanel').style.display = 'none';
             solvedTasks = {}; answerHistory = []; ogeCorrectHistory = []; egeCorrectHistory = [];
             userExam = "oge";
+            includeOge = false;
             document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active';
             document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive';
-            await renderTypesGrid();
+            document.getElementById('ogeToggle').style.display = 'none';
+            await renderNumbersGrid();
             await updateRandomTask();
             updateStats();
             updateChart();
@@ -692,7 +790,7 @@
     window.addEventListener('scroll', () => { taglineWrapper.classList.toggle('hide', window.scrollY > 50); });
     document.getElementById('getRandomBtn').addEventListener('click', updateRandomTask);
     document.getElementById('checkRandomBtn').addEventListener('click', checkRandomAnswer);
-    document.getElementById('generateVariantBtn').addEventListener('click', generateVariant);
+    document.getElementById('generateVariantBtn').addEventListener('click', generateVariantAndDisplay);
     document.getElementById('closeTasksModalBtn').addEventListener('click', () => document.getElementById('tasksModal').classList.remove('active'));
     
     // Модалки аутентификации
@@ -716,7 +814,7 @@
     });
     document.querySelectorAll('#authModal .exam-btn').forEach(btn => { btn.addEventListener('click', function() { document.querySelectorAll('#authModal .exam-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); selectedExam = this.dataset.exam; }); });
     document.querySelectorAll('.profile-exam-btn').forEach(btn => { btn.addEventListener('click', function() { document.querySelectorAll('.profile-exam-btn').forEach(b => { b.style.background = 'white'; b.style.color = '#034694'; }); this.style.background = '#034694'; this.style.color = 'white'; selectedExam = this.dataset.exam; }); });
-    document.getElementById('saveExamBtn').addEventListener('click', async () => { if (currentUser) { userExam = selectedExam; await setDoc(doc(db, "users", currentUser.uid), { userExam }, { merge: true }); if (userExam === 'oge') { document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active'; document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive'; } else { document.getElementById('egeMainBtn').className = 'exam-btn-main ege-active'; document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-inactive'; } await renderTypesGrid(); await updateRandomTask(); profileModal.classList.remove('active'); alert(`Экзамен изменён на ${selectedExam === 'oge' ? 'ОГЭ' : 'ЕГЭ'}`); } });
+    document.getElementById('saveExamBtn').addEventListener('click', async () => { if (currentUser) { userExam = selectedExam; await setDoc(doc(db, "users", currentUser.uid), { userExam }, { merge: true }); if (userExam === 'oge') { document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-active'; document.getElementById('egeMainBtn').className = 'exam-btn-main ege-inactive'; document.getElementById('ogeToggle').style.display = 'none'; } else { document.getElementById('egeMainBtn').className = 'exam-btn-main ege-active'; document.getElementById('ogeMainBtn').className = 'exam-btn-main oge-inactive'; document.getElementById('ogeToggle').style.display = 'flex'; } await renderNumbersGrid(); await updateRandomTask(); profileModal.classList.remove('active'); alert(`Экзамен изменён на ${selectedExam === 'oge' ? 'ОГЭ' : 'ЕГЭ'}`); } });
     document.getElementById('logoutBtn').addEventListener('click', async () => { await signOut(auth); alert('Вы вышли'); });
     
     init();
