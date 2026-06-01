@@ -93,11 +93,14 @@
         .task-card .meta .self-check-badge { background: #F59E0B; color: white; }
         .task-card .question { font-size: 17px; line-height: 1.5; margin: 15px 0; background: #F8FAFE; padding: 18px; border-radius: 16px; white-space: pre-wrap; }
         .task-card .question-image, .task-card .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
-        .task-card .solution { background: #E0F2FE; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 14px; display: none; }
-        .task-card .answer-area { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
-        .task-card .answer-area input { flex: 2; padding: 12px 18px; border-radius: 60px; border: 2px solid #BAE6FD; outline: none; font-size: 1rem; min-width: 200px; background: #8DD8F7; }
-        .task-card .answer-area input:focus { border-color: #034694; background: #a8e0f9; }
-        .task-card .answer-area button { background: #034694; color: white; border: none; padding: 12px 40px; border-radius: 60px; font-weight: 700; cursor: pointer; }
+        .solution-wrapper { margin-top: 10px; }
+        .btn-solution { background: #8B5CF6; color: white; border: none; padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: 0.2s; margin-top: 10px; }
+        .btn-solution:hover { background: #7C3AED; transform: scale(1.02); }
+        .solution-content { background: #E0F2FE; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 14px; display: none; }
+        .answer-area { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
+        .answer-area input { flex: 2; padding: 12px 18px; border-radius: 60px; border: 2px solid #BAE6FD; outline: none; font-size: 1rem; min-width: 200px; background: #8DD8F7; }
+        .answer-area input:focus { border-color: #034694; background: #a8e0f9; }
+        .answer-area button { background: #034694; color: white; border: none; padding: 12px 40px; border-radius: 60px; font-weight: 700; cursor: pointer; }
         .feedback { margin-top: 15px; padding: 12px; border-radius: 12px; display: none; text-align: center; font-weight: bold; }
         .btn-generate-variant { background: white; color: #034694; border: none; padding: 20px 40px; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 25px; }
         .btn-generate-variant:hover { background: #f0f0f0; transform: translateY(-2px); }
@@ -114,6 +117,8 @@
         .variant-question-item .question-image, .variant-question-item .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
         .variant-question-item .answer-input { width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #BAE6FD; border-radius: 12px; outline: none; background: #8DD8F7; }
         .variant-question-item .feedback-individual { font-size: 0.85rem; margin-top: 8px; display: none; }
+        .variant-question-item .btn-solution-small { background: #8B5CF6; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.75rem; margin-top: 8px; }
+        .variant-question-item .solution-small { background: #E0F2FE; padding: 10px; border-radius: 10px; margin-top: 8px; font-size: 0.85rem; display: none; }
         .check-variant-btn { background: #10B981; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; }
         .variant-result { margin-top: 15px; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; display: none; }
         
@@ -142,9 +147,11 @@
         .task-item.self-check { border-left-color: #F59E0B; background: #FFFBEB; }
         .task-item .task-text { margin-bottom: 8px; white-space: pre-wrap; }
         .task-item .task-image, .task-item .task-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
-        .task-item .task-solution { background: #E0F2FE; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
+        .task-item .task-solution-wrapper { margin-top: 10px; }
+        .task-item .task-solution-btn { background: #8B5CF6; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.75rem; }
+        .task-item .task-solution-content { background: #E0F2FE; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; display: none; }
         .task-item .task-answer { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
-        .task-item .task-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .task-item .task-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .self-check-label { background: #F59E0B; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; display: inline-block; margin-left: 10px; }
         .btn-small { padding: 5px 12px; font-size: 0.8rem; border-radius: 20px; border: none; cursor: pointer; }
         .solve-btn { background: #10B981; color: white; }
@@ -233,7 +240,10 @@
                 <div class="meta"><span id="randomExamBadge">ОГЭ</span><span id="randomNumBadge">Задание №1</span><span id="randomSelfCheckBadge" class="self-check-badge" style="display:none;">📖 Самопроверка</span></div>
                 <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
                 <div id="randomFileContainer"></div>
-                <div class="solution" id="randomSolution"></div>
+                <div class="solution-wrapper" id="randomSolutionWrapper" style="display:none;">
+                    <button class="btn-solution" onclick="window.toggleSolution('randomSolution')">📖 Показать решение</button>
+                    <div class="solution-content" id="randomSolution"></div>
+                </div>
                 <div class="answer-area"><input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ..."><button id="checkRandomBtn">Проверить</button></div>
                 <div class="feedback" id="randomFeedback"></div>
             </div>
@@ -374,6 +384,28 @@
     const auth = window.auth;
     const db = window.db;
     const signOut = firebaseSignOut;
+    
+    // Глобальная функция для переключения решения
+    window.toggleSolution = function(id) {
+        const solutionDiv = document.getElementById(id);
+        const btn = solutionDiv.previousElementSibling;
+        if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
+            solutionDiv.style.display = 'block';
+            btn.innerHTML = '📖 Скрыть решение';
+        } else {
+            solutionDiv.style.display = 'none';
+            btn.innerHTML = '📖 Показать решение';
+        }
+    };
+    
+    window.toggleSolutionById = function(id) {
+        const solutionDiv = document.getElementById(id);
+        if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
+            solutionDiv.style.display = 'block';
+        } else {
+            solutionDiv.style.display = 'none';
+        }
+    };
     
     const tasksCache = new Map();
     let allTasksCache = null;
@@ -544,7 +576,6 @@
                         await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData || "", task.fileName || "", task.isSelfCheck || false);
                     }
                 } else if (exam === "oge" && parseInt(num) === 7 && existing.length !== oge7Tasks.length) {
-                    // Обновляем 7 задание если количество не совпадает
                     for (const t of existing) {
                         await deleteDoc(doc(db, "tasks", t.id));
                     }
@@ -600,12 +631,17 @@
             } else if (task.imageUrl && task.imageUrl !== "") {
                 fileContainer.innerHTML = `<img src="${task.imageUrl}" class="question-image">`;
             }
+            
+            const solutionWrapper = document.getElementById('randomSolutionWrapper');
             const solutionDiv = document.getElementById('randomSolution');
             if (task.solution && task.solution !== "") {
                 solutionDiv.innerHTML = `<strong>📖 Решение:</strong> ${task.solution}`;
-                solutionDiv.style.display = 'block';
-            } else {
                 solutionDiv.style.display = 'none';
+                solutionWrapper.style.display = 'block';
+                const btn = solutionWrapper.querySelector('.btn-solution');
+                btn.onclick = () => window.toggleSolution('randomSolution');
+            } else {
+                solutionWrapper.style.display = 'none';
             }
             document.getElementById('randomAnswerInput').value = '';
             document.getElementById('randomFeedback').style.display = 'none';
@@ -688,12 +724,20 @@
                 } else if (task.imageUrl && task.imageUrl !== "") {
                     fileHtml = `<img src="${task.imageUrl}" class="question-image">`;
                 }
+                const solutionHtml = task.solution ? `
+                    <div class="solution-small-wrapper">
+                        <button class="btn-solution-small" onclick="window.toggleSolutionById('variantSolution_${idx}')">📖 Показать решение</button>
+                        <div class="solution-small" id="variantSolution_${idx}"><strong>Решение:</strong> ${task.solution}</div>
+                    </div>
+                ` : '';
+                
                 variantContainer.innerHTML += `
                     <div class="variant-question-item" data-task-id="${task.id}" data-answer="${task.answer}" data-is-self-check="${task.isSelfCheck}">
                         <div class="question-text"><strong>${task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ'} №${task.num}</strong><br>${task.text.replace(/\n/g, '<br>')}</div>
                         ${fileHtml}
                         ${task.isSelfCheck ? '<div style="background:#FEF3C7; padding:8px; border-radius:8px; margin-top:8px; font-size:0.85rem;"><i class="fas fa-book-open"></i> Задание для самостоятельной проверки</div>' : ''}
                         <input type="text" class="answer-input" id="variantAnswer_${idx}" placeholder="Введите ответ..." ${task.isSelfCheck ? 'disabled' : ''}>
+                        ${solutionHtml}
                         <div class="feedback-individual" id="variantFeedback_${idx}"></div>
                     </div>
                 `;
@@ -818,11 +862,18 @@
             } else if (task.imageUrl && task.imageUrl !== "") {
                 fileHtml = `<img src="${task.imageUrl}" class="task-image">`;
             }
+            const solutionHtml = task.solution && task.solution !== "" ? `
+                <div class="task-solution-wrapper">
+                    <button class="task-solution-btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.textContent = this.nextElementSibling.style.display === 'none' ? '📖 Показать решение' : '📖 Скрыть решение'">📖 Показать решение</button>
+                    <div class="task-solution-content" style="display:none;"><strong>Решение:</strong> ${task.solution}</div>
+                </div>
+            ` : '';
+            
             container.innerHTML += `<div class="task-item ${task.isSelfCheck ? 'self-check' : ''}" data-id="${task.id}">
                 <div class="task-text">${task.text.replace(/\n/g, '<br>')}</div>
                 ${fileHtml}
                 <div class="task-answer">Ответ: ${task.answer}</div>
-                ${task.solution && task.solution !== "" ? `<div class="task-solution"><strong>📖 Решение:</strong> ${task.solution}</div>` : ''}
+                ${solutionHtml}
                 ${task.isSelfCheck ? '<div class="self-check-label">📖 Для самостоятельной проверки</div>' : ''}
                 <div class="task-actions">
                     <button class="btn-small solve-btn" data-id="${task.id}" style="background:#10B981;">${isSolved ? '✅ Решено' : '📌 Отметить решённым'}</button>
