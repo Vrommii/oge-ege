@@ -91,7 +91,7 @@
         .task-card .meta { display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
         .task-card .meta span { background: #E0F2FE; padding: 5px 15px; border-radius: 30px; font-weight: 600; color: #034694; }
         .task-card .meta .self-check-badge { background: #F59E0B; color: white; }
-        .task-card .question { font-size: 17px; line-height: 1.5; margin: 15px 0; background: #F8FAFE; padding: 18px; border-radius: 16px; }
+        .task-card .question { font-size: 17px; line-height: 1.5; margin: 15px 0; background: #F8FAFE; padding: 18px; border-radius: 16px; white-space: pre-wrap; }
         .task-card .question-image, .task-card .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
         .task-card .solution { background: #E0F2FE; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 14px; display: none; }
         .task-card .answer-area { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
@@ -110,7 +110,7 @@
         .variant-content.show { display: block; }
         .variant-questions { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
         .variant-question-item { background: #F8FAFE; padding: 15px; border-radius: 16px; border-left: 4px solid #034694; }
-        .variant-question-item .question-text { font-weight: 500; margin-bottom: 8px; }
+        .variant-question-item .question-text { font-weight: 500; margin-bottom: 8px; white-space: pre-wrap; }
         .variant-question-item .question-image, .variant-question-item .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
         .variant-question-item .answer-input { width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #BAE6FD; border-radius: 12px; outline: none; background: #8DD8F7; }
         .variant-question-item .feedback-individual { font-size: 0.85rem; margin-top: 8px; display: none; }
@@ -140,7 +140,7 @@
         .tasks-modal { max-width: 700px; max-height: 80vh; overflow-y: auto; }
         .task-item { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #034694; }
         .task-item.self-check { border-left-color: #F59E0B; background: #FFFBEB; }
-        .task-item .task-text { margin-bottom: 8px; }
+        .task-item .task-text { margin-bottom: 8px; white-space: pre-wrap; }
         .task-item .task-image, .task-item .task-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
         .task-item .task-solution { background: #E0F2FE; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
         .task-item .task-answer { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
@@ -380,8 +380,21 @@
     let lastCacheUpdate = 0;
     const CACHE_TTL = 60000;
     
-    // Статистика успеваемости по каждому номеру задания
-    let taskSuccessStats = {}; // { "oge_1": { total: 5, correct: 3, successRate: 60 }, ... }
+    let taskSuccessStats = {};
+    
+    // НОВЫЕ ЗАДАНИЯ ДЛЯ 7 НОМЕРА ОГЭ (10 заданий)
+    const oge7Tasks = [
+        { text: "Доступ к файлу `txt.net`, находящемуся на сервере `gov.org`, осуществляется по протоколу `http`. Фрагменты адреса файла закодированы буквами от А до Ж. Запишите последовательность этих букв, кодирующую адрес указанного файла в сети Интернет.\n\nА) `://`\nБ) `txt`\nВ) `.net`\nГ) `http`\nД) `/`\nЕ) `gov`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://gov.org/txt.net → Г(HTTP) А(://) Е(gov) Ж(.org) Д(/) Б(txt) В(.net)" },
+        { text: "Доступ к файлу `index.html`, находящемуся на сервере `school.ru`, осуществляется по протоколу `https`. Фрагменты адреса файла закодированы буквами от А до Ж.\n\nА) `://`\nБ) `index`\nВ) `.html`\nГ) `https`\nД) `/`\nЕ) `school`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://school.ru/index.html → Г(HTTPS) А(://) Е(school) Ж(.ru) Д(/) Б(index) В(.html)" },
+        { text: "Доступ к файлу `page.php`, находящемуся на сервере `example.com`, осуществляется по протоколу `ftp`. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) `://`\nБ) `page`\nВ) `.php`\nГ) `ftp`\nД) `/`\nЕ) `example`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://example.com/page.php → Г(FTP) А(://) Е(example) Ж(.com) Д(/) Б(page) В(.php)" },
+        { text: "Доступ к файлу `data.xml`, находящемуся на сервере `api.service.net`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `data`\nВ) `.xml`\nГ) `http`\nД) `/`\nЕ) `api`\nЖ) `.service.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://api.service.net/data.xml → Г(HTTP) А(://) Е(api) Ж(.service.net) Д(/) Б(data) В(.xml)" },
+        { text: "Доступ к файлу `document.pdf`, находящемуся на сервере `files.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `document`\nВ) `.pdf`\nГ) `https`\nД) `/`\nЕ) `files`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://files.org/document.pdf → Г(HTTPS) А(://) Е(files) Ж(.org) Д(/) Б(document) В(.pdf)" },
+        { text: "Доступ к файлу `image.jpg`, находящемуся на сервере `photo.com`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `image`\nВ) `.jpg`\nГ) `http`\nД) `/`\nЕ) `photo`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://photo.com/image.jpg → Г(HTTP) А(://) Е(photo) Ж(.com) Д(/) Б(image) В(.jpg)" },
+        { text: "Доступ к файлу `script.js`, находящемуся на сервере `cdn.cloud.net`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `script`\nВ) `.js`\nГ) `https`\nД) `/`\nЕ) `cdn`\nЖ) `.cloud.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://cdn.cloud.net/script.js → Г(HTTPS) А(://) Е(cdn) Ж(.cloud.net) Д(/) Б(script) В(.js)" },
+        { text: "Доступ к файлу `style.css`, находящемуся на сервере `site.ru`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `style`\nВ) `.css`\nГ) `http`\nД) `/`\nЕ) `site`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://site.ru/style.css → Г(HTTP) А(://) Е(site) Ж(.ru) Д(/) Б(style) В(.css)" },
+        { text: "Доступ к файлу `video.mp4`, находящемуся на сервере `media.tv`, осуществляется по протоколу `ftp`. Фрагменты адреса:\n\nА) `://`\nБ) `video`\nВ) `.mp4`\nГ) `ftp`\nД) `/`\nЕ) `media`\nЖ) `.tv`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://media.tv/video.mp4 → Г(FTP) А(://) Е(media) Ж(.tv) Д(/) Б(video) В(.mp4)" },
+        { text: "Доступ к файлу `archive.zip`, находящемуся на сервере `backup.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `archive`\nВ) `.zip`\nГ) `https`\nД) `/`\nЕ) `backup`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://backup.org/archive.zip → Г(HTTPS) А(://) Е(backup) Ж(.org) Д(/) Б(archive) В(.zip)" }
+    ];
     
     const initialTasks = {
         oge: {
@@ -391,19 +404,7 @@
             4: [{ text: "Между пунктами A, B, C, D, E построены дороги. Найдите длину кратчайшего пути между A и E.", answer: "6", solution: "Кратчайший путь: A→C→E = 2+4=6", imageUrl: "", fileData: "", isSelfCheck: false }],
             5: [{ text: "У исполнителя Альфа команды: +1 и *2. Сколько разных чисел можно получить из 2 с помощью программы из 3 команд?", answer: "4", solution: "2→3→4→5, 2→3→6→7, 2→4→5→6, 2→4→8→9... Всего 4 уникальных", imageUrl: "", fileData: "", isSelfCheck: false }],
             6: [{ text: "Определите значение b после выполнения: a:=5; b:=7; if a>b then b:=b+3 else b:=b-3;", answer: "4", solution: "a=5, b=7, a>b? нет, b=7-3=4", imageUrl: "", fileData: "", isSelfCheck: false }],
-            // Задание 7 ОГЭ - добавлено 10 заданий по протоколам и адресам файлов
-            7: [
-                { text: "Доступ к файлу `txt.net`, находящемуся на сервере `gov.org`, осуществляется по протоколу `http`. Фрагменты адреса файла закодированы буквами от А до Ж. Запишите последовательность этих букв, кодирующую адрес указанного файла в сети Интернет.\n\nА) `://`\nБ) `txt`\nВ) `.net`\nГ) `http`\nД) `/`\nЕ) `gov`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://gov.org/txt.net → Г(HTTP) А(://) Е(gov) Ж(.org) Д(/) Б(txt) В(.net)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `index.html`, находящемуся на сервере `school.ru`, осуществляется по протоколу `https`. Фрагменты адреса файла закодированы буквами от А до Ж.\n\nА) `://`\nБ) `index`\nВ) `.html`\nГ) `https`\nД) `/`\nЕ) `school`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://school.ru/index.html → Г(HTTPS) А(://) Е(school) Ж(.ru) Д(/) Б(index) В(.html)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `page.php`, находящемуся на сервере `example.com`, осуществляется по протоколу `ftp`. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) `://`\nБ) `page`\nВ) `.php`\nГ) `ftp`\nД) `/`\nЕ) `example`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://example.com/page.php → Г(FTP) А(://) Е(example) Ж(.com) Д(/) Б(page) В(.php)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `data.xml`, находящемуся на сервере `api.service.net`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `data`\nВ) `.xml`\nГ) `http`\nД) `/`\nЕ) `api`\nЖ) `.service.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://api.service.net/data.xml → Г(HTTP) А(://) Е(api) Ж(.service.net) Д(/) Б(data) В(.xml)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `document.pdf`, находящемуся на сервере `files.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `document`\nВ) `.pdf`\nГ) `https`\nД) `/`\nЕ) `files`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://files.org/document.pdf → Г(HTTPS) А(://) Е(files) Ж(.org) Д(/) Б(document) В(.pdf)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `image.jpg`, находящемуся на сервере `photo.com`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `image`\nВ) `.jpg`\nГ) `http`\nД) `/`\nЕ) `photo`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://photo.com/image.jpg → Г(HTTP) А(://) Е(photo) Ж(.com) Д(/) Б(image) В(.jpg)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `script.js`, находящемуся на сервере `cdn.cloud.net`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `script`\nВ) `.js`\nГ) `https`\nД) `/`\nЕ) `cdn`\nЖ) `.cloud.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://cdn.cloud.net/script.js → Г(HTTPS) А(://) Е(cdn) Ж(.cloud.net) Д(/) Б(script) В(.js)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `style.css`, находящемуся на сервере `site.ru`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `style`\nВ) `.css`\nГ) `http`\nД) `/`\nЕ) `site`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://site.ru/style.css → Г(HTTP) А(://) Е(site) Ж(.ru) Д(/) Б(style) В(.css)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `video.mp4`, находящемуся на сервере `media.tv`, осуществляется по протоколу `ftp`. Фрагменты адреса:\n\nА) `://`\nБ) `video`\nВ) `.mp4`\nГ) `ftp`\nД) `/`\nЕ) `media`\nЖ) `.tv`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://media.tv/video.mp4 → Г(FTP) А(://) Е(media) Ж(.tv) Д(/) Б(video) В(.mp4)", imageUrl: "", fileData: "", isSelfCheck: false },
-                { text: "Доступ к файлу `archive.zip`, находящемуся на сервере `backup.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `archive`\nВ) `.zip`\nГ) `https`\nД) `/`\nЕ) `backup`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://backup.org/archive.zip → Г(HTTPS) А(://) Е(backup) Ж(.org) Д(/) Б(archive) В(.zip)", imageUrl: "", fileData: "", isSelfCheck: false }
-            ],
+            7: oge7Tasks.map(t => ({ ...t, imageUrl: "", fileData: "", isSelfCheck: false })),
             8: [{ text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231", solution: "Самый частотный запрос даёт больше страниц", imageUrl: "", fileData: "", isSelfCheck: false }],
             9: [{ text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5", solution: "Подсчёт всех возможных маршрутов", imageUrl: "", fileData: "", isSelfCheck: false }],
             10: [{ text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны", solution: "101101₂ = 45₁₀, числа равны", imageUrl: "", fileData: "", isSelfCheck: false }],
@@ -451,7 +452,6 @@
         });
     }
     
-    // Обновление статистики успеваемости по каждому номеру задания
     function updateTaskSuccessStats() {
         taskSuccessStats = {};
         for (const record of answerHistory) {
@@ -465,66 +465,41 @@
         }
     }
     
-    // Адаптивный выбор задания с весами (хуже решаемые задания имеют больший вес)
     async function getAdaptiveRandomTask() {
         const allTasks = await getAllTasksForRandom();
-        // Исключаем задания для самопроверки из адаптивного выбора
         const validTasks = allTasks.filter(t => !t.isSelfCheck);
-        
         if (validTasks.length === 0) return null;
-        
-        // Обновляем статистику
         updateTaskSuccessStats();
-        
-        // Вычисляем веса для каждого задания (обратная пропорция к успеваемости)
         const tasksWithWeights = validTasks.map(task => {
             const key = `${task.exam}_${task.num}`;
             const stats = taskSuccessStats[key];
-            let weight = 1; // базовый вес
-            
+            let weight = 1;
             if (stats && stats.total >= 2) {
-                // Чем ниже процент успеха, тем больше вес
-                // Минимальный вес 0.5, максимальный 5
                 const successRate = stats.successRate;
                 if (successRate < 30) weight = 5;
                 else if (successRate < 50) weight = 3;
                 else if (successRate < 70) weight = 1.5;
                 else weight = 0.7;
             } else if (stats && stats.total === 1) {
-                // Если была только одна попытка
                 weight = stats.correct === 1 ? 0.8 : 2;
             } else {
-                // Новое задание - средний вес
                 weight = 1.2;
             }
-            
-            // Дополнительно: если задание уже решено много раз, но всё ещё ошибается
-            if (stats && stats.total > 5 && stats.successRate < 50) {
-                weight *= 1.5;
-            }
-            
+            if (stats && stats.total > 5 && stats.successRate < 50) weight *= 1.5;
             return { task, weight };
         });
-        
-        // Взвешенный случайный выбор
         const totalWeight = tasksWithWeights.reduce((sum, item) => sum + item.weight, 0);
         let random = Math.random() * totalWeight;
-        
         for (const item of tasksWithWeights) {
-            if (random < item.weight) {
-                return item.task;
-            }
+            if (random < item.weight) return item.task;
             random -= item.weight;
         }
-        
         return tasksWithWeights[0]?.task || null;
     }
     
     async function loadTasksFromFirestore(exam, num) {
         const cacheKey = `${exam}_${num}`;
-        if (tasksCache.has(cacheKey)) {
-            return tasksCache.get(cacheKey);
-        }
+        if (tasksCache.has(cacheKey)) return tasksCache.get(cacheKey);
         try {
             const q = query(collection(db, "tasks"), where("exam", "==", exam), where("num", "==", num));
             const querySnapshot = await getDocs(q);
@@ -566,8 +541,17 @@
                 const existing = await loadTasksFromFirestore(exam, parseInt(num));
                 if (existing.length === 0) {
                     for (const task of tasks) {
-                        await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData, "", task.isSelfCheck);
+                        await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData || "", task.fileName || "", task.isSelfCheck || false);
                     }
+                } else if (exam === "oge" && parseInt(num) === 7 && existing.length !== oge7Tasks.length) {
+                    // Обновляем 7 задание если количество не совпадает
+                    for (const t of existing) {
+                        await deleteDoc(doc(db, "tasks", t.id));
+                    }
+                    for (const task of tasks) {
+                        await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData || "", task.fileName || "", task.isSelfCheck || false);
+                    }
+                    tasksCache.delete(`${exam}_${num}`);
                 }
             }
         }
@@ -575,10 +559,7 @@
     
     async function getAllTasksForRandom() {
         const now = Date.now();
-        if (allTasksCache && (now - lastCacheUpdate) < CACHE_TTL) {
-            return allTasksCache;
-        }
-        
+        if (allTasksCache && (now - lastCacheUpdate) < CACHE_TTL) return allTasksCache;
         const allTasks = [];
         const examsToCheck = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
         for (const exam of examsToCheck) {
@@ -594,11 +575,8 @@
     }
     
     async function getRandomTaskForRandomizer() {
-        // Используем адаптивный алгоритм
         const task = await getAdaptiveRandomTask();
         if (task) return task;
-        
-        // Fallback: обычный случайный выбор
         const allTasks = await getAllTasksForRandom();
         const validTasks = allTasks.filter(t => !t.isSelfCheck);
         if (validTasks.length > 0) return validTasks[Math.floor(Math.random() * validTasks.length)];
@@ -612,16 +590,13 @@
             document.getElementById('randomExamBadge').innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
             document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
             document.getElementById('randomSelfCheckBadge').style.display = task.isSelfCheck ? 'inline-block' : 'none';
-            document.getElementById('randomQuestion').innerHTML = task.text;
+            document.getElementById('randomQuestion').innerHTML = task.text.replace(/\n/g, '<br>');
             const fileContainer = document.getElementById('randomFileContainer');
             fileContainer.innerHTML = '';
             if (task.fileData && task.fileData !== "") {
                 const isImage = task.fileData.startsWith('data:image');
-                if (isImage) {
-                    fileContainer.innerHTML = `<img src="${task.fileData}" class="question-image">`;
-                } else {
-                    fileContainer.innerHTML = `<a href="${task.fileData}" target="_blank" class="question-file" style="display:inline-block; padding:10px; background:#E0F2FE; border-radius:12px; text-decoration:none; color:#034694;"><i class="fas fa-download"></i> Скачать файл: ${task.fileName || 'вложение'}</a>`;
-                }
+                if (isImage) fileContainer.innerHTML = `<img src="${task.fileData}" class="question-image">`;
+                else fileContainer.innerHTML = `<a href="${task.fileData}" target="_blank" class="question-file"><i class="fas fa-download"></i> Скачать файл</a>`;
             } else if (task.imageUrl && task.imageUrl !== "") {
                 fileContainer.innerHTML = `<img src="${task.imageUrl}" class="question-image">`;
             }
@@ -673,10 +648,7 @@
         }
         answerHistory.push({ exam: currentRandomTask.exam, num: currentRandomTask.num, correct: isCorrect });
         if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { answerHistory, ogeCorrectHistory, egeCorrectHistory }, { merge: true });
-        
-        // Обновляем статистику для адаптивного алгоритма
         updateTaskSuccessStats();
-        
         updateChart();
         updateStats();
         setTimeout(() => updateRandomTask(), 1500);
@@ -686,10 +658,8 @@
         const variantSection = document.getElementById('variantSection');
         const variantContainer = document.getElementById('variantQuestions');
         variantContainer.innerHTML = '<div class="loading-spinner"></div> Генерация варианта...';
-        
         const examsToUse = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
         const allTasks = [];
-        
         for (const exam of examsToUse) {
             const maxNum = exam === 'oge' ? 16 : 27;
             for (let num = 1; num <= maxNum; num++) {
@@ -700,15 +670,12 @@
                 }
             }
         }
-        
         allTasks.sort((a, b) => {
             if (a.exam !== b.exam) return a.exam === 'oge' ? -1 : 1;
             return a.num - b.num;
         });
-        
         currentVariantTasks = allTasks;
         variantContainer.innerHTML = '';
-        
         if (allTasks.length === 0) {
             variantContainer.innerHTML = '<p>Нет заданий для генерации варианта</p>';
         } else {
@@ -716,17 +683,14 @@
                 let fileHtml = '';
                 if (task.fileData && task.fileData !== "") {
                     const isImage = task.fileData.startsWith('data:image');
-                    if (isImage) {
-                        fileHtml = `<img src="${task.fileData}" class="question-image">`;
-                    } else {
-                        fileHtml = `<a href="${task.fileData}" target="_blank" class="question-file" style="display:inline-block; padding:10px; background:#E0F2FE; border-radius:12px; text-decoration:none; color:#034694;"><i class="fas fa-download"></i> Скачать файл: ${task.fileName || 'вложение'}</a>`;
-                    }
+                    if (isImage) fileHtml = `<img src="${task.fileData}" class="question-image">`;
+                    else fileHtml = `<a href="${task.fileData}" target="_blank" class="question-file"><i class="fas fa-download"></i> Скачать файл</a>`;
                 } else if (task.imageUrl && task.imageUrl !== "") {
                     fileHtml = `<img src="${task.imageUrl}" class="question-image">`;
                 }
                 variantContainer.innerHTML += `
                     <div class="variant-question-item" data-task-id="${task.id}" data-answer="${task.answer}" data-is-self-check="${task.isSelfCheck}">
-                        <div class="question-text"><strong>${task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ'} №${task.num}</strong><br>${task.text}</div>
+                        <div class="question-text"><strong>${task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ'} №${task.num}</strong><br>${task.text.replace(/\n/g, '<br>')}</div>
                         ${fileHtml}
                         ${task.isSelfCheck ? '<div style="background:#FEF3C7; padding:8px; border-radius:8px; margin-top:8px; font-size:0.85rem;"><i class="fas fa-book-open"></i> Задание для самостоятельной проверки</div>' : ''}
                         <input type="text" class="answer-input" id="variantAnswer_${idx}" placeholder="Введите ответ..." ${task.isSelfCheck ? 'disabled' : ''}>
@@ -735,7 +699,6 @@
                 `;
             });
         }
-        
         variantSection.style.display = 'block';
         document.getElementById('variantContent').classList.add('show');
         document.getElementById('variantToggleIcon').className = 'fas fa-chevron-up';
@@ -745,7 +708,6 @@
         let correctCount = 0;
         let totalCheckable = 0;
         const newCorrectAnswers = [];
-        
         for (let i = 0; i < currentVariantTasks.length; i++) {
             const task = currentVariantTasks[i];
             if (task.isSelfCheck) continue;
@@ -772,8 +734,6 @@
                 }
             }
         }
-        
-        // Обновляем историю ответов
         for (const ans of newCorrectAnswers) {
             answerHistory.push(ans);
             if (ans.exam === 'oge') {
@@ -784,14 +744,10 @@
                 egeCorrectHistory.push(last + (ans.correct ? 1 : 0));
             }
         }
-        
         if (currentUser && newCorrectAnswers.length > 0) {
             await setDoc(doc(db, "users", currentUser.uid), { solvedTasks, answerHistory, ogeCorrectHistory, egeCorrectHistory }, { merge: true });
         }
-        
-        // Обновляем статистику для адаптивного алгоритма
         updateTaskSuccessStats();
-        
         const resultDiv = document.getElementById('variantResult');
         if (totalCheckable === 0) {
             resultDiv.innerHTML = `📖 В этом варианте только задания для самостоятельной проверки. Сверьтесь с ответами в каждом задании.`;
@@ -803,7 +759,6 @@
             resultDiv.style.color = correctCount === totalCheckable ? '#16a34a' : '#dc2626';
         }
         resultDiv.style.display = 'block';
-        
         await renderNumbersGrid();
         updateStats();
         updateChart();
@@ -816,18 +771,13 @@
         const grid = document.getElementById('numbersGrid');
         const maxNum = userExam === 'oge' ? 16 : 27;
         grid.innerHTML = '<div class="loading-spinner"></div> Загрузка заданий...';
-        
         const tasksData = await loadAllTasksForExam(userExam);
-        
-        // Обновляем статистику для отображения процента успеха
         updateTaskSuccessStats();
-        
         grid.innerHTML = '';
         for (let num = 1; num <= maxNum; num++) {
             const tasks = tasksData[num] || [];
             const solvedCount = tasks.filter(t => solvedTasks[`${userExam}_${num}_${t.id}`]).length;
             const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
-            
             const key = `${userExam}_${num}`;
             const stats = taskSuccessStats[key];
             let successRateHtml = '';
@@ -839,14 +789,12 @@
                 const rate = stats.correct === 1 ? 100 : 0;
                 successRateHtml = `<div class="success-rate" style="color:${rate === 100 ? '#10B981' : '#dc2626'};">📊 ${rate}%</div>`;
             }
-            
             grid.innerHTML += `<div class="number-card ${isFullySolved ? 'solved' : ''}" data-num="${num}">
                 <div class="num">№${num}</div>
                 <div class="count">${solvedCount}/${tasks.length}</div>
                 ${successRateHtml}
             </div>`;
         }
-        
         document.querySelectorAll('.number-card').forEach(card => {
             card.addEventListener('click', () => openTasksModal(userExam, parseInt(card.dataset.num)));
         });
@@ -865,16 +813,13 @@
             let fileHtml = '';
             if (task.fileData && task.fileData !== "") {
                 const isImage = task.fileData.startsWith('data:image');
-                if (isImage) {
-                    fileHtml = `<img src="${task.fileData}" class="task-image">`;
-                } else {
-                    fileHtml = `<a href="${task.fileData}" target="_blank" class="task-file" style="display:inline-block; padding:10px; background:#E0F2FE; border-radius:12px; text-decoration:none; color:#034694; margin:10px 0;"><i class="fas fa-download"></i> Скачать файл: ${task.fileName || 'вложение'}</a>`;
-                }
+                if (isImage) fileHtml = `<img src="${task.fileData}" class="task-image">`;
+                else fileHtml = `<a href="${task.fileData}" target="_blank" class="task-file"><i class="fas fa-download"></i> Скачать файл</a>`;
             } else if (task.imageUrl && task.imageUrl !== "") {
                 fileHtml = `<img src="${task.imageUrl}" class="task-image">`;
             }
             container.innerHTML += `<div class="task-item ${task.isSelfCheck ? 'self-check' : ''}" data-id="${task.id}">
-                <div class="task-text">${task.text}</div>
+                <div class="task-text">${task.text.replace(/\n/g, '<br>')}</div>
                 ${fileHtml}
                 <div class="task-answer">Ответ: ${task.answer}</div>
                 ${task.solution && task.solution !== "" ? `<div class="task-solution"><strong>📖 Решение:</strong> ${task.solution}</div>` : ''}
@@ -893,7 +838,6 @@
             document.getElementById('showAddFormBtn').style.display = 'none';
         }
         document.getElementById('tasksModal').classList.add('active');
-        
         document.querySelectorAll('.solve-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
