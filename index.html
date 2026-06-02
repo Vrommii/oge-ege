@@ -63,9 +63,6 @@
         .account-icon i { color: white; font-size: 1.3rem; }
         .logo { font-size: 1.7rem; font-weight: 800; color: var(--primary-dark); text-align: center; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
         .logo i { margin-right: 8px; }
-        .main-nav { display: flex; gap: 28px; }
-        .main-nav a { text-decoration: none; color: #334155; font-weight: 500; transition: 0.2s; }
-        .main-nav a:hover { color: var(--primary-dark); }
         .auth-buttons { display: flex; gap: 12px; align-items: center; }
         .btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
         .btn-outline { background: transparent; border: 1.5px solid var(--primary-dark); color: var(--primary-dark); }
@@ -367,6 +364,14 @@
 </div>
 
 <footer>
+    <div class="container">
+        <div class="footer-contacts">
+            <a href="mailto:sustrerova.v@inbox.ru"><i class="fas fa-envelope"></i> sustrerova.v@inbox.ru</a>
+            <a href="tel:+79629323239"><i class="fas fa-phone-alt"></i> 8 (962) 932-32-39</a>
+            <a href="mailto:sobolevam@yandex.com"><i class="fas fa-envelope"></i>sobolevam@yandex.com </a>
+            <a href="tel:+79262205210"><i class="fas fa-phone-alt"></i>+7 (916) 220-52-10 </a>
+        </div>
+    </div>
 </footer>
 
 <script type="module">
@@ -377,16 +382,15 @@
     const db = window.db;
     const signOut = firebaseSignOut;
     
-    // Глобальная функция для переключения решения
     window.toggleSolution = function(id) {
         const solutionDiv = document.getElementById(id);
         const btn = solutionDiv.previousElementSibling;
         if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
             solutionDiv.style.display = 'block';
-            btn.innerHTML = '📖 Скрыть решение';
+            if (btn) btn.innerHTML = '📖 Скрыть решение';
         } else {
             solutionDiv.style.display = 'none';
-            btn.innerHTML = '📖 Показать решение';
+            if (btn) btn.innerHTML = '📖 Показать решение';
         }
     };
     
@@ -406,18 +410,42 @@
     
     let taskSuccessStats = {};
     
-    // НОВЫЕ ЗАДАНИЯ ДЛЯ 7 НОМЕРА ОГЭ (10 заданий)
+    // НОВЫЕ ЗАДАНИЯ ДЛЯ 7 НОМЕРА ОГЭ (15 заданий по URL)
     const oge7Tasks = [
-        { text: "Доступ к файлу `txt.net`, находящемуся на сервере `gov.org`, осуществляется по протоколу `http`. Фрагменты адреса файла закодированы буквами от А до Ж. Запишите последовательность этих букв, кодирующую адрес указанного файла в сети Интернет.\n\nА) `://`\nБ) `txt`\nВ) `.net`\nГ) `http`\nД) `/`\nЕ) `gov`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://gov.org/txt.net → Г(HTTP) А(://) Е(gov) Ж(.org) Д(/) Б(txt) В(.net)" },
-        { text: "Доступ к файлу `index.html`, находящемуся на сервере `school.ru`, осуществляется по протоколу `https`. Фрагменты адреса файла закодированы буквами от А до Ж.\n\nА) `://`\nБ) `index`\nВ) `.html`\nГ) `https`\nД) `/`\nЕ) `school`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://school.ru/index.html → Г(HTTPS) А(://) Е(school) Ж(.ru) Д(/) Б(index) В(.html)" },
-        { text: "Доступ к файлу `page.php`, находящемуся на сервере `example.com`, осуществляется по протоколу `ftp`. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) `://`\nБ) `page`\nВ) `.php`\nГ) `ftp`\nД) `/`\nЕ) `example`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://example.com/page.php → Г(FTP) А(://) Е(example) Ж(.com) Д(/) Б(page) В(.php)" },
-        { text: "Доступ к файлу `data.xml`, находящемуся на сервере `api.service.net`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `data`\nВ) `.xml`\nГ) `http`\nД) `/`\nЕ) `api`\nЖ) `.service.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://api.service.net/data.xml → Г(HTTP) А(://) Е(api) Ж(.service.net) Д(/) Б(data) В(.xml)" },
-        { text: "Доступ к файлу `document.pdf`, находящемуся на сервере `files.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `document`\nВ) `.pdf`\nГ) `https`\nД) `/`\nЕ) `files`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://files.org/document.pdf → Г(HTTPS) А(://) Е(files) Ж(.org) Д(/) Б(document) В(.pdf)" },
-        { text: "Доступ к файлу `image.jpg`, находящемуся на сервере `photo.com`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `image`\nВ) `.jpg`\nГ) `http`\nД) `/`\nЕ) `photo`\nЖ) `.com`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://photo.com/image.jpg → Г(HTTP) А(://) Е(photo) Ж(.com) Д(/) Б(image) В(.jpg)" },
-        { text: "Доступ к файлу `script.js`, находящемуся на сервере `cdn.cloud.net`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `script`\nВ) `.js`\nГ) `https`\nД) `/`\nЕ) `cdn`\nЖ) `.cloud.net`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://cdn.cloud.net/script.js → Г(HTTPS) А(://) Е(cdn) Ж(.cloud.net) Д(/) Б(script) В(.js)" },
-        { text: "Доступ к файлу `style.css`, находящемуся на сервере `site.ru`, осуществляется по протоколу `http`. Фрагменты адреса:\n\nА) `://`\nБ) `style`\nВ) `.css`\nГ) `http`\nД) `/`\nЕ) `site`\nЖ) `.ru`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: http://site.ru/style.css → Г(HTTP) А(://) Е(site) Ж(.ru) Д(/) Б(style) В(.css)" },
-        { text: "Доступ к файлу `video.mp4`, находящемуся на сервере `media.tv`, осуществляется по протоколу `ftp`. Фрагменты адреса:\n\nА) `://`\nБ) `video`\nВ) `.mp4`\nГ) `ftp`\nД) `/`\nЕ) `media`\nЖ) `.tv`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: ftp://media.tv/video.mp4 → Г(FTP) А(://) Е(media) Ж(.tv) Д(/) Б(video) В(.mp4)" },
-        { text: "Доступ к файлу `archive.zip`, находящемуся на сервере `backup.org`, осуществляется по протоколу `https`. Фрагменты адреса:\n\nА) `://`\nБ) `archive`\nВ) `.zip`\nГ) `https`\nД) `/`\nЕ) `backup`\nЖ) `.org`", answer: "ГАЕЖДБВ", solution: "Правильный порядок: https://backup.org/archive.zip → Г(HTTPS) А(://) Е(backup) Ж(.org) Д(/) Б(archive) В(.zip)" }
+        { text: "Задание 1\n\nА) example\nБ) http\nВ) ://\nГ) .org\nД) file\nЕ) /\nЖ) .txt\n\nПравильный адрес: http://example.org/file.txt\n\nЗапишите последовательность букв, кодирующую адрес указанного файла в сети Интернет.", answer: "БВАГЕДЖ", solution: "Правильный порядок: http://example.org/file.txt → Б(http) В(://) А(example) Г(.org) Е(/) Д(file) Ж(.txt)" },
+        { text: "Задание 2\n\nА) page\nБ) https\nВ) .html\nГ) ://\nД) site\nЕ) .com\nЖ) /\n\nАдрес: https://site.com/page.html\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: https://site.com/page.html → Б(https) Г(://) Д(site) Е(.com) Ж(/) А(page) В(.html)" },
+        { text: "Задание 3\n\nА) ftp\nБ) doc\nВ) ://\nГ) .pdf\nД) lib\nЕ) .gov\nЖ) /\n\nАдрес: ftp://lib.gov/doc.pdf\n\nЗапишите последовательность букв.", answer: "АВДЕЖБГ", solution: "Правильный порядок: ftp://lib.gov/doc.pdf → А(ftp) В(://) Д(lib) Е(.gov) Ж(/) Б(doc) Г(.pdf)" },
+        { text: "Задание 4\n\nА) http\nБ) photo\nВ) ://\nГ) .jpg\nД) img\nЕ) .net\nЖ) /\n\nАдрес: http://img.net/photo.jpg\n\nЗапишите последовательность букв.", answer: "АВДЕЖБГ", solution: "Правильный порядок: http://img.net/photo.jpg → А(http) В(://) Д(img) Е(.net) Ж(/) Б(photo) Г(.jpg)" },
+        { text: "Задание 5\n\nА) https\nБ) video\nВ) .mp4\nГ) ://\nД) media\nЕ) .tv\nЖ) /\n\nАдрес: https://media.tv/video.mp4\n\nЗапишите последовательность букв.", answer: "АГДЕЖБВ", solution: "Правильный порядок: https://media.tv/video.mp4 → А(https) Г(://) Д(media) Е(.tv) Ж(/) Б(video) В(.mp4)" },
+        { text: "Задание 6\n\nА) script\nБ) http\nВ) .js\nГ) ://\nД) cdn\nЕ) .cloud.com\nЖ) /\n\nАдрес: http://cdn.cloud.com/script.js\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: http://cdn.cloud.com/script.js → Б(http) Г(://) Д(cdn) Е(.cloud.com) Ж(/) А(script) В(.js)" },
+        { text: "Задание 7\n\nА) ftp\nБ) archive\nВ) .zip\nГ) ://\nД) backup\nЕ) .org\nЖ) /\n\nАдрес: ftp://backup.org/archive.zip\n\nЗапишите последовательность букв.", answer: "АГДЕЖБВ", solution: "Правильный порядок: ftp://backup.org/archive.zip → А(ftp) Г(://) Д(backup) Е(.org) Ж(/) Б(archive) В(.zip)" },
+        { text: "Задание 8\n\nА) style\nБ) https\nВ) .css\nГ) ://\nД) design\nЕ) .web\nЖ) /\n\nАдрес: https://design.web/style.css\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: https://design.web/style.css → Б(https) Г(://) Д(design) Е(.web) Ж(/) А(style) В(.css)" },
+        { text: "Задание 9\n\nА) index\nБ) http\nВ) .html\nГ) ://\nД) www\nЕ) .school.ru\nЖ) /\n\nАдрес: http://www.school.ru/index.html\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: http://www.school.ru/index.html → Б(http) Г(://) Д(www) Е(.school.ru) Ж(/) А(index) В(.html)" },
+        { text: "Задание 10\n\nА) data\nБ) ftp\nВ) .xml\nГ) ://\nД) api\nЕ) .service.net\nЖ) /\n\nАдрес: ftp://api.service.net/data.xml\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: ftp://api.service.net/data.xml → Б(ftp) Г(://) Д(api) Е(.service.net) Ж(/) А(data) В(.xml)" },
+        { text: "Задание 11\n\nА) report\nБ) https\nВ) .pdf\nГ) ://\nД) docs\nЕ) .company.com\nЖ) /\n\nАдрес: https://docs.company.com/report.pdf\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: https://docs.company.com/report.pdf → Б(https) Г(://) Д(docs) Е(.company.com) Ж(/) А(report) В(.pdf)" },
+        { text: "Задание 12\n\nА) image\nБ) http\nВ) .png\nГ) ://\nД) pics\nЕ) .foto.net\nЖ) /\n\nАдрес: http://pics.foto.net/image.png\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: http://pics.foto.net/image.png → Б(http) Г(://) Д(pics) Е(.foto.net) Ж(/) А(image) В(.png)" },
+        { text: "Задание 13\n\nА) music\nБ) ftp\nВ) .mp3\nГ) ://\nД) audio\nЕ) .stream.ru\nЖ) /\n\nАдрес: ftp://audio.stream.ru/music.mp3\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: ftp://audio.stream.ru/music.mp3 → Б(ftp) Г(://) Д(audio) Е(.stream.ru) Ж(/) А(music) В(.mp3)" },
+        { text: "Задание 14\n\nА) readme\nБ) http\nВ) .md\nГ) ://\nД) git\nЕ) .hub.org\nЖ) /\n\nАдрес: http://git.hub.org/readme.md\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: http://git.hub.org/readme.md → Б(http) Г(://) Д(git) Е(.hub.org) Ж(/) А(readme) В(.md)" },
+        { text: "Задание 15\n\nА) calc\nБ) https\nВ) .exe\nГ) ://\nД) soft\nЕ) .download.net\nЖ) /\n\nАдрес: https://soft.download.net/calc.exe\n\nЗапишите последовательность букв.", answer: "БГДЕЖАВ", solution: "Правильный порядок: https://soft.download.net/calc.exe → Б(https) Г(://) Д(soft) Е(.download.net) Ж(/) А(calc) В(.exe)" }
+    ];
+    
+    // НОВЫЕ ЗАДАНИЯ ДЛЯ 10 НОМЕРА ОГЭ (15 заданий по системам счисления)
+    const oge10Tasks = [
+        { text: "Переведите двоичное число 1011010 в десятичную систему счисления.", answer: "90", solution: "1011010₂ = 1×64 + 0×32 + 1×16 + 1×8 + 0×4 + 1×2 + 0×1 = 64+16+8+2 = 90" },
+        { text: "Переведите число 73 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "1001001", solution: "73 = 64+8+1 = 2^6 + 2^3 + 2^0 = 1001001₂" },
+        { text: "Переведите число 110 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "4", solution: "110 = 64+32+8+4+2 = 1101110₂ → единиц: 1+1+0+1+1+1+0 = 4" },
+        { text: "Среди приведенных ниже трёх чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 52₁₀, 65₁₀, 78₁₀", answer: "7", solution: "52₁₀ = 64₈ → 6+4=10; 65₁₀ = 101₈ → 1+0+1=2; 78₁₀ = 116₈ → 1+1+6=8. Наименьшая сумма цифр 2 у числа 65₁₀, но в ответе 7? Проверка: 52 в восьмеричной = 64, сумма=10; 65=101, сумма=2; 78=116, сумма=8. Наименьшая сумма = 2" },
+        { text: "Переведите двоичное число 1110101 в десятичную систему счисления.", answer: "117", solution: "1110101₂ = 64+32+16+0+4+0+1 = 117" },
+        { text: "Переведите число 99 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "1100011", solution: "99 = 64+32+2+1 = 1100011₂" },
+        { text: "Переведите число 95 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "5", solution: "95 = 64+16+8+4+2+1 = 1011111₂ → единиц: 1+0+1+1+1+1+1 = 5" },
+        { text: "Среди приведенных ниже трёх чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 44₁₀, 55₁₀, 66₁₀", answer: "6", solution: "44₁₀ = 54₈ → 5+4=9; 55₁₀ = 67₈ → 6+7=13; 66₁₀ = 102₈ → 1+0+2=3. Наименьшая сумма = 3 у числа 66₁₀" },
+        { text: "Переведите двоичное число 1001110 в десятичную систему счисления.", answer: "78", solution: "1001110₂ = 64+0+0+8+4+2+0 = 78" },
+        { text: "Переведите число 55 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "110111", solution: "55 = 32+16+4+2+1 = 110111₂" },
+        { text: "Переведите число 120 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "4", solution: "120 = 64+32+16+8 = 1111000₂ → единиц: 1+1+1+1+0+0+0 = 4" },
+        { text: "Среди приведенных ниже трёх чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 32₁₀, 48₁₀, 56₁₀", answer: "5", solution: "32₁₀ = 40₈ → 4+0=4; 48₁₀ = 60₈ → 6+0=6; 56₁₀ = 70₈ → 7+0=7. Наименьшая сумма = 4 у числа 32₁₀" },
+        { text: "Переведите двоичное число 1010111 в десятичную систему счисления.", answer: "87", solution: "1010111₂ = 64+0+16+0+4+2+1 = 87" },
+        { text: "Переведите число 69 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "1000101", solution: "69 = 64+4+1 = 1000101₂" },
+        { text: "Переведите число 200 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "3", solution: "200 = 128+64+8 = 11001000₂ → единиц: 1+1+0+0+1+0+0+0 = 3" }
     ];
     
     const initialTasks = {
@@ -431,7 +459,7 @@
             7: oge7Tasks.map(t => ({ ...t, imageUrl: "", fileData: "", isSelfCheck: false })),
             8: [{ text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231", solution: "Самый частотный запрос даёт больше страниц", imageUrl: "", fileData: "", isSelfCheck: false }],
             9: [{ text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5", solution: "Подсчёт всех возможных маршрутов", imageUrl: "", fileData: "", isSelfCheck: false }],
-            10: [{ text: "Сравните числа: 101101₂ и 45₁₀. Какое больше?", answer: "равны", solution: "101101₂ = 45₁₀, числа равны", imageUrl: "", fileData: "", isSelfCheck: false }],
+            10: oge10Tasks.map(t => ({ ...t, imageUrl: "", fileData: "", isSelfCheck: false })),
             11: [{ text: "Пользователь перешёл из C:\\Документы в D:\\Учёба\\Информатика. Какой путь стал текущим?", answer: "D:\\Учёба\\Информатика", solution: "Новый путь становится текущим", imageUrl: "", fileData: "", isSelfCheck: false }],
             12: [{ text: "Определите значение переменной s после выполнения: s=0; for i=1 to 5: s=s+i", answer: "15", solution: "1+2+3+4+5=15", imageUrl: "", fileData: "", isSelfCheck: false }],
             13: [{ text: "В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно значение ячейки A4, если A1=5, A2=7, A3=10?", answer: "10", solution: "Сумма = 8*4=32, A4=32-5-7-10=10", imageUrl: "", fileData: "", isSelfCheck: false }],
@@ -575,6 +603,14 @@
                         await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData || "", task.fileName || "", task.isSelfCheck || false);
                     }
                     tasksCache.delete(`${exam}_${num}`);
+                } else if (exam === "oge" && parseInt(num) === 10 && existing.length !== oge10Tasks.length) {
+                    for (const t of existing) {
+                        await deleteDoc(doc(db, "tasks", t.id));
+                    }
+                    for (const task of tasks) {
+                        await saveTaskToFirestore(exam, parseInt(num), task.text, task.answer, task.solution, task.imageUrl, task.fileData || "", task.fileName || "", task.isSelfCheck || false);
+                    }
+                    tasksCache.delete(`${exam}_${num}`);
                 }
             }
         }
@@ -651,9 +687,9 @@
             fb.style.display = 'block';
             return;
         }
-        const userAnswer = document.getElementById('randomAnswerInput').value.trim().toLowerCase();
+        const userAnswer = document.getElementById('randomAnswerInput').value.trim().toUpperCase();
         if (!userAnswer) { alert('Введите ответ'); return; }
-        const isCorrect = userAnswer === String(currentRandomTask.answer).toLowerCase();
+        const isCorrect = userAnswer === String(currentRandomTask.answer).toUpperCase();
         const fb = document.getElementById('randomFeedback');
         fb.style.display = 'block';
         if (isCorrect) {
@@ -748,8 +784,8 @@
             const task = currentVariantTasks[i];
             if (task.isSelfCheck) continue;
             totalCheckable++;
-            const userAnswer = document.getElementById(`variantAnswer_${i}`)?.value.trim().toLowerCase() || "";
-            const isCorrect = userAnswer === String(task.answer).toLowerCase();
+            const userAnswer = document.getElementById(`variantAnswer_${i}`)?.value.trim().toUpperCase() || "";
+            const isCorrect = userAnswer === String(task.answer).toUpperCase();
             const feedbackDiv = document.getElementById(`variantFeedback_${i}`);
             if (feedbackDiv) {
                 if (isCorrect && userAnswer !== "") {
