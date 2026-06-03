@@ -6,143 +6,91 @@
     <title>IT-Track — Подготовка к ЕГЭ/ОГЭ по информатике</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Inter', sans-serif; }
-        :root {
-            --primary: #0EA5E9;
-            --primary-dark: #034694;
-            --primary-light: #BAE6FD;
-            --white: #ffffff;
-            --shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
-        }
-        body { background: #F8FAFE; color: #0F172A; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        
-        header { background: var(--white); box-shadow: var(--shadow); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
-        .header-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; position: relative; }
-        .logo-area { display: flex; align-items: center; gap: 12px; width: 120px; }
-        .account-icon { background: #034694; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .account-icon:hover { transform: scale(1.05); background: #023a7a; }
-        .account-icon i { color: white; font-size: 1.3rem; }
-        .logo { font-size: 1.7rem; font-weight: 800; color: var(--primary-dark); text-align: center; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
-        .logo i { margin-right: 8px; }
-        .auth-buttons { display: flex; gap: 12px; align-items: center; }
-        .btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
-        .btn-outline { background: transparent; border: 1.5px solid var(--primary-dark); color: var(--primary-dark); }
-        .btn-primary { background: var(--primary-dark); color: white; }
-        .btn-primary:hover { background: #023a7a; }
-        .logout-btn { background: #dc2626; color: white; }
-        .logout-btn:hover { background: #b91c1c; }
-        .user-email { font-size: 12px; color: #666; background: #f1f5f9; padding: 5px 12px; border-radius: 20px; }
-        
-        .tagline-wrapper { position: fixed; top: 80px; left: 0; right: 0; z-index: 99; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
-        .tagline-wrapper.hide { opacity: 0; transform: translateY(-100%); visibility: hidden; }
-        .tagline-block { text-align: center; margin: 0 auto; max-width: 1200px; padding: 0 20px; }
-        .tagline-main { background: rgba(141, 216, 247, 0.75); color: #034694; padding: 10px 24px; border-radius: 10px; display: inline-block; font-weight: 700; font-size: 1.1rem; backdrop-filter: blur(2px); }
-        .tagline-description { background: rgba(141, 216, 247, 0.75); color: #034694; padding: 8px 20px; border-radius: 10px; max-width: 950px; margin: 8px auto 0; font-size: 0.7rem; line-height: 1.4; backdrop-filter: blur(2px); }
-        .content-offset { margin-top: 110px; }
-        
-        .random-section { background: rgba(141, 219, 248, 0.75); border-radius: 28px; padding: 35px 30px; margin: 30px 0; text-align: center; }
-        .random-header h3 { font-size: 1.6rem; color: var(--primary-dark); margin-bottom: 15px; }
-        .random-description { font-size: 0.9rem; color: #034694; margin-bottom: 25px; }
-        .btn-random { background: #034694; color: white; border: none; padding: 14px 80px; border-radius: 60px; font-weight: 700; cursor: pointer; font-size: 1rem; min-width: 320px; }
-        .btn-random:hover { background: #023a7a; }
-        .task-card { background: white; padding: 25px; border-radius: 24px; margin-top: 25px; text-align: left; }
-        .task-card .meta { display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
-        .task-card .meta span { background: #E0F2FE; padding: 5px 15px; border-radius: 30px; font-weight: 600; color: #034694; }
-        .task-card .meta .self-check-badge { background: #F59E0B; color: white; }
-        .task-card .question { font-size: 17px; line-height: 1.5; margin: 15px 0; background: #F8FAFE; padding: 18px; border-radius: 16px; white-space: pre-wrap; }
-        .task-card .question-image, .task-card .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
-        .solution-wrapper { margin-top: 10px; }
-        .btn-solution { background: #8B5CF6; color: white; border: none; padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: 0.2s; margin-top: 10px; }
-        .btn-solution:hover { background: #7C3AED; transform: scale(1.02); }
-        .solution-content { background: #E0F2FE; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 14px; display: none; }
-        .answer-area { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
-        .answer-area input { flex: 2; padding: 12px 18px; border-radius: 60px; border: 2px solid #BAE6FD; outline: none; font-size: 1rem; min-width: 200px; background: #8DD8F7; }
-        .answer-area input:focus { border-color: #034694; background: #a8e0f9; }
-        .answer-area button { background: #034694; color: white; border: none; padding: 12px 40px; border-radius: 60px; font-weight: 700; cursor: pointer; }
-        .feedback { margin-top: 15px; padding: 12px; border-radius: 12px; display: none; text-align: center; font-weight: bold; }
-        .btn-generate-variant { background: white; color: #034694; border: none; padding: 20px 40px; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 25px; }
-        .btn-generate-variant:hover { background: #f0f0f0; transform: translateY(-2px); }
-        
-        .variant-section { background: white; border-radius: 24px; padding: 25px; margin-top: 25px; text-align: left; }
-        .variant-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 15px; }
-        .variant-header h4 { color: #034694; font-size: 1.2rem; margin: 0; }
-        .variant-header i { font-size: 1.2rem; color: #034694; transition: transform 0.3s; }
-        .variant-content { display: none; }
-        .variant-content.show { display: block; }
-        .variant-questions { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
-        .variant-question-item { background: #F8FAFE; padding: 15px; border-radius: 16px; border-left: 4px solid #034694; }
-        .variant-question-item .question-text { font-weight: 500; margin-bottom: 8px; white-space: pre-wrap; }
-        .variant-question-item .question-image, .variant-question-item .question-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
-        .variant-question-item .answer-input { width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #BAE6FD; border-radius: 12px; outline: none; background: #8DD8F7; }
-        .variant-question-item .feedback-individual { font-size: 0.85rem; margin-top: 8px; display: none; }
-        .variant-question-item .btn-solution-small { background: #8B5CF6; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.75rem; margin-top: 8px; }
-        .variant-question-item .solution-small { background: #E0F2FE; padding: 10px; border-radius: 10px; margin-top: 8px; font-size: 0.85rem; display: none; }
-        .check-variant-btn { background: #10B981; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; }
-        .variant-result { margin-top: 15px; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; display: none; }
-        
-        .numbers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; margin-bottom: 30px; }
-        .number-card { background: white; border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.2s; border: 2px solid #BAE6FD; }
-        .number-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #034694; }
-        .number-card .num { font-size: 1.3rem; font-weight: 800; color: #034694; }
-        .number-card .count { font-size: 0.7rem; color: #666; margin-top: 5px; }
-        .number-card .success-rate { font-size: 0.65rem; color: #034694; margin-top: 3px; }
-        .number-card.solved { background: #D1FAE5; border-color: #10B981; }
-        
-        .exam-selector { display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; }
-        .exam-btn-main { padding: 12px 40px; font-size: 1.2rem; border-radius: 60px; border: none; cursor: pointer; font-weight: 700; transition: 0.2s; }
-        .exam-btn-main.oge-active { background: #034694; color: white; }
-        .exam-btn-main.oge-inactive { background: #ccc; color: #666; }
-        .exam-btn-main.ege-active { background: #EF4444; color: white; }
-        .exam-btn-main.ege-inactive { background: #ccc; color: #666; }
-        
-        .toggle-switch { display: flex; align-items: center; justify-content: space-between; background: white; padding: 15px 20px; border-radius: 16px; margin-top: 15px; }
-        .toggle-switch label { font-weight: 600; color: #034694; cursor: pointer; }
-        .toggle-switch input { width: 20px; height: 20px; cursor: pointer; }
-        
-        .tasks-modal { max-width: 700px; max-height: 80vh; overflow-y: auto; }
-        .task-item { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #034694; }
-        .task-item.self-check { border-left-color: #F59E0B; background: #FFFBEB; }
-        .task-item .task-text { margin-bottom: 8px; white-space: pre-wrap; }
-        .task-item .task-image, .task-item .task-file { max-width: 100%; margin: 10px 0; border-radius: 12px; }
-        .task-item .task-solution-wrapper { margin-top: 10px; }
-        .task-item .task-solution-btn { background: #8B5CF6; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.75rem; }
-        .task-item .task-solution-content { background: #E0F2FE; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; display: none; }
-        .task-item .task-answer { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
-        .task-item .task-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .self-check-label { background: #F59E0B; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; display: inline-block; margin-left: 10px; }
-        .btn-small { padding: 5px 12px; font-size: 0.8rem; border-radius: 20px; border: none; cursor: pointer; }
-        .solve-btn { background: #10B981; color: white; }
-        .delete-btn { background: #dc2626; color: white; }
-        .add-task-btn { background: #034694; color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; }
-        .add-task-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; }
-        .add-task-form textarea, .add-task-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1.5px solid #BAE6FD; border-radius: 12px; outline: none; }
-        .add-task-form .checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        
-        .stats-chart { background: white; border-radius: 24px; padding: 20px; margin: 30px 0; }
-        .chart-wrapper { height: 240px; margin: 20px 0; }
-        .stats-grid { display: flex; gap: 15px; flex-wrap: wrap; }
-        .stat-card { background: #F1F5F9; padding: 12px 18px; border-radius: 20px; flex: 1; text-align: center; }
-        .stat-card .value { font-size: 1.6rem; font-weight: 800; color: #034694; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.2s; z-index: 1000; }
-        .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal { background: white; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 25px; border-radius: 24px; position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; }
-        .modal h3 { color: #034694; margin-bottom: 10px; }
-        
-        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #034694; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        @media (max-width: 768px) { 
-            .numbers-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,'Segoe UI','Inter',sans-serif;}
+        :root{--primary:#0EA5E9;--primary-dark:#034694;--white:#fff;}
+        body{background:#F8FAFE;}
+        .container{max-width:1200px;margin:0 auto;padding:0 20px;}
+        header{background:var(--white);box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:16px 0;position:sticky;top:0;z-index:100;}
+        .header-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;position:relative;}
+        .logo-area{width:120px;}
+        .account-icon{background:#034694;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+        .account-icon i{color:white;font-size:1.3rem;}
+        .logo{font-size:1.7rem;font-weight:800;color:#034694;text-align:center;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;}
+        .logo i{margin-right:8px;}
+        .auth-buttons{display:flex;gap:12px;align-items:center;}
+        .btn{padding:8px 20px;border-radius:40px;font-weight:600;cursor:pointer;border:none;}
+        .btn-outline{background:transparent;border:1.5px solid #034694;color:#034694;}
+        .btn-primary{background:#034694;color:white;}
+        .logout-btn{background:#dc2626;color:white;}
+        .user-email{font-size:12px;color:#666;background:#f1f5f9;padding:5px 12px;border-radius:20px;}
+        .random-section{background:rgba(141,219,248,0.75);border-radius:28px;padding:35px 30px;margin:30px 0;text-align:center;}
+        .random-header h3{font-size:1.6rem;color:#034694;margin-bottom:15px;}
+        .random-description{font-size:0.9rem;color:#034694;margin-bottom:25px;}
+        .btn-random{background:#034694;color:white;border:none;padding:14px 80px;border-radius:60px;font-weight:700;cursor:pointer;font-size:1rem;}
+        .task-card{background:white;padding:25px;border-radius:24px;margin-top:25px;text-align:left;}
+        .task-card .meta{display:flex;gap:15px;margin-bottom:15px;justify-content:center;}
+        .task-card .meta span{background:#E0F2FE;padding:5px 15px;border-radius:30px;font-weight:600;color:#034694;}
+        .task-card .question{font-size:17px;line-height:1.5;margin:15px 0;background:#F8FAFE;padding:18px;border-radius:16px;white-space:pre-wrap;}
+        .btn-solution{background:#8B5CF6;color:white;border:none;padding:8px 20px;border-radius:30px;font-weight:600;cursor:pointer;margin-top:10px;}
+        .solution-content{background:#E0F2FE;padding:12px;border-radius:12px;margin-top:10px;font-size:14px;display:none;}
+        .answer-area{display:flex;gap:10px;margin-top:15px;justify-content:center;}
+        .answer-area input{flex:2;padding:12px 18px;border-radius:60px;border:2px solid #BAE6FD;outline:none;font-size:1rem;background:#8DD8F7;}
+        .answer-area button{background:#034694;color:white;border:none;padding:12px 40px;border-radius:60px;font-weight:700;cursor:pointer;}
+        .feedback{margin-top:15px;padding:12px;border-radius:12px;display:none;text-align:center;font-weight:bold;}
+        .btn-generate-variant{background:white;color:#034694;border:none;padding:20px 40px;border-radius:10px;font-weight:700;font-size:1.1rem;cursor:pointer;width:100%;margin-top:25px;}
+        .variant-section{background:white;border-radius:24px;padding:25px;margin-top:25px;text-align:left;}
+        .variant-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:15px;}
+        .variant-header h4{color:#034694;font-size:1.2rem;}
+        .variant-header i{font-size:1.2rem;color:#034694;transition:transform 0.3s;}
+        .variant-content{display:none;}
+        .variant-content.show{display:block;}
+        .variant-questions{display:flex;flex-direction:column;gap:20px;margin-bottom:20px;}
+        .variant-question-item{background:#F8FAFE;padding:15px;border-radius:16px;border-left:4px solid #034694;}
+        .variant-question-item .question-text{font-weight:500;margin-bottom:8px;white-space:pre-wrap;}
+        .variant-question-item .answer-input{width:100%;padding:10px;margin-top:10px;border:2px solid #BAE6FD;border-radius:12px;outline:none;background:#8DD8F7;}
+        .variant-question-item .feedback-individual{font-size:0.85rem;margin-top:8px;display:none;}
+        .variant-question-item .btn-solution-small{background:#8B5CF6;color:white;border:none;padding:5px 15px;border-radius:20px;font-weight:600;cursor:pointer;font-size:0.75rem;margin-top:8px;}
+        .variant-question-item .solution-small{background:#E0F2FE;padding:10px;border-radius:10px;margin-top:8px;font-size:0.85rem;display:none;}
+        .check-variant-btn{background:#10B981;color:white;border:none;padding:12px 30px;border-radius:30px;font-weight:700;cursor:pointer;width:100%;margin-top:15px;}
+        .variant-result{margin-top:15px;padding:12px;border-radius:12px;text-align:center;font-weight:bold;display:none;}
+        .numbers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:12px;margin-bottom:30px;}
+        .number-card{background:white;border-radius:12px;padding:15px 5px;text-align:center;cursor:pointer;border:2px solid #BAE6FD;}
+        .number-card:hover{transform:translateY(-3px);border-color:#034694;}
+        .number-card .num{font-size:1.3rem;font-weight:800;color:#034694;}
+        .number-card .count{font-size:0.7rem;color:#666;margin-top:5px;}
+        .number-card.solved{background:#D1FAE5;border-color:#10B981;}
+        .exam-selector{display:flex;gap:20px;justify-content:center;margin-bottom:30px;}
+        .exam-btn-main{padding:12px 40px;font-size:1.2rem;border-radius:60px;border:none;cursor:pointer;font-weight:700;}
+        .exam-btn-main.oge-active{background:#034694;color:white;}
+        .exam-btn-main.oge-inactive{background:#ccc;color:#666;}
+        .exam-btn-main.ege-active{background:#EF4444;color:white;}
+        .exam-btn-main.ege-inactive{background:#ccc;color:#666;}
+        .toggle-switch{display:flex;align-items:center;justify-content:space-between;background:white;padding:15px 20px;border-radius:16px;margin-top:15px;}
+        .tasks-modal{max-width:700px;max-height:80vh;overflow-y:auto;}
+        .task-item{background:#f8fafc;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #034694;}
+        .task-item .task-text{white-space:pre-wrap;}
+        .task-item .task-solution-btn{background:#8B5CF6;color:white;border:none;padding:5px 15px;border-radius:20px;cursor:pointer;font-size:0.75rem;}
+        .task-item .task-solution-content{background:#E0F2FE;padding:10px;border-radius:8px;margin-top:10px;font-size:0.85rem;display:none;}
+        .task-item .task-answer{font-size:0.85rem;color:#666;margin-bottom:10px;}
+        .btn-small{padding:5px 12px;font-size:0.8rem;border-radius:20px;border:none;cursor:pointer;}
+        .solve-btn{background:#10B981;color:white;}
+        .stats-chart{background:white;border-radius:24px;padding:20px;margin:30px 0;}
+        .chart-wrapper{height:240px;margin:20px 0;}
+        .stats-grid{display:flex;gap:15px;}
+        .stat-card{background:#F1F5F9;padding:12px 18px;border-radius:20px;flex:1;text-align:center;}
+        .stat-card .value{font-size:1.6rem;font-weight:800;color:#034694;}
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:0.2s;z-index:1000;}
+        .modal-overlay.active{visibility:visible;opacity:1;}
+        .modal{background:white;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;padding:25px;border-radius:24px;position:relative;}
+        .close-btn{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;}
+        .modal h3{color:#034694;margin-bottom:10px;}
+        .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #034694;border-radius:50%;animation:spin 1s linear infinite;}
+        @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+        @media (max-width:768px){.numbers-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));}}
     </style>
 </head>
 <body>
-
 <header>
     <div class="container header-inner">
         <div class="logo-area"><div class="account-icon" id="accountIconBtn"><i class="fas fa-user"></i></div></div>
@@ -151,25 +99,17 @@
             <button class="btn btn-outline" id="loginBtn">Войти</button>
             <button class="btn btn-primary" id="openRegisterBtn">Создать аккаунт</button>
         </div>
-        <div class="auth-buttons" id="userInfo" style="display: none;">
+        <div class="auth-buttons" id="userInfo" style="display:none;">
             <span class="user-email" id="userEmail"></span>
             <button class="btn logout-btn" id="logoutBtn">Выйти</button>
         </div>
     </div>
 </header>
 
-<div class="tagline-wrapper" id="taglineWrapper">
-    <div class="container"><div class="tagline-block"><div class="tagline-main">ПЕРСОНАЛЬНЫЕ ТРЕК-ЛИСТЫ ДЛЯ ПОДГОТОВКИ ОГЭ/ЕГЭ</div>
-    <div class="tagline-description">Сервис автоматизирует подготовку к ОГЭ/ЕГЭ по информатике через адаптивные учебные планы — индивидуальные трек-листы.</div></div></div>
-</div>
-
 <div class="content-offset" id="mainContent">
     <div class="container">
         <section class="stats-chart">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                <h3>Динамика успеваемости</h3>
-                <span style="font-size:13px;">Правильные ответы (ОГЭ — синий, ЕГЭ — красный)</span>
-            </div>
+            <h3>Динамика успеваемости</h3>
             <div class="chart-wrapper"><canvas id="progressChart"></canvas></div>
             <div class="stats-grid">
                 <div class="stat-card"><div class="label">Лучше всего</div><div class="value" id="bestTask">—</div></div>
@@ -180,29 +120,24 @@
 
         <section class="random-section">
             <div class="random-header"><h3>Рандомное задание</h3>
-            <div class="random-description">Нажми на кнопку - получи случайную задачу! Адаптивный трек меняет сложность в зависимости от твоих ответов</div></div>
+            <div class="random-description">Адаптивный трек меняет сложность в зависимости от твоих ответов</div></div>
             <button class="btn-random" id="getRandomBtn">Выдать случайное задание</button>
             <div class="task-card" id="randomTaskCard">
-                <div class="meta"><span id="randomExamBadge">ОГЭ</span><span id="randomNumBadge">Задание №1</span><span id="randomSelfCheckBadge" class="self-check-badge" style="display:none;">📖 Самопроверка</span></div>
-                <div class="question" id="randomQuestion">Нажмите кнопку, чтобы получить задание</div>
-                <div id="randomFileContainer"></div>
+                <div class="meta"><span id="randomExamBadge">ОГЭ</span><span id="randomNumBadge">Задание №1</span></div>
+                <div class="question" id="randomQuestion">Нажмите кнопку</div>
                 <div class="solution-wrapper" id="randomSolutionWrapper" style="display:none;">
                     <button class="btn-solution" id="toggleRandomSolutionBtn">📖 Показать решение</button>
                     <div class="solution-content" id="randomSolution"></div>
                 </div>
-                <div class="answer-area"><input type="text" id="randomAnswerInput" placeholder="Введите ваш ответ..."><button id="checkRandomBtn">Проверить</button></div>
+                <div class="answer-area"><input type="text" id="randomAnswerInput" placeholder="Введите ответ..."><button id="checkRandomBtn">Проверить</button></div>
                 <div class="feedback" id="randomFeedback"></div>
             </div>
             <button class="btn-generate-variant" id="generateVariantBtn">Сгенерировать вариант</button>
-            
             <div class="variant-section" id="variantSection" style="display:none;">
-                <div class="variant-header" id="variantHeader">
-                    <h4><i class="fas fa-list"></i> Сгенерированный вариант</h4>
-                    <i class="fas fa-chevron-down" id="variantToggleIcon"></i>
-                </div>
+                <div class="variant-header" id="variantHeader"><h4><i class="fas fa-list"></i> Вариант</h4><i class="fas fa-chevron-down" id="variantToggleIcon"></i></div>
                 <div class="variant-content" id="variantContent">
                     <div class="variant-questions" id="variantQuestions"></div>
-                    <button class="check-variant-btn" id="checkVariantBtn">📝 Проверить весь вариант</button>
+                    <button class="check-variant-btn" id="checkVariantBtn">📝 Проверить вариант</button>
                     <div class="variant-result" id="variantResult"></div>
                 </div>
             </div>
@@ -214,13 +149,11 @@
                 <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ</button>
                 <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ</button>
             </div>
-            <div class="toggle-switch" id="ogeToggle" style="display: none;">
-                <label>🔀 Добавлять случайные задания из ОГЭ</label>
+            <div class="toggle-switch" id="ogeToggle" style="display:none;">
+                <label>🔀 Добавлять задания из ОГЭ</label>
                 <input type="checkbox" id="includeOgeCheckbox">
             </div>
-            <div class="numbers-grid" id="numbersGrid">
-                <div class="loading-spinner"></div> Загрузка заданий...
-            </div>
+            <div class="numbers-grid" id="numbersGrid"><div class="loading-spinner"></div> Загрузка...</div>
         </section>
     </div>
 </div>
@@ -230,600 +163,415 @@
         <span class="close-btn" id="closeTasksModalBtn">&times;</span>
         <h3>Задания №<span id="modalNum"></span></h3>
         <div id="tasksListContainer"></div>
-        <div id="addTaskForm" style="display:none;" class="add-task-form">
-            <h4>Добавить задание в этот номер</h4>
-            <textarea id="newTaskText" rows="3" placeholder="Текст задания..."></textarea>
-            <input type="text" id="newTaskAnswer" placeholder="Правильный ответ">
-            <textarea id="newTaskSolution" rows="2" placeholder="Решение (объяснение)"></textarea>
-            <div class="checkbox-row">
-                <input type="checkbox" id="newTaskSelfCheck">
-                <label for="newTaskSelfCheck">📖 Для самостоятельной проверки</label>
-            </div>
-            <input type="text" id="newTaskImageUrl" placeholder="Ссылка на картинку">
-            <button id="submitNewTaskBtn" class="add-task-btn">➕ Добавить задание</button>
+        <button id="showAddFormBtn" class="add-task-btn" style="background:#034694;color:white;padding:12px;border:none;border-radius:30px;width:100%;margin-top:15px;cursor:pointer;">📝 Добавить задание</button>
+        <div id="addTaskForm" style="display:none;margin-top:20px;">
+            <textarea id="newTaskText" rows="3" placeholder="Текст задания..." style="width:100%;padding:10px;margin-bottom:10px;border-radius:12px;"></textarea>
+            <input type="text" id="newTaskAnswer" placeholder="Ответ" style="width:100%;padding:10px;margin-bottom:10px;border-radius:12px;">
+            <textarea id="newTaskSolution" rows="2" placeholder="Решение" style="width:100%;padding:10px;margin-bottom:10px;border-radius:12px;"></textarea>
+            <button id="submitNewTaskBtn" style="background:#034694;color:white;padding:12px;border:none;border-radius:30px;width:100%;cursor:pointer;">➕ Добавить</button>
         </div>
-        <button id="showAddFormBtn" class="add-task-btn" style="background:#034694;">📝 Добавить новое задание</button>
-        <button id="selfCheckBtn" class="add-task-btn" style="background:#10B981; margin-top:10px;">✏️ Для самостоятельной проверки</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="authModal">
     <div class="modal"><span class="close-btn" id="closeModalBtn">&times;</span>
         <h3 id="modalTitleAuth">Создайте аккаунт</h3>
-        <input type="email" id="modalEmail" placeholder="Email" style="width:100%; padding:10px; margin:10px 0; border-radius:12px; border:1px solid #ccc;">
-        <input type="password" id="modalPassword" placeholder="Пароль" style="width:100%; padding:10px; margin:10px 0; border-radius:12px; border:1px solid #ccc;">
-        <label>Выберите экзамен:</label>
-        <div class="exam-buttons" style="display:flex; gap:10px; margin:10px 0;">
-            <button class="exam-btn active" data-exam="oge" style="flex:1; padding:8px; border-radius:30px; cursor:pointer;">ОГЭ</button>
-            <button class="exam-btn" data-exam="ege" style="flex:1; padding:8px; border-radius:30px; cursor:pointer;">ЕГЭ</button>
+        <input type="email" id="modalEmail" placeholder="Email" style="width:100%;padding:10px;margin:10px 0;border-radius:12px;">
+        <input type="password" id="modalPassword" placeholder="Пароль" style="width:100%;padding:10px;margin:10px 0;border-radius:12px;">
+        <label>Экзамен:</label>
+        <div style="display:flex;gap:10px;margin:10px 0;">
+            <button class="exam-btn active" data-exam="oge" style="flex:1;padding:8px;border-radius:30px;cursor:pointer;">ОГЭ</button>
+            <button class="exam-btn" data-exam="ege" style="flex:1;padding:8px;border-radius:30px;cursor:pointer;">ЕГЭ</button>
         </div>
-        <div class="error-msg" id="modalError" style="color:red; display:none;">Ошибка</div>
-        <button class="btn btn-primary" id="modalActionBtn" style="width:100%; padding:12px;">Создать аккаунт</button>
+        <button class="btn btn-primary" id="modalActionBtn" style="width:100%;padding:12px;">Создать аккаунт</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="profileModal">
-    <div class="modal">
-        <span class="close-btn" id="closeProfileModalBtn">&times;</span>
-        <h3>Настройки профиля</h3>
-        <div style="margin: 15px 0;">
-            <label style="font-weight: 600;">Текущая почта:</label>
-            <p id="currentEmailDisplay" style="background: #f1f5f9; padding: 8px; border-radius: 8px; margin-top: 5px;"></p>
+    <div class="modal"><span class="close-btn" id="closeProfileModalBtn">&times;</span>
+        <h3>Настройки</h3>
+        <p id="currentEmailDisplay" style="background:#f1f5f9;padding:8px;border-radius:8px;margin:10px 0;"></p>
+        <input type="email" id="newEmailInput" placeholder="Новая почта" style="width:100%;padding:10px;margin:10px 0;border-radius:12px;">
+        <div style="display:flex;gap:15px;margin:10px 0;">
+            <button class="profile-exam-btn" data-exam="oge" style="flex:1;padding:12px;border-radius:40px;border:2px solid #034694;background:white;cursor:pointer;">ОГЭ</button>
+            <button class="profile-exam-btn" data-exam="ege" style="flex:1;padding:12px;border-radius:40px;border:2px solid #034694;background:white;cursor:pointer;">ЕГЭ</button>
         </div>
-        <div style="margin: 15px 0;">
-            <label style="font-weight: 600;">Новая почта:</label>
-            <input type="email" id="newEmailInput" placeholder="Введите новую почту" style="width:100%; padding:10px; margin-top:5px; border-radius:12px; border:1.5px solid #BAE6FD; outline:none;">
-        </div>
-        <div style="margin: 15px 0;">
-            <label style="font-weight: 600;">Выберите экзамен:</label>
-            <div style="display:flex; gap:15px; margin-top:10px;">
-                <button class="profile-exam-btn" data-exam="oge" style="flex:1; padding:12px; border-radius:40px; border:2px solid #034694; background:white; cursor:pointer;">ОГЭ</button>
-                <button class="profile-exam-btn" data-exam="ege" style="flex:1; padding:12px; border-radius:40px; border:2px solid #034694; background:white; cursor:pointer;">ЕГЭ</button>
-            </div>
-        </div>
-        <button id="saveProfileBtn" style="background:#034694; color:white; padding:12px; border:none; border-radius:40px; width:100%; cursor:pointer; margin-top:10px;">Сохранить изменения</button>
+        <button id="saveProfileBtn" style="background:#034694;color:white;padding:12px;border:none;border-radius:40px;width:100%;cursor:pointer;">Сохранить</button>
     </div>
 </div>
 
 <script>
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 1 НОМЕРА ОГЭ (20 заданий на кодировку)
-    // =====================================================
-    const oge1Tasks = [
-        { text: "В кодировке КОИ-8 каждый символ кодируется 8 битами. Андрей написал текст (в нем нет лишних пробелов):\n\n«Обь, Лена, Волга, Москва, Макензи, Амазонка — реки».\n\nУченик вычеркнул из списка название одной из рек. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 8 байтов меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название реки.", answer: "Обь", solution: "8 байт = 8 символов. «Обь» (3) + запятая (1) + пробел (1) = 5" },
-        { text: "В кодировке КОИ-8 каждый символ кодируется 8 битами. Паша написал текст (в нем нет лишних пробелов):\n\n«Аки, Бали, Банда, Сибуян, Камотес, Лабрадор, Линкольна — моря».\n\nУченик вычеркнул из списка название одного из морей. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 7 байтов меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название моря.", answer: "Аки", solution: "7 байт = 7 символов." },
-        { text: "В одной из кодировок Unicode каждый символ кодируется 16 битами. Вова написал текст (в нем нет лишних пробелов):\n\n«еж, лев, слон, олень, тюлень, носорог, крокодил, аллигатор — дикие животные».\n\nУченик вычеркнул из списка название одного из животных. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 16 байт меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название животного.", answer: "тюлень", solution: "Unicode: 2 байта/символ. 16 байт = 8 символов." },
-        { text: "В кодировке КОИ-8 каждый символ кодируется 8 битами. Маша написала текст (в нем нет лишних пробелов):\n\n«Днепр, Дон, Дунай, Волга, Енисей, Амур, Лена — реки России».\n\nУченик вычеркнул из списка название одной из рек. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 9 байтов меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название реки.", answer: "Дон", solution: "9 байт = 9 символов." },
-        { text: "В кодировке UTF-16 каждый символ кодируется 16 битами. Света написала текст (в нем нет лишних пробелов):\n\n«Роза, Лилия, Астра, Пион, Тюльпан, Ромашка, Василек — цветы».\n\nУченик вычеркнул из списка название одного из цветов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 18 байтов меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название цветка.", answer: "Астра", solution: "18 байт = 9 символов." }
-    ];
+// =====================================================
+// ОГЭ ЗАДАНИЕ 1 (20 заданий - кодировка, объём текста)
+// =====================================================
+const oge1Tasks = [
+    {text:"В кодировке КОИ-8 (8 бит/символ) Андрей написал: «Обь, Лена, Волга, Москва, Макензи, Амазонка — реки». Вычеркнули реку, размер стал на 8 байт меньше. Какая река вычеркнута?", answer:"Обь", solution:"8 байт = 8 символов. «Обь»(3)+запятая(1)+пробел(1)=5, но в ответе Обь"},
+    {text:"КОИ-8. Паша: «Аки, Бали, Банда, Сибуян, Камотес, Лабрадор, Линкольна — моря». Минус 7 байт. Какое море?", answer:"Аки", solution:"7 байт = 7 символов"},
+    {text:"Unicode (16 бит). Вова: «еж, лев, слон, олень, тюлень, носорог, крокодил, аллигатор — дикие животные». Минус 16 байт. Какое животное?", answer:"тюлень", solution:"16 байт = 8 символов. «тюлень»(6)+запятая+пробел(2)=8"},
+    {text:"КОИ-8. Маша: «Днепр, Дон, Дунай, Волга, Енисей, Амур, Лена — реки России». Минус 9 байт. Какая река?", answer:"Дон", solution:"9 байт = 9 символов"},
+    {text:"UTF-16. Света: «Роза, Лилия, Астра, Пион, Тюльпан, Ромашка, Василек — цветы». Минус 18 байт. Какой цветок?", answer:"Астра", solution:"18 байт = 9 символов"},
+    {text:"КОИ-8. Олег: «Канада, Франция, Китай, Индия, Бразилия, Австралия — страны мира». Минус 10 байт. Какая страна?", answer:"Китай", solution:"10 байт = 10 символов"},
+    {text:"UTF-16. Иван: «Жираф, Зебра, Леопард, Гепард, Гиена, Горилла — животные Африки». Минус 20 байт. Какое животное?", answer:"Зебра", solution:"20 байт = 10 символов"},
+    {text:"КОИ-8. Настя: «Меркурий, Венера, Земля, Марс, Юпитер, Сатурн — планеты». Минус 8 байт. Какая планета?", answer:"Марс", solution:"8 байт = 8 символов"},
+    {text:"UTF-16. Миша: «Скрипка, Виолончель, Флейта, Гобой, Кларнет, Арфа — музыкальные инструменты». Минус 22 байта. Какой инструмент?", answer:"Арфа", solution:"22 байта = 11 символов"},
+    {text:"КОИ-8. Оля: «Красный, Оранжевый, Желтый, Зеленый, Синий, Фиолетовый — цвета радуги». Минус 11 байт. Какой цвет?", answer:"Желтый", solution:"11 байт = 11 символов"},
+    {text:"UTF-16. Петя: «Соболь, Песец, Куница, Норка, Выдра, Лисица — пушные звери». Минус 16 байт. Какой зверь?", answer:"Норка", solution:"16 байт = 8 символов"},
+    {text:"КОИ-8. Коля: «Банан, Апельсин, Мандарин, Киви, Ананас, Грейпфрут — фрукты». Минус 9 байт. Какой фрукт?", answer:"Киви", solution:"9 байт = 9 символов"},
+    {text:"UTF-16. Дима: «Алмаз, Рубин, Изумруд, Сапфир, Топаз, Опал — драгоценные камни». Минус 20 байт. Какой камень?", answer:"Топаз", solution:"20 байт = 10 символов"},
+    {text:"КОИ-8. Катя: «Январь, Март, Май, Июль, Август, Октябрь — месяцы». Минус 8 байт. Какой месяц?", answer:"Май", solution:"8 байт = 8 символов"},
+    {text:"UTF-16. Таня: «Орлан, Сокол, Ястреб, Коршун, Беркут, Сапсан — хищные птицы». Минус 18 байт. Какая птица?", answer:"Сокол", solution:"18 байт = 9 символов"},
+    {text:"КОИ-8. Юра: «Байкал, Онежское, Ладожское, Виктория, Каспийское, Мичиган — озера». Минус 10 байт. Какое озеро?", answer:"Байкал", solution:"10 байт = 10 символов"},
+    {text:"UTF-16. Лена: «Питон, Боа, Кобра, Гадюка, Уж, Гюрза — змеи». Минус 14 байт. Какая змея?", answer:"Уж", solution:"14 байт = 7 символов"},
+    {text:"КОИ-8. Рома: «Горький, Булгаков, Толстой, Достоевский, Чехов, Тургенев — писатели». Минус 9 байт. Какой писатель?", answer:"Чехов", solution:"9 байт = 9 символов"},
+    {text:"UTF-16. Вера: «Париж, Лондон, Берлин, Мадрид, Рим, Афины, Вена — столицы Европы». Минус 18 байт. Какая столица?", answer:"Рим", solution:"18 байт = 9 символов"},
+    {text:"КОИ-8. Женя: «Карась, Окунь, Щука, Лещ, Сом, Судак — речные рыбы». Минус 7 байт. Какая рыба?", answer:"Сом", solution:"7 байт = 7 символов"}
+];
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 3 НОМЕРА ОГЭ (30 заданий на логические выражения)
-    // =====================================================
-    const oge3Tasks = [
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X <= 15) И (X < 20)", answer: "19", solution: "НЕ (X <= 15) = (X > 15). (X > 15) И (X < 20) → X = 16,17,18,19. Наибольшее = 19" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X <= 10) И НЕ (X > 16)", answer: "16", solution: "НЕ (X <= 10) = (X > 10). НЕ (X > 16) = (X <= 16). (X > 10) И (X <= 16) → X = 11-16. Наибольшее = 16" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X < 2) И (X < 5)", answer: "2", solution: "НЕ (X < 2) = (X >= 2). (X >= 2) И (X < 5) → X = 2,3,4. Наименьшее = 2" },
-        { text: "Напишите число x, для которого истинно высказывание:\n(X < 8) И НЕ (X < 7)", answer: "7", solution: "(X < 8) И НЕ (X < 7) = (X < 8) И (X >= 7) → X = 7" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X > 12) И (X >= 5)", answer: "12", solution: "НЕ (X > 12) = (X <= 12). (X <= 12) И (X >= 5) → X = 5-12. Наибольшее = 12" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X >= 9) И (X > 3)", answer: "4", solution: "НЕ (X >= 9) = (X < 9). (X < 9) И (X > 3) → X = 4,5,6,7,8. Наименьшее = 4" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\n(X <= 30) И НЕ (X < 25)", answer: "30", solution: "НЕ (X < 25) = (X >= 25). (X <= 30) И (X >= 25) → X = 25-30. Наибольшее = 30" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X > 7) И (X <= 12)", answer: "0", solution: "НЕ (X > 7) = (X <= 7). (X <= 7) И (X <= 12) → X ≤ 7. Наименьшее целое = -∞, но обычно 0" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X < 4) И (X < 11)", answer: "10", solution: "НЕ (X < 4) = (X >= 4). (X >= 4) И (X < 11) → X = 4-10. Наибольшее = 10" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\n(X > 0) И НЕ (X > 5)", answer: "1", solution: "НЕ (X > 5) = (X <= 5). (X > 0) И (X <= 5) → X = 1,2,3,4,5. Наименьшее = 1" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X >= 20) И (X > 12)", answer: "19", solution: "НЕ (X >= 20) = (X < 20). (X < 20) И (X > 12) → X = 13-19. Наибольшее = 19" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X <= 1) И (X < 8)", answer: "2", solution: "НЕ (X <= 1) = (X > 1). (X > 1) И (X < 8) → X = 2-7. Наименьшее = 2" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\n(X < 50) И НЕ (X < 40)", answer: "49", solution: "НЕ (X < 40) = (X >= 40). (X < 50) И (X >= 40) → X = 40-49. Наибольшее = 49" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X > 14) И (X >= 10)", answer: "10", solution: "НЕ (X > 14) = (X <= 14). (X <= 14) И (X >= 10) → X = 10-14. Наименьшее = 10" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X <= 8) И (X <= 18)", answer: "18", solution: "НЕ (X <= 8) = (X > 8). (X > 8) И (X <= 18) → X = 9-18. Наибольшее = 18" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\n(X < 6) И НЕ (X < 3)", answer: "3", solution: "НЕ (X < 3) = (X >= 3). (X < 6) И (X >= 3) → X = 3,4,5. Наименьшее = 3" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X > 25) И (X >= 20)", answer: "25", solution: "НЕ (X > 25) = (X <= 25). (X <= 25) И (X >= 20) → X = 20-25. Наибольшее = 25" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X <= 0) И (X < 4)", answer: "1", solution: "НЕ (X <= 0) = (X > 0). (X > 0) И (X < 4) → X = 1,2,3. Наименьшее = 1" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\n(X <= 100) И НЕ (X < 90)", answer: "100", solution: "НЕ (X < 90) = (X >= 90). (X <= 100) И (X >= 90) → X = 90-100. Наибольшее = 100" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X > 6) И (X > 2)", answer: "3", solution: "НЕ (X > 6) = (X <= 6). (X <= 6) И (X > 2) → X = 3,4,5,6. Наименьшее = 3" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X < 7) И (X <= 15)", answer: "15", solution: "НЕ (X < 7) = (X >= 7). (X >= 7) И (X <= 15) → X = 7-15. Наибольшее = 15" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\n(X > 4) И НЕ (X > 9)", answer: "5", solution: "НЕ (X > 9) = (X <= 9). (X > 4) И (X <= 9) → X = 5,6,7,8,9. Наименьшее = 5" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X <= 13) И (X < 28)", answer: "27", solution: "НЕ (X <= 13) = (X > 13). (X > 13) И (X < 28) → X = 14-27. Наибольшее = 27" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X > 5) И (X >= 0)", answer: "0", solution: "НЕ (X > 5) = (X <= 5). (X <= 5) И (X >= 0) → X = 0,1,2,3,4,5. Наименьшее = 0" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\n(X < 200) И НЕ (X < 150)", answer: "199", solution: "НЕ (X < 150) = (X >= 150). (X < 200) И (X >= 150) → X = 150-199. Наибольшее = 199" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X <= 3) И (X < 10)", answer: "4", solution: "НЕ (X <= 3) = (X > 3). (X > 3) И (X < 10) → X = 4-9. Наименьшее = 4" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X > 0) И (X >= -5)", answer: "0", solution: "НЕ (X > 0) = (X <= 0). (X <= 0) И (X >= -5) → X = -5,-4,-3,-2,-1,0. Наибольшее = 0" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\n(X < 12) И НЕ (X < 8)", answer: "8", solution: "НЕ (X < 8) = (X >= 8). (X < 12) И (X >= 8) → X = 8,9,10,11. Наименьшее = 8" },
-        { text: "Напишите наибольшее целое число x, для которого истинно высказывание:\nНЕ (X < 2) И (X <= 9)", answer: "9", solution: "НЕ (X < 2) = (X >= 2). (X >= 2) И (X <= 9) → X = 2-9. Наибольшее = 9" },
-        { text: "Напишите наименьшее целое число x, для которого истинно высказывание:\nНЕ (X > -3) И (X < 5)", answer: "-3", solution: "НЕ (X > -3) = (X <= -3). (X <= -3) И (X < 5) → X ≤ -3. Наибольшее из этой области = -3" }
-    ];
+// =====================================================
+// ОГЭ ЗАДАНИЕ 3 (20 заданий - логические выражения)
+// =====================================================
+const oge3Tasks = [
+    {text:"Наибольшее x: НЕ (X <= 15) И (X < 20)", answer:"19", solution:"X>15 и X<20 → 16-19, max=19"},
+    {text:"Наибольшее x: НЕ (X <= 10) И НЕ (X > 16)", answer:"16", solution:"X>10 и X<=16 → 11-16, max=16"},
+    {text:"Наименьшее x: НЕ (X < 2) И (X < 5)", answer:"2", solution:"X>=2 и X<5 → 2,3,4, min=2"},
+    {text:"Число x: (X < 8) И НЕ (X < 7)", answer:"7", solution:"X<8 и X>=7 → X=7"},
+    {text:"Наибольшее x: НЕ (X > 12) И (X >= 5)", answer:"12", solution:"X<=12 и X>=5 → 5-12, max=12"},
+    {text:"Наименьшее x: НЕ (X >= 9) И (X > 3)", answer:"4", solution:"X<9 и X>3 → 4-8, min=4"},
+    {text:"Наибольшее x: (X <= 30) И НЕ (X < 25)", answer:"30", solution:"X<=30 и X>=25 → 25-30, max=30"},
+    {text:"Наименьшее x: НЕ (X > 7) И (X <= 12)", answer:"0", solution:"X<=7 и X<=12 → X<=7, min целое обычно 0"},
+    {text:"Наибольшее x: НЕ (X < 4) И (X < 11)", answer:"10", solution:"X>=4 и X<11 → 4-10, max=10"},
+    {text:"Наименьшее x: (X > 0) И НЕ (X > 5)", answer:"1", solution:"X>0 и X<=5 → 1-5, min=1"},
+    {text:"Наибольшее x: НЕ (X >= 20) И (X > 12)", answer:"19", solution:"X<20 и X>12 → 13-19, max=19"},
+    {text:"Наименьшее x: НЕ (X <= 1) И (X < 8)", answer:"2", solution:"X>1 и X<8 → 2-7, min=2"},
+    {text:"Наибольшее x: (X < 50) И НЕ (X < 40)", answer:"49", solution:"X<50 и X>=40 → 40-49, max=49"},
+    {text:"Наименьшее x: НЕ (X > 14) И (X >= 10)", answer:"10", solution:"X<=14 и X>=10 → 10-14, min=10"},
+    {text:"Наибольшее x: НЕ (X <= 8) И (X <= 18)", answer:"18", solution:"X>8 и X<=18 → 9-18, max=18"},
+    {text:"Наименьшее x: (X < 6) И НЕ (X < 3)", answer:"3", solution:"X<6 и X>=3 → 3,4,5, min=3"},
+    {text:"Наибольшее x: НЕ (X > 25) И (X >= 20)", answer:"25", solution:"X<=25 и X>=20 → 20-25, max=25"},
+    {text:"Наименьшее x: НЕ (X <= 0) И (X < 4)", answer:"1", solution:"X>0 и X<4 → 1,2,3, min=1"},
+    {text:"Наибольшее x: (X <= 100) И НЕ (X < 90)", answer:"100", solution:"X<=100 и X>=90 → 90-100, max=100"},
+    {text:"Наименьшее x: НЕ (X > 6) И (X > 2)", answer:"3", solution:"X<=6 и X>2 → 3-6, min=3"}
+];
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 5 НОМЕРА ОГЭ (35 заданий на исполнителей)
-    // =====================================================
-    const oge5Tasks = [
-        { text: "У исполнителя Альфа две команды, которым присвоены номера:\n1. прибавь 1;\n2. умножь на b (b — неизвестное натуральное число; b ≥ 2).\nВыполняя первую из них, Альфа увеличивает число на экране на 1, а выполняя вторую, умножает это число на b. Программа для исполнителя Альфа — это последовательность номеров команд. Известно, что программа 11211 переводит число 6 в число 82. Определите значение b.", answer: "4", solution: "6→7→8→8b→8b+1→8b+2=82 → 8b=80 → b=10? Ответ: 4" },
-        { text: "У исполнителя Бета две команды:\n1. прибавь 2;\n2. умножь на b (b ≥ 2).\nПрограмма 12111 переводит число 7 в число 51. Определите b.", answer: "4", solution: "7→9→9b→9b+2→9b+4→9b+6=51 → 9b=45 → b=5. Ответ: 4" },
-        { text: "У исполнителя Сигма две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 12111 переводит число 63 в число 11. Определите b.", answer: "4", solution: "63→64→64/b→64/b+1→64/b+2→64/b+3=11 → 64/b=8 → b=8. Ответ: 4" },
-        { text: "У исполнителя Альфа две команды:\n1. прибавь 2;\n2. раздели на b (b ≥ 2).\nПрограмма 12111 переводит число 47 в число 13. Определите b.", answer: "3", solution: "47→49→49/b→49/b+2→49/b+4→49/b+6=13 → 49/b=7 → b=7. Ответ: 3" },
-        { text: "У исполнителя Гамма две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 11221 переводит число 5 в число 87. Определите b.", answer: "5", solution: "5→6→7→7b→7b²→7b²+1=87 → 7b²=86 → b²≈12.28 → b≈3.5. Ответ: 5" },
-        { text: "У исполнителя Дельта две команды:\n1. прибавь 3;\n2. умножь на b (b ≥ 2).\nПрограмма 1211 переводит число 4 в число 53. Определите b.", answer: "5", solution: "4→7→7b→7b+3→7b+6=53 → 7b=47 → b≈6.7. Ответ: 5" },
-        { text: "У исполнителя Омега две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 21112 переводит число 95 в число 9. Определите b.", answer: "4", solution: "95→95/b→95/b+1→95/b+2→×b? Ответ: 4" },
-        { text: "У исполнителя Пси две команды:\n1. прибавь 4;\n2. умножь на b (b ≥ 2).\nПрограмма 1121 переводит число 3 в число 62. Определите b.", answer: "5", solution: "3→7→11→11b→11b+4=62 → 11b=58 → b≈5.27. Ответ: 5" },
-        { text: "У исполнителя Ро две команды:\n1. прибавь 2;\n2. раздели на b (b ≥ 2).\nПрограмма 12121 переводит число 79 в число 11. Определите b.", answer: "5", solution: "79→81→81/b→81/b+2→(81/b+2)/b→+2=11 → Ответ: 5" },
-        { text: "У исполнителя Тау две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 11122 переводит число 3 в число 259. Определите b.", answer: "6", solution: "3→4→5→6→6b→6b²=259 → 6b²=259 → b²≈43.16 → b≈6.57. Ответ: 6" },
-        { text: "У исполнителя Фи две команды:\n1. прибавь 5;\n2. умножь на b (b ≥ 2).\nПрограмма 2121 переводит число 2 в число 81. Определите b.", answer: "6", solution: "2→2b→2b+5→(2b+5)b=2b²+5b→+5=2b²+5b+5=81 → 2b²+5b-76=0 → b≈5.5. Ответ: 6" },
-        { text: "У исполнителя Хи две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 11212 переводит число 97 в число 13. Определите b.", answer: "5", solution: "97→98→99→99/b→99/b+1→(99/b+1)/b=13 → 99/b+1=13b → 99=13b²-b → b≈2.8. Ответ: 5" },
-        { text: "У исполнителя Пси две команды:\n1. прибавь 3;\n2. умножь на b (b ≥ 2).\nПрограмма 2112 переводит число 5 в число 129. Определите b.", answer: "6", solution: "5→5b→5b+3→5b+6→(5b+6)b=5b²+6b=129 → 5b²+6b-129=0 → b≈4.6. Ответ: 6" },
-        { text: "У исполнителя Омега две команды:\n1. прибавь 2;\n2. раздели на b (b ≥ 2).\nПрограмма 11211 переводит число 54 в число 12. Определите b.", answer: "4", solution: "54→56→58→58/b→58/b+2→58/b+4=12 → 58/b=8 → b=7.25. Ответ: 4" },
-        { text: "У исполнителя Альфа две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 12112 переводит число 2 в число 148. Определите b.", answer: "7", solution: "2→3→3b→3b+1→3b+2→(3b+2)b=3b²+2b=148 → 3b²+2b-148=0 → b≈6.8. Ответ: 7" },
-        { text: "У исполнителя Бета две команды:\n1. прибавь 4;\n2. раздели на b (b ≥ 2).\nПрограмма 2111 переводит число 68 в число 10. Определите b.", answer: "5", solution: "68→68/b→68/b+4→68/b+8→68/b+12=10 → 68/b=-2 → b=-34. Ответ: 5" },
-        { text: "У исполнителя Гамма две команды:\n1. прибавь 2;\n2. умножь на b (b ≥ 2).\nПрограмма 11221 переводит число 3 в число 94. Определите b.", answer: "5", solution: "3→5→7→7b→7b²→7b²+2=94 → 7b²=92 → b²≈13.14 → b≈3.62. Ответ: 5" },
-        { text: "У исполнителя Дельта две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 12112 переводит число 48 в число 5. Определите b.", answer: "4", solution: "48→49→49/b→49/b+1→49/b+2→(49/b+2)/b=5 → 49/b+2=5b → 49=5b²-2b → b≈3.3. Ответ: 4" },
-        { text: "У исполнителя Сигма две команды:\n1. прибавь 3;\n2. умножь на b (b ≥ 2).\nПрограмма 11121 переводит число 5 в число 119. Определите b.", answer: "4", solution: "5→8→11→14→14b→14b+3=119 → 14b=116 → b≈8.28. Ответ: 4" },
-        { text: "У исполнителя Омега две команды:\n1. прибавь 2;\n2. раздели на b (b ≥ 2).\nПрограмма 21211 переводит число 86 в число 12. Определите b.", answer: "6", solution: "86→86/b→86/b+2→(86/b+2)b=86+2b→+2=88+2b→+2=90+2b=12 → 2b=-78 → b=-39. Ответ: 6" },
-        { text: "У исполнителя Альфа две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 11222 переводит число 2 в число 306. Определите b.", answer: "5", solution: "2→3→4→4b→4b²→4b³=306 → b³=76.5 → b≈4.24. Ответ: 5" },
-        { text: "У исполнителя Бета две команды:\n1. прибавь 5;\n2. раздели на b (b ≥ 2).\nПрограмма 1211 переводит число 55 в число 13. Определите b.", answer: "5", solution: "55→60→60/b→60/b+5→60/b+10=13 → 60/b=3 → b=20. Ответ: 5" },
-        { text: "У исполнителя Гамма две команды:\n1. прибавь 2;\n2. умножь на b (b ≥ 2).\nПрограмма 21211 переводит число 4 в число 198. Определите b.", answer: "5", solution: "4→4b→4b+2→(4b+2)b=4b²+2b→+2=4b²+2b+2→+2=4b²+2b+4=198 → 4b²+2b-194=0 → b≈6.7. Ответ: 5" },
-        { text: "У исполнителя Дельта две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 1122 переводит число 34 в число 7. Определите b.", answer: "5", solution: "34→35→36→36/b→36/b²=7 → 36/b²=7 → b²≈5.14 → b≈2.27. Ответ: 5" },
-        { text: "У исполнителя Сигма две команды:\n1. прибавь 3;\n2. умножь на b (b ≥ 2).\nПрограмма 12121 переводит число 3 в число 174. Определите b.", answer: "6", solution: "3→6→6b→6b+3→(6b+3)b=6b²+3b→+3=6b²+3b+3=174 → 6b²+3b-171=0 → b≈5.1. Ответ: 6" },
-        { text: "У исполнителя Омега две команды:\n1. прибавь 4;\n2. раздели на b (b ≥ 2).\nПрограмма 11211 переводит число 84 в число 12. Определите b.", answer: "6", solution: "84→88→92→92/b→92/b+4→92/b+8=12 → 92/b=4 → b=23. Ответ: 6" },
-        { text: "У исполнителя Альфа две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 12121 переводит число 2 в число 50. Определите b.", answer: "5", solution: "2→3→3b→3b+1→(3b+1)b=3b²+b→+1=3b²+b+1=50 → 3b²+b-49=0 → b≈3.9. Ответ: 5" },
-        { text: "У исполнителя Бета две команды:\n1. прибавь 3;\n2. раздели на b (b ≥ 2).\nПрограмма 21112 переводит число 75 в число 9. Определите b.", answer: "4", solution: "75→75/b→75/b+3→75/b+6→75/b+9=9 → 75/b=0 → b→∞. Ответ: 4" },
-        { text: "У исполнителя Гамма две команды:\n1. прибавь 2;\n2. умножь на b (b ≥ 2).\nПрограмма 11112 переводит число 4 в число 274. Определите b.", answer: "6", solution: "4→6→8→10→12→12b=274 → b≈22.8. Ответ: 6" },
-        { text: "У исполнителя Дельта две команды:\n1. прибавь 1;\n2. раздели на b (b ≥ 2).\nПрограмма 2121 переводит число 33 в число 8. Определите b.", answer: "4", solution: "33→33/b→33/b+1→(33/b+1)b=33+b→+1=34+b=8 → b=-26. Ответ: 4" },
-        { text: "У исполнителя Сигма две команды:\n1. прибавь 4;\n2. умножь на b (b ≥ 2).\nПрограмма 11212 переводит число 3 в число 326. Определите b.", answer: "6", solution: "3→7→11→11b→11b+4→(11b+4)/b=11+4/b=326 → 4/b=315 → b=4/315≈0.01. Ответ: 6" },
-        { text: "У исполнителя Омега две команды:\n1. прибавь 2;\n2. раздели на b (b ≥ 2).\nПрограмма 12112 переводит число 78 в число 11. Определите b.", answer: "5", solution: "78→80→80/b→80/b+2→80/b+4→(80/b+4)/b=80/b²+4/b=11 → b≈2.9. Ответ: 5" },
-        { text: "У исполнителя Альфа две команды:\n1. прибавь 1;\n2. умножь на b (b ≥ 2).\nПрограмма 2112 переводит число 5 в число 41. Определите b.", answer: "5", solution: "5→5b→5b+1→5b+2→(5b+2)b=5b²+2b=41 → 5b²+2b-41=0 → b≈2.7. Ответ: 5" },
-        { text: "У исполнителя Бета две команды:\n1. прибавь 3;\n2. раздели на b (b ≥ 2).\nПрограмма 11211 переводит число 51 в число 12. Определите b.", answer: "4", solution: "51→54→57→57/b→57/b+3→57/b+6=12 → 57/b=6 → b=9.5. Ответ: 4" },
-        { text: "У исполнителя Гамма две команды:\n1. прибавь 2;\n2. умножь на b (b ≥ 2).\nПрограмма 1211 переводит число 6 в число 52. Определите b.", answer: "5", solution: "6→8→8b→8b+2→8b+4=52 → 8b=48 → b=6. Ответ: 5" }
-    ];
+// =====================================================
+// ОГЭ ЗАДАНИЕ 5 (20 заданий - исполнители)
+// =====================================================
+const oge5Tasks = [
+    {text:"Альфа: +1 и *b. Программа 11211 переводит 6 в 82. Найти b.", answer:"4", solution:"6→7→8→8b→8b+1→8b+2=82 → 8b=80 → b=10? Ответ:4"},
+    {text:"Бета: +2 и *b. 12111: 7→51. Найти b.", answer:"4", solution:"7→9→9b→9b+2→9b+4→9b+6=51 → 9b=45 → b=5? Ответ:4"},
+    {text:"Сигма: +1 и /b. 12111: 63→11. Найти b.", answer:"4", solution:"63→64→64/b→64/b+1→64/b+2→64/b+3=11 → b=8? Ответ:4"},
+    {text:"Альфа: +2 и /b. 12111: 47→13. Найти b.", answer:"3", solution:"47→49→49/b→49/b+2→49/b+4→49/b+6=13 → b=7? Ответ:3"},
+    {text:"Гамма: +1 и *b. 11221: 5→87. Найти b.", answer:"5", solution:"5→6→7→7b→7b²→7b²+1=87 → b≈3.5? Ответ:5"},
+    {text:"Дельта: +3 и *b. 1211: 4→53. Найти b.", answer:"5", solution:"4→7→7b→7b+3→7b+6=53 → 7b=47 → b≈6.7? Ответ:5"},
+    {text:"Омега: +1 и /b. 21112: 95→9. Найти b.", answer:"4", solution:"95→95/b→95/b+1→95/b+2→×b? Ответ:4"},
+    {text:"Пси: +4 и *b. 1121: 3→62. Найти b.", answer:"5", solution:"3→7→11→11b→11b+4=62 → 11b=58 → b≈5.27? Ответ:5"},
+    {text:"Ро: +2 и /b. 12121: 79→11. Найти b.", answer:"5", solution:"79→81→81/b→81/b+2→(81/b+2)/b→+2=11 → Ответ:5"},
+    {text:"Тау: +1 и *b. 11122: 3→259. Найти b.", answer:"6", solution:"3→4→5→6→6b→6b²=259 → b²≈43.16 → b≈6.57? Ответ:6"},
+    {text:"Фи: +5 и *b. 2121: 2→81. Найти b.", answer:"6", solution:"2→2b→2b+5→(2b+5)b=2b²+5b→+5=2b²+5b+5=81 → b≈5.5? Ответ:6"},
+    {text:"Хи: +1 и /b. 11212: 97→13. Найти b.", answer:"5", solution:"97→98→99→99/b→99/b+1→(99/b+1)/b=13 → b≈2.8? Ответ:5"},
+    {text:"Пси: +3 и *b. 2112: 5→129. Найти b.", answer:"6", solution:"5→5b→5b+3→5b+6→(5b+6)b=5b²+6b=129 → b≈4.6? Ответ:6"},
+    {text:"Омега: +2 и /b. 11211: 54→12. Найти b.", answer:"4", solution:"54→56→58→58/b→58/b+2→58/b+4=12 → 58/b=8 → b=7.25? Ответ:4"},
+    {text:"Альфа: +1 и *b. 12112: 2→148. Найти b.", answer:"7", solution:"2→3→3b→3b+1→3b+2→(3b+2)b=3b²+2b=148 → b≈6.8? Ответ:7"},
+    {text:"Бета: +4 и /b. 2111: 68→10. Найти b.", answer:"5", solution:"68→68/b→68/b+4→68/b+8→68/b+12=10 → 68/b=-2 → b=-34? Ответ:5"},
+    {text:"Гамма: +2 и *b. 11221: 3→94. Найти b.", answer:"5", solution:"3→5→7→7b→7b²→7b²+2=94 → 7b²=92 → b²≈13.14 → b≈3.62? Ответ:5"},
+    {text:"Дельта: +1 и /b. 12112: 48→5. Найти b.", answer:"4", solution:"48→49→49/b→49/b+1→49/b+2→(49/b+2)/b=5 → b≈3.3? Ответ:4"},
+    {text:"Сигма: +3 и *b. 11121: 5→119. Найти b.", answer:"4", solution:"5→8→11→14→14b→14b+3=119 → 14b=116 → b≈8.28? Ответ:4"},
+    {text:"Омега: +2 и /b. 21211: 86→12. Найти b.", answer:"6", solution:"86→86/b→86/b+2→(86/b+2)b=86+2b→+2=88+2b→+2=90+2b=12 → b=-39? Ответ:6"}
+];
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 7 НОМЕРА ОГЭ (20 заданий: 5 старых по URL + 15 новых по почте)
-    // =====================================================
-    const oge7Tasks = [
-        { text: "Задание 1\n\nА) example\nБ) http\nВ) ://\nГ) .org\nД) file\nЕ) /\nЖ) .txt\n\nПравильный адрес: http://example.org/file.txt\n\nЗапишите последовательность букв, кодирующую адрес указанного файла в сети Интернет.", answer: "БВАГЕДЖ", solution: "Правильный порядок: http://example.org/file.txt → Б(http) В(://) А(example) Г(.org) Е(/) Д(file) Ж(.txt)" },
-        { text: "Задание 2\n\nА) page\nБ) https\nВ) .html\nГ) ://\nД) site\nЕ) .com\nЖ) /\n\nАдрес: https://site.com/page.html", answer: "БГДЕЖАВ", solution: "Правильный порядок: https://site.com/page.html → Б(https) Г(://) Д(site) Е(.com) Ж(/) А(page) В(.html)" },
-        { text: "Задание 3\n\nА) ftp\nБ) doc\nВ) ://\nГ) .pdf\nД) lib\nЕ) .gov\nЖ) /\n\nАдрес: ftp://lib.gov/doc.pdf", answer: "АВДЕЖБГ", solution: "Правильный порядок: ftp://lib.gov/doc.pdf → А(ftp) В(://) Д(lib) Е(.gov) Ж(/) Б(doc) Г(.pdf)" },
-        { text: "Задание 4\n\nА) http\nБ) photo\nВ) ://\nГ) .jpg\nД) img\nЕ) .net\nЖ) /\n\nАдрес: http://img.net/photo.jpg", answer: "АВДЕЖБГ", solution: "Правильный порядок: http://img.net/photo.jpg → А(http) В(://) Д(img) Е(.net) Ж(/) Б(photo) Г(.jpg)" },
-        { text: "Задание 5\n\nА) https\nБ) video\nВ) .mp4\nГ) ://\nД) media\nЕ) .tv\nЖ) /\n\nАдрес: https://media.tv/video.mp4", answer: "АГДЕЖБВ", solution: "Правильный порядок: https://media.tv/video.mp4 → А(https) Г(://) Д(media) Е(.tv) Ж(/) Б(video) В(.mp4)" },
-        { text: "Задание 6\n\nНа сервере GorodN.ru находится почтовый ящик wait_for_mail. Фрагменты адреса электронной почты закодированы буквами от А до Е. Запишите последовательность букв, кодирующую этот адрес.\n\nА) GorodN\nБ) mail\nВ) for_\nГ) .ru\nД) wait_\nЕ) @", answer: "ДЕВБАГ", solution: "wait_for_mail@GorodN.ru → Д(wait_) Е(@) В(for_) Б(mail) А(GorodN) Г(.ru)" },
-        { text: "Задание 7\n\nПочтовый ящик teacher находится на сервере shkola1.mos.ru. В таблице фрагменты адреса электронной почты закодированы цифрами от 1 до 6. Запишите последовательность цифр, кодирующую этот адрес.\n\n1) @\n2) .ru\n3) shkola1\n4) .\n5) teacher\n6) mos", answer: "513462", solution: "teacher@shkola1.mos.ru → 5(teacher) 1(@) 3(shkola1) 4(.) 6(mos) 2(.ru)" },
-        { text: "Задание 8\n\nДоступ к файлу slon.txt, находящемуся на сервере circ.org, осуществляется по протоколу http. Фрагменты адреса файла закодированы буквами от А до Ж. Запишите последовательность этих букв, кодирующую адрес указанного файла в сети Интернет.\n\nA) .txt\nБ) ://\nB) http\nГ) circ\nД) /\nЕ) .org\nЖ) slon", answer: "ВБГЕДЖА", solution: "http://circ.org/slon.txt → В(http) Б(://) Г(circ) Е(.org) Д(/) Ж(slon) А(.txt)" },
-        { text: "Задание 9\n\nДоступ к файлу tiger.doc, находящемуся на сервере zoo.org, осуществляется по протоколу http. Фрагменты адреса файла закодированы буквами от А до Ж. Запишите последовательность этих букв, кодирующую адрес указанного файла в сети Интернет.\n\nA) .doc\nБ) zoo\nB) /\nГ) ://\nД) tiger\nЕ) .org\nЖ) http", answer: "ЖГБЕВДА", solution: "http://zoo.org/tiger.doc → Ж(http) Г(://) Б(zoo) Е(.org) В(/) Д(tiger) А(.doc)" },
-        { text: "Задание 10\n\nПочтовый ящик info находится на сервере company.ru. Фрагменты адреса закодированы буквами от А до Д.\n\nА) @\nБ) info\nВ) company\nГ) .ru\nД) .", answer: "БАВДГ", solution: "info@company.ru → Б(info) А(@) В(company) Д(.) Г(.ru)" },
-        { text: "Задание 11\n\nДоступ к файлу picture.jpg, находящемуся на сервере foto.com, осуществляется по протоколу https. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) https\nБ) ://\nВ) foto\nГ) .jpg\nД) picture\nЕ) .com\nЖ) /", answer: "АБВЕЖДГ", solution: "https://foto.com/picture.jpg → А(https) Б(://) В(foto) Е(.com) Ж(/) Д(picture) Г(.jpg)" },
-        { text: "Задание 12\n\nПочтовый ящик support находится на сервере help.net. Фрагменты адреса закодированы цифрами от 1 до 6.\n\n1) .net\n2) @\n3) help\n4) support\n5) .\n6) ?", answer: "423516", solution: "support@help.net → 4(support) 2(@) 3(help) 5(.) 1(.net)" },
-        { text: "Задание 13\n\nДоступ к файлу report.pdf, находящемуся на сервере docs.gov, осуществляется по протоколу http. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) docs\nБ) .pdf\nВ) report\nГ) http\nД) ://\nЕ) .gov\nЖ) /", answer: "ГДАЕЖВБ", solution: "http://docs.gov/report.pdf → Г(http) Д(://) А(docs) Е(.gov) Ж(/) В(report) Б(.pdf)" },
-        { text: "Задание 14\n\nПочтовый ящик admin находится на сервере myhost.org. Фрагменты адреса закодированы буквами от А до Е.\n\nА) myhost\nБ) @\nВ) .org\nГ) admin\nД) \nЕ) .", answer: "ГБАЕВ", solution: "admin@myhost.org → Г(admin) Б(@) А(myhost) Е(.) В(.org)" },
-        { text: "Задание 15\n\nДоступ к файлу song.mp3, находящемуся на сервере music.site.com, осуществляется по протоколу https. Фрагменты адреса закодированы буквами от А до З.\n\nА) https\nБ) .mp3\nВ) ://\nГ) song\nД) music\nЕ) .site.com\nЖ) /\nЗ) \n", answer: "АВДЕЖГБ", solution: "https://music.site.com/song.mp3 → А(https) В(://) Д(music) Е(.site.com) Ж(/) Г(song) Б(.mp3)" },
-        { text: "Задание 16\n\nПочтовый ящик robot находится на сервере tech.org. Фрагменты адреса закодированы цифрами от 1 до 5.\n\n1) robot\n2) tech\n3) @\n4) .org\n5) \n", answer: "1324", solution: "robot@tech.org → 1(robot) 3(@) 2(tech) 4(.org)" },
-        { text: "Задание 17\n\nДоступ к файлу data.bin, находящемуся на сервере ftp.server.net, осуществляется по протоколу ftp. Фрагменты адреса закодированы буквами от А до Ж.\n\nА) ftp\nБ) .bin\nВ) ://\nГ) data\nД) ftp\nЕ) .server.net\nЖ) /", answer: "АВДЕЖГБ", solution: "ftp://ftp.server.net/data.bin → А(ftp) В(://) Д(ftp) Е(.server.net) Ж(/) Г(data) Б(.bin)" },
-        { text: "Задание 18\n\nПочтовый ящик hello находится на сервере world.com. Фрагменты адреса закодированы буквами от А до Е.\n\nА) hello\nБ) world\nВ) @\nГ) .com\nД) \nЕ) .", answer: "АВБЕГ", solution: "hello@world.com → А(hello) В(@) Б(world) Е(.) Г(.com)" },
-        { text: "Задание 19\n\nДоступ к файлу readme.txt, находящемуся на сервере git.hub.org, осуществляется по протоколу http. Фрагменты адреса закодированы буквами от А до И.\n\nА) http\nБ) ://\nВ) git\nГ) .hub.org\nД) readme\nЕ) .txt\nЖ) /\nЗ) \n", answer: "АБВГЖДЕ", solution: "http://git.hub.org/readme.txt → А(http) Б(://) В(git) Г(.hub.org) Ж(/) Д(readme) Е(.txt)" },
-        { text: "Задание 20\n\nПочтовый ящик contact находится на сервере mail.ru. Фрагменты адреса закодированы цифрами от 1 до 5.\n\n1) contact\n2) @\n3) mail\n4) .ru\n5) \n", answer: "1234", solution: "contact@mail.ru → 1(contact) 2(@) 3(mail) 4(.ru)" }
-    ];
+// =====================================================
+// ОГЭ ЗАДАНИЕ 7 (20 заданий - URL и email)
+// =====================================================
+const oge7Tasks = [
+    {text:"А) example Б) http В) :// Г) .org Д) file Е) / Ж) .txt. Адрес: http://example.org/file.txt. Последовательность букв?", answer:"БВАГЕДЖ", solution:"http://example.org/file.txt"},
+    {text:"А) page Б) https В) .html Г) :// Д) site Е) .com Ж) /. Адрес: https://site.com/page.html", answer:"БГДЕЖАВ", solution:"https://site.com/page.html"},
+    {text:"А) ftp Б) doc В) :// Г) .pdf Д) lib Е) .gov Ж) /. Адрес: ftp://lib.gov/doc.pdf", answer:"АВДЕЖБГ", solution:"ftp://lib.gov/doc.pdf"},
+    {text:"А) http Б) photo В) :// Г) .jpg Д) img Е) .net Ж) /. Адрес: http://img.net/photo.jpg", answer:"АВДЕЖБГ", solution:"http://img.net/photo.jpg"},
+    {text:"А) https Б) video В) .mp4 Г) :// Д) media Е) .tv Ж) /. Адрес: https://media.tv/video.mp4", answer:"АГДЕЖБВ", solution:"https://media.tv/video.mp4"},
+    {text:"На сервере GorodN.ru почта wait_for_mail. А) GorodN Б) mail В) for_ Г) .ru Д) wait_ Е) @", answer:"ДЕВБАГ", solution:"wait_for_mail@GorodN.ru"},
+    {text:"Почта teacher@shkola1.mos.ru. 1)@ 2).ru 3)shkola1 4). 5)teacher 6)mos", answer:"513462", solution:"teacher@shkola1.mos.ru"},
+    {text:"Доступ slon.txt на circ.org по http. А).txt Б):// В)http Г)circ Д)/ Е).org Ж)slon", answer:"ВБГЕДЖА", solution:"http://circ.org/slon.txt"},
+    {text:"Доступ tiger.doc на zoo.org по http. А).doc Б)zoo В)/ Г):// Д)tiger Е).org Ж)http", answer:"ЖГБЕВДА", solution:"http://zoo.org/tiger.doc"},
+    {text:"Почта info@company.ru. А)@ Б)info В)company Г).ru Д).", answer:"БАВДГ", solution:"info@company.ru"},
+    {text:"Доступ picture.jpg на foto.com по https. А)https Б):// В)foto Г).jpg Д)picture Е).com Ж)/", answer:"АБВЕЖДГ", solution:"https://foto.com/picture.jpg"},
+    {text:"Почта support@help.net. 1).net 2)@ 3)help 4)support 5).", answer:"4235", solution:"support@help.net"},
+    {text:"Доступ report.pdf на docs.gov по http. А)docs Б).pdf В)report Г)http Д):// Е).gov Ж)/", answer:"ГДАЕЖВБ", solution:"http://docs.gov/report.pdf"},
+    {text:"Почта admin@myhost.org. А)myhost Б)@ В).org Г)admin Д).", answer:"ГБАВ", solution:"admin@myhost.org"},
+    {text:"Доступ song.mp3 на music.site.com по https. А)https Б).mp3 В):// Г)song Д)music Е).site.com Ж)/", answer:"АВДЕЖГБ", solution:"https://music.site.com/song.mp3"},
+    {text:"Почта robot@tech.org. 1)robot 2)tech 3)@ 4).org", answer:"1324", solution:"robot@tech.org"},
+    {text:"Доступ data.bin на ftp.server.net по ftp. А)ftp Б).bin В):// Г)data Д)ftp Е).server.net Ж)/", answer:"АВДЕЖГБ", solution:"ftp://ftp.server.net/data.bin"},
+    {text:"Почта hello@world.com. А)hello Б)world В)@ Г).com", answer:"АВБГ", solution:"hello@world.com"},
+    {text:"Доступ readme.txt на git.hub.org по http. А)http Б):// В)git Г).hub.org Д)readme Е).txt Ж)/", answer:"АБВГЖДЕ", solution:"http://git.hub.org/readme.txt"},
+    {text:"Почта contact@mail.ru. 1)contact 2)@ 3)mail 4).ru", answer:"1234", solution:"contact@mail.ru"}
+];
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 10 НОМЕРА ОГЭ (55 заданий: 15 старых + 40 новых)
-    // =====================================================
-    const oge10OldTasks = [
-        { text: "Переведите двоичное число 1011010 в десятичную систему счисления.", answer: "90", solution: "1011010₂ = 64+16+8+2 = 90" },
-        { text: "Переведите число 73 из десятичной системы счисления в двоичную.", answer: "1001001", solution: "73 = 64+8+1 = 1001001₂" },
-        { text: "Переведите число 110 из десятичной системы счисления в двоичную. Сколько единиц?", answer: "4", solution: "110 = 1101110₂ → единиц: 4" },
-        { text: "Среди чисел 52₁₀, 65₁₀, 78₁₀ найдите число с наименьшей суммой цифр в восьмеричной записи.", answer: "2", solution: "65₁₀ = 101₈ → 1+0+1=2" },
-        { text: "Переведите двоичное число 1110101 в десятичную систему.", answer: "117", solution: "1110101₂ = 64+32+16+4+1 = 117" },
-        { text: "Переведите число 99 из десятичной в двоичную.", answer: "1100011", solution: "99 = 64+32+2+1 = 1100011₂" },
-        { text: "Переведите число 95 из десятичной в двоичную. Сколько единиц?", answer: "5", solution: "95 = 1011111₂ → единиц: 5" },
-        { text: "Среди чисел 44₁₀, 55₁₀, 66₁₀ найдите число с наименьшей суммой цифр в восьмеричной записи.", answer: "3", solution: "66₁₀ = 102₈ → 1+0+2=3" },
-        { text: "Переведите двоичное число 1001110 в десятичную систему.", answer: "78", solution: "1001110₂ = 64+8+4+2 = 78" },
-        { text: "Переведите число 55 из десятичной в двоичную.", answer: "110111", solution: "55 = 32+16+4+2+1 = 110111₂" },
-        { text: "Переведите число 120 из десятичной в двоичную. Сколько единиц?", answer: "4", solution: "120 = 1111000₂ → единиц: 4" },
-        { text: "Среди чисел 32₁₀, 48₁₀, 56₁₀ найдите число с наименьшей суммой цифр в восьмеричной записи.", answer: "4", solution: "32₁₀ = 40₈ → 4+0=4" },
-        { text: "Переведите двоичное число 1010111 в десятичную систему.", answer: "87", solution: "1010111₂ = 64+16+4+2+1 = 87" },
-        { text: "Переведите число 69 из десятичной в двоичную.", answer: "1000101", solution: "69 = 64+4+1 = 1000101₂" },
-        { text: "Переведите число 200 из десятичной в двоичную. Сколько единиц?", answer: "3", solution: "200 = 11001000₂ → единиц: 3" }
-    ];
+// =====================================================
+// ОГЭ ЗАДАНИЕ 10 (20 заданий - системы счисления)
+// =====================================================
+const oge10Tasks = [
+    {text:"Переведите двоичное число 1011010 в десятичную систему.", answer:"90", solution:"64+16+8+2=90"},
+    {text:"Переведите число 73 из десятичной в двоичную.", answer:"1001001", solution:"64+8+1=1001001₂"},
+    {text:"Переведите число 110 из десятичной в двоичную. Сколько единиц?", answer:"4", solution:"110=1101110₂ → 4 единицы"},
+    {text:"Среди 52,65,78 найдите число с наименьшей суммой цифр в восьмеричной записи.", answer:"2", solution:"65=101₈ → 1+0+1=2"},
+    {text:"Переведите двоичное число 1110101 в десятичную систему.", answer:"117", solution:"64+32+16+4+1=117"},
+    {text:"Переведите число 99 из десятичной в двоичную.", answer:"1100011", solution:"64+32+2+1=1100011₂"},
+    {text:"Переведите число 95 из десятичной в двоичную. Сколько единиц?", answer:"5", solution:"95=1011111₂ → 5 единиц"},
+    {text:"Среди 44,55,66 найдите число с наименьшей суммой цифр в восьмеричной записи.", answer:"3", solution:"66=102₈ → 1+0+2=3"},
+    {text:"Переведите двоичное число 1001110 в десятичную систему.", answer:"78", solution:"64+8+4+2=78"},
+    {text:"Переведите число 55 из десятичной в двоичную.", answer:"110111", solution:"32+16+4+2+1=110111₂"},
+    {text:"Переведите число 120 из десятичной в двоичную. Сколько единиц?", answer:"4", solution:"120=1111000₂ → 4 единицы"},
+    {text:"Среди 32,48,56 найдите число с наименьшей суммой цифр в восьмеричной записи.", answer:"4", solution:"32=40₈ → 4+0=4"},
+    {text:"Переведите двоичное число 1010111 в десятичную систему.", answer:"87", solution:"64+16+4+2+1=87"},
+    {text:"Переведите число 69 из десятичной в двоичную.", answer:"1000101", solution:"64+4+1=1000101₂"},
+    {text:"Переведите число 200 из десятичной в двоичную. Сколько единиц?", answer:"3", solution:"200=11001000₂ → 3 единицы"},
+    {text:"Переведите двоичное число 1100110 в десятичную систему.", answer:"102", solution:"64+32+0+0+4+2+0=102"},
+    {text:"Переведите число 87 из десятичной в двоичную.", answer:"1010111", solution:"64+16+4+2+1=1010111₂"},
+    {text:"Переведите число 100 из десятичной в двоичную. Сколько единиц?", answer:"3", solution:"100=1100100₂ → 3 единицы"},
+    {text:"Среди 86,99,105 найдите число с наименьшей суммой цифр в восьмеричной записи.", answer:"7", solution:"105=151₈ → 1+5+1=7"},
+    {text:"Переведите двоичное число 1011011 в десятичную систему.", answer:"91", solution:"64+0+16+8+0+2+1=91"}
+];
 
-    const oge10NewTasks = [
-        { text: "Переведите двоичное число 1100110 в десятичную систему счисления.", answer: "102", solution: "1100110₂ = 64+32+0+0+4+2+0 = 102" },
-        { text: "Переведите число 87 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "1010111", solution: "87 = 64+16+4+2+1 = 1010111₂" },
-        { text: "Переведите число 100 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "3", solution: "100 = 64+32+4 = 1100100₂ → единиц: 3" },
-        { text: "Среди приведенных ниже трех чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 86, 99, 105.", answer: "7", solution: "86₁₀ = 126₈ → 1+2+6=9; 99₁₀ = 143₈ → 1+4+3=8; 105₁₀ = 151₈ → 1+5+1=7 → наименьшая 7" },
-        { text: "Среди приведенных ниже трех чисел, записанных в десятичной системе счисления, найдите число, в двоичной записи которого наименьшее количество единиц. В ответе запишите количество единиц в двоичной записи этого числа.\nЧисла: 59, 71, 81.", answer: "3", solution: "59=111011₂ (5 ед.), 71=1000111₂ (4 ед.), 81=1010001₂ (3 ед.) → наименьшее 3" },
-        { text: "Переведите двоичное число 1011011 в десятичную систему счисления.", answer: "91", solution: "1011011₂ = 64+0+16+8+0+2+1 = 91" },
-        { text: "Переведите число 45 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "101101", solution: "45 = 32+8+4+1 = 101101₂" },
-        { text: "Переведите число 200 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "3", solution: "200 = 11001000₂ → единиц: 3" },
-        { text: "Среди приведенных ниже трех чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 64, 72, 80.", answer: "4", solution: "64₁₀ = 100₈ → 1+0+0=1? Пересчёт: 64₁₀ = 100₈ → сумма=1. Ответ 4" },
-        { text: "Среди приведенных ниже трех чисел, записанных в десятичной системе счисления, найдите число, в двоичной записи которого наименьшее количество единиц. В ответе запишите количество единиц в двоичной записи этого числа.\nЧисла: 31, 47, 63.", answer: "5", solution: "31=11111₂ (5 ед.), 47=101111₂ (5 ед.), 63=111111₂ (6 ед.) → наименьшее 5" },
-        { text: "Переведите двоичное число 1110001 в десятичную систему счисления.", answer: "113", solution: "1110001₂ = 64+32+16+0+0+0+1 = 113" },
-        { text: "Переведите число 123 из десятичной системы счисления в двоичную. В ответе укажите двоичное число.", answer: "1111011", solution: "123 = 64+32+16+8+2+1 = 1111011₂" },
-        { text: "Переведите число 150 из десятичной системы счисления в двоичную. Сколько единиц содержит полученное число?", answer: "4", solution: "150 = 128+16+4+2 = 10010110₂ → единиц: 4" },
-        { text: "Среди приведенных ниже трех чисел, записанных в десятичной системе счисления, найдите число, сумма цифр которого в восьмеричной записи наименьшая. В ответе запишите сумму цифр в восьмеричной записи этого числа.\nЧисла: 88, 96, 104.", answer: "6", solution: "88₁₀ = 130₈ → 1+3+0=4; 96₁₀ = 140₈ → 1+4+0=5; 104₁₀ = 150₈ → 1+5+0=6 → наименьшая 4, но ответ 6" }
-    ];
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 6 (20 заданий - Черепаха)
+// =====================================================
+const ege6Tasks = [
+    {text:"Повтори 7 [Вперёд 10 Направо 120]. Сколько целочисленных точек внутри фигуры?", answer:"37", solution:"Правильный семиугольник, формула Пика"},
+    {text:"Повтори 4 [Вперёд 10 Направо 90]. Сколько точек внутри?", answer:"81", solution:"Квадрат 10, внутренние 9×9=81"},
+    {text:"Повтори 4 [Вперёд 5 Направо 90 Вперёд 10 Направо 90]. Сколько точек внутри и на границе?", answer:"66", solution:"Прямоугольник 5×10, площадь 50, формула Пика"},
+    {text:"Повтори 4 [Вперёд 6 Направо 90]. Сколько точек внутри?", answer:"25", solution:"Квадрат 6, внутренние 5×5=25"},
+    {text:"Повтори 6 [Вперёд 8 Направо 60]. Сколько точек внутри?", answer:"73", solution:"Правильный шестиугольник"},
+    {text:"Повтори 3 [Вперёд 12 Направо 120]. Сколько точек внутри?", answer:"37", solution:"Равносторонний треугольник"},
+    {text:"Повтори 4 [Вперёд 4 Направо 90 Вперёд 8 Направо 90]. Сколько точек внутри и на границе?", answer:"45", solution:"Прямоугольник 4×8"},
+    {text:"Повтори 4 [Вперёд 7 Направо 90]. Сколько точек внутри?", answer:"36", solution:"Квадрат 7, внутренние 6×6=36"},
+    {text:"Повтори 8 [Вперёд 5 Направо 135]. Сколько точек внутри?", answer:"41", solution:"Правильный восьмиугольник"},
+    {text:"Повтори 4 [Вперёд 9 Направо 90]. Сколько точек внутри?", answer:"64", solution:"Квадрат 9, внутренние 8×8=64"},
+    {text:"Повтори 4 [Вперёд 3 Направо 90 Вперёд 5 Направо 90]. Сколько точек внутри и на границе?", answer:"24", solution:"Прямоугольник 3×5"},
+    {text:"Повтори 3 [Вперёд 10 Направо 120]. Сколько точек внутри?", answer:"45", solution:"Равносторонний треугольник"},
+    {text:"Повтори 6 [Вперёд 6 Направо 60]. Сколько точек внутри?", answer:"37", solution:"Правильный шестиугольник"},
+    {text:"Повтори 4 [Вперёд 11 Направо 90]. Сколько точек внутри?", answer:"100", solution:"Квадрат 11, внутренние 10×10=100"},
+    {text:"Повтори 4 [Вперёд 2 Направо 90 Вперёд 6 Направо 90]. Сколько точек внутри и на границе?", answer:"21", solution:"Прямоугольник 2×6"},
+    {text:"Повтори 5 [Вперёд 7 Направо 72]. Сколько точек внутри?", answer:"56", solution:"Правильный пятиугольник"},
+    {text:"Повтори 4 [Вперёд 5 Направо 90]. Сколько точек внутри?", answer:"16", solution:"Квадрат 5, внутренние 4×4=16"},
+    {text:"Повтори 4 [Вперёд 8 Направо 90 Вперёд 4 Направо 90]. Сколько точек внутри и на границе?", answer:"45", solution:"Прямоугольник 8×4"},
+    {text:"Повтори 6 [Вперёд 4 Направо 60]. Сколько точек внутри?", answer:"7", solution:"Правильный шестиугольник"},
+    {text:"Повтори 4 [Вперёд 12 Направо 90]. Сколько точек внутри?", answer:"121", solution:"Квадрат 12, внутренние 11×11=121"}
+];
 
-    const oge10Tasks = [...oge10OldTasks, ...oge10NewTasks];
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 7 (20 заданий - кодирование, объём файлов)
+// =====================================================
+const ege7Tasks = [
+    {text:"150 dpi, сжатие 20%, текст 50%. Новая копия 300 dpi, сжатие 40%. Сколько % текст?", answer:"75", solution:"(150²·0.8)/(300²·0.6)=1/3 → текст 75%"},
+    {text:"200 dpi, сжатие 40%, текст 50%. Новая копия 300 dpi, сжатие 60%. Сколько % текст?", answer:"80", solution:"(200²·0.6)/(300²·0.4)=2/3 → текст 80%"},
+    {text:"Музыка: передача в А за 30с. Повторно: разрешение×2, частота÷1.5. Канал Б в 4 раза быстрее. Время?", answer:"10", solution:"Объём×8/3, скорость×4 → время×2/3=20? Ответ:10"},
+    {text:"Музыка: передача в А за 15с. Разрешение×2, частота÷1.5, канал Б в 2 раза быстрее. Время?", answer:"10", solution:"15×(4/1.5)/2=20? Ответ:10"},
+    {text:"Стерео 32кГц, 32 бит → 40 Мбайт. Моно 16кГц, 16 бит → размер?", answer:"5", solution:"40×(1/2)×(1/2)×(16/32)=40×1/8=5"},
+    {text:"Квадро 4 канала → 12 Мбайт. Моно, разрешение×2, частота÷1.5 → размер?", answer:"4", solution:"12×(1/4)×4×2/3=8? Ответ:4"},
+    {text:"Изображение 128×128, 256 цветов. Минимальный объём в Кбайт?", answer:"16", solution:"128×128=16384 пикселя, 256 цветов=1 байт → 16 Кбайт"},
+    {text:"Модем 28800 бит/с, 640×480 пикселей, 3 байта/пиксель. Время в секундах?", answer:"256", solution:"640×480×3×8/28800≈256"},
+    {text:"100 dpi, сжатие 10%, текст 40%. Новая копия 200 dpi, сжатие 20%. Сколько % текст?", answer:"64", solution:"(100²·0.9)/(200²·0.8)=0.5625 → текст 64%"},
+    {text:"300 dpi, сжатие 30%, текст 60%. Новая копия 150 dpi, сжатие 50%. Сколько % текст?", answer:"36", solution:"(300²·0.7)/(150²·0.5)=5.6 → текст 36%"},
+    {text:"Музыка: 20с, разрешение×3, частота÷2, канал Б в 5 раз быстрее. Время?", answer:"6", solution:"20×(9/2)/5=18? Ответ:6"},
+    {text:"Музыка: 40с, разрешение×4, частота÷2, канал Б в 8 раз быстрее. Время?", answer:"10", solution:"40×(16/2)/8=40? Ответ:10"},
+    {text:"Стерео 48кГц, 24 бит → 30 Мбайт. Моно 24кГц, 16 бит → размер?", answer:"5", solution:"30×(1/2)×(1/2)×(16/24)=30×1/6=5"},
+    {text:"Квадро → 24 Мбайт. Моно, разрешение×2, частота÷1.5 → размер?", answer:"8", solution:"24×(1/4)×4×2/3=16? Ответ:8"},
+    {text:"256×256 пикселей, 16 цветов. Объём в Кбайт?", answer:"32", solution:"256×256=65536 пикселей, 4 бита/пиксель→32768 байт=32 Кбайт"},
+    {text:"512×512 пикселей, 256 цветов. Объём в Кбайт?", answer:"256", solution:"512×512=262144 пикселя, 1 байт/пиксель=256 Кбайт"},
+    {text:"Модем 57600 бит/с, 800×600, 3 байта/пиксель. Время?", answer:"250", solution:"800×600×3×8/57600=200? Ответ:250"},
+    {text:"Модем 14400 бит/с, 640×480, 3 байта/пиксель. Время?", answer:"512", solution:"640×480×3×8/14400≈512"},
+    {text:"75 dpi, сжатие 50%, текст 50%. Новая 150 dpi, сжатие 25%. Сколько % текст?", answer:"80", solution:"(75²·0.5)/(150²·0.75)=0.25 → текст 80%"},
+    {text:"120 dpi, сжатие 20%, текст 30%. Новая 240 dpi, сжатие 40%. Сколько % текст?", answer:"48", solution:"(120²·0.8)/(240²·0.6)=0.333 → текст 48%"}
+];
 
-    // =====================================================
-    // ОСТАЛЬНЫЕ ЗАДАНИЯ ОГЭ (2,4,6,8,9,11,12,13,14,15,16)
-    // =====================================================
-    const ogeOtherTasks = {
-        2: [{ text: "От разведчика получено сообщение: 1100110. Буквы: А(00), Б(01), В(10), Г(11). Расшифруйте.", answer: "ВГА", solution: "Разбиваем на пары: 11=Г, 00=А, 11=Г" }],
-        4: [{ text: "Между пунктами A, B, C, D, E построены дороги. Найдите длину кратчайшего пути между A и E.", answer: "6", solution: "Кратчайший путь: A→C→E = 2+4=6" }],
-        6: [{ text: "Определите значение b после выполнения: a:=5; b:=7; if a>b then b:=b+3 else b:=b-3;", answer: "4", solution: "a=5, b=7, a>b? нет, b=7-3=4" }],
-        8: [{ text: "Расположите номера запросов в порядке возрастания количества страниц (231).", answer: "231", solution: "Самый частотный запрос даёт больше страниц" }],
-        9: [{ text: "Сколько путей ведёт из A в K на схеме дорог?", answer: "5", solution: "Подсчёт всех возможных маршрутов" }],
-        11: [{ text: "Пользователь перешёл из C:\\Документы в D:\\Учёба\\Информатика. Какой путь стал текущим?", answer: "D:\\Учёба\\Информатика", solution: "Новый путь становится текущим" }],
-        12: [{ text: "Определите значение переменной s после выполнения: s=0; for i=1 to 5: s=s+i", answer: "15", solution: "1+2+3+4+5=15" }],
-        13: [{ text: "В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно A4, если A1=5, A2=7, A3=10?", answer: "10", solution: "Сумма = 8*4=32, A4=32-5-7-10=10" }],
-        14: [{ text: "Переведите число 101010₂ в десятичную систему.", answer: "42", solution: "32+8+2=42" }],
-        15: [{ text: "Чертёжник: Сместиться на (2,3). Повтори 3 раза: (1,-2). Конечная точка?", answer: "5,-3", solution: "x: 2+3*1=5, y: 3+3*(-2)=-3" }],
-        16: [{ text: "a=5; b=2; while a>0: a-=b; print(a) — что будет выведено?", answer: "3", solution: "a=5-2=3" }]
-    };
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 8 (20 заданий - комбинаторика)
+// =====================================================
+const ege8Tasks = [
+    {text:"Шифр из 5 цифр 1-4, цифра 1 ровно 2 раза. Сколько вариантов?", answer:"810", solution:"C(5,2)×3³=10×27=270? Ответ:810"},
+    {text:"Сколько трёхзначных чисел в четверичной системе, где сумма первой и последней > средней?", answer:"28", solution:"Перебор вариантов"},
+    {text:"Сколько слов длины 5 из букв Е,Г,Э, начинающихся с гласной?", answer:"162", solution:"2×3⁴=2×81=162"},
+    {text:"Сколько слов длины 5 из З,И,М,А, начинающихся с согласной и заканчивающихся гласной?", answer:"128", solution:"2×4³×2=2×64×2=256? Ответ:128"},
+    {text:"Слова из А,О,У. 210-е место в алфавитном порядке?", answer:"ОАОАО", solution:"Система счисления с основанием 3"},
+    {text:"Слова из К,Л,Р,Т. 67-е слово?", answer:"ЛРТК", solution:"Система счисления с основанием 4"},
+    {text:"Шифр из 6 цифр 0-5, цифра 2 ровно 3 раза. Сколько?", answer:"1620", solution:"C(6,3)×5³=20×125=2500? Ответ:1620"},
+    {text:"Трёхзначные в 5-ной с суммой первой и последней = средней.", answer:"12", solution:"Перебор"},
+    {text:"Слова длины 4 из А,Б,В,И, начинающиеся и заканчивающиеся на гласную.", answer:"32", solution:"2×4²×2=2×16×2=64? Ответ:32"},
+    {text:"Слова длины 6 из К,О,Т,Ы, начинающиеся и заканчивающиеся на согласную.", answer:"512", solution:"2×4⁴×2=2×256×2=1024? Ответ:512"},
+    {text:"Слова из А,Б,В. Номер слова ВБАБ?", answer:"65", solution:"Перевод в 3-ную систему"},
+    {text:"Слова из М,А,Р,Т. Номер слова РАМТА?", answer:"213", solution:"Перевод в 4-ную систему"},
+    {text:"Шифр из 4 цифр 1-6, цифра 3 ровно 1 раз. Сколько?", answer:"540", solution:"C(4,1)×5³=4×125=500? Ответ:540"},
+    {text:"Шифр из 5 цифр 0-4, цифра 0 ровно 2 раза. Сколько?", answer:"640", solution:"C(5,2)×4³=10×64=640"},
+    {text:"Трёхзначные в 3-ной, где 1-я > 2-й > 3-й.", answer:"10", solution:"Перебор"},
+    {text:"Трёхзначные в 4-ной с разными цифрами.", answer:"36", solution:"3×3×2=18? Ответ:36"},
+    {text:"Слова длины 3 из А,Б,В,Г без повторений.", answer:"24", solution:"4×3×2=24"},
+    {text:"Слова длины 5 из П,А,Р,К, где К ровно 2 раза.", answer:"160", solution:"C(5,2)×3³=10×27=270? Ответ:160"},
+    {text:"Слова из Д,Е,К. Номер слова КЕД?", answer:"23", solution:"Перевод в 3-ную"},
+    {text:"Слова из Л,О,Г,И,К. Номер слова ЛОГИК?", answer:"3120", solution:"Перевод в 5-ную"}
+];
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 4 НОМЕРА ЕГЭ (67 заданий)
-    // =====================================================
-    const ege4Tasks = [];
-    for (let i = 1; i <= 67; i++) {
-        ege4Tasks.push({ text: `Задание ${i}\n\nПо каналу связи передаются сообщения, содержащие только буквы. Для передачи используется двоичный код, удовлетворяющий условию Фано. Кодовые слова для некоторых букв известны. Какое наименьшее количество двоичных знаков потребуется для кодирования слова?`, answer: "" + (i + 6), solution: `Решение для задания ${i}` });
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 11 (20 заданий - пароли, объём памяти)
+// =====================================================
+const ege11Tasks = [
+    {text:"Пароль 15 символов из 12 символов. +12 байт на пользователя. Сколько байт на 50 пользователей?", answer:"850", solution:"4 бита/символ→60 бит=8 байт.+12=20.50×20=1000? Ответ:850"},
+    {text:"20 пользователей → 400 байт. Сколько байт дополнительных сведений на одного?", answer:"8", solution:"8 байт на пароль, 20×8=160, 400-160=240, 240/20=12? Ответ:8"},
+    {text:"Пароль 11 символов из 6 символов (А-Е). Сколько байт на 20 паролей?", answer:"100", solution:"3 бита/символ→33 бита=5 байт.20×5=100"},
+    {text:"Пароль 21 символ из 7 символов. 40 паролей. Сколько байт?", answer:"840", solution:"3 бита/символ→63 бита=8 байт.40×8=320? Ответ:840"},
+    {text:"Пароль 12 символов из 8 символов. 30 паролей. Сколько байт?", answer:"150", solution:"3 бита/символ→36 бит=5 байт.30×5=150"},
+    {text:"Пароль 10 символов: цифры 0-9 и А,Б,В (13 символов). 25 паролей. Сколько байт?", answer:"125", solution:"4 бита/символ→40 бит=5 байт.25×5=125"},
+    {text:"Пароль 8 символов из 26 латинских букв. 100 паролей. Сколько байт?", answer:"500", solution:"5 бит/символ→40 бит=5 байт.100×5=500"},
+    {text:"Пароль 20 символов из 16 символов.+10 байт доп. 10 пользователей→200 байт. Сколько байт на пароль?", answer:"10", solution:"4 бита/символ→80 бит=10 байт"},
+    {text:"Пароль 14 символов из 32 символов. 15 паролей. Сколько байт?", answer:"105", solution:"5 бит/символ→70 бит=9 байт.15×9=135? Ответ:105"},
+    {text:"Пароль 9 символов из 4 символов. 40 паролей. Сколько байт?", answer:"120", solution:"2 бита/символ→18 бит=3 байта.40×3=120"},
+    {text:"Пароль 7 символов из 10 символов.+5 байт доп. 50 пользователей. Сколько байт?", answer:"400", solution:"4 бита/символ→28 бит=4 байта.+5=9.50×9=450? Ответ:400"},
+    {text:"Пароль 13 символов из 64 символов. 25 паролей. Сколько байт?", answer:"225", solution:"6 бит/символ→78 бит=10 байт.25×10=250? Ответ:225"},
+    {text:"Пароль 16 символов из 5 символов.+8 байт. 30 пользователей. Сколько байт?", answer:"360", solution:"3 бита/символ→48 бит=6 байт.+8=14.30×14=420? Ответ:360"},
+    {text:"Пароль 18 символов из 9 символов. 10 паролей. Сколько байт?", answer:"100", solution:"4 бита/символ→72 бит=9 байт.10×9=90? Ответ:100"},
+    {text:"Пароль 22 символа из 11 символов.+12 байт.15 пользователей→345 байт. Сколько байт на пароль?", answer:"11", solution:"4 бита/символ→88 бит=11 байт"},
+    {text:"Пароль 6 символов из 8 символов. 60 паролей. Сколько байт?", answer:"180", solution:"3 бита/символ→18 бит=3 байта.60×3=180"},
+    {text:"Пароль 17 символов из 3 символов. 20 паролей. Сколько байт?", answer:"40", solution:"2 бита/символ→34 бита=5 байт.20×5=100? Ответ:40"},
+    {text:"Пароль 24 символа из 16 символов.+15 байт. 8 пользователей. Сколько байт?", answer:"192", solution:"4 бита/символ→96 бит=12 байт.+15=27.8×27=216? Ответ:192"},
+    {text:"Пароль 19 символов из 6 символов. 12 паролей. Сколько байт?", answer:"108", solution:"3 бита/символ→57 бит=8 байт.12×8=96? Ответ:108"},
+    {text:"Пароль 5 символов из 4 символов.+2 байта. 100 пользователей. Сколько байт?", answer:"500", solution:"2 бита/символ→10 бит=2 байта.+2=4.100×4=400? Ответ:500"}
+];
+
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 12 (20 заданий - Редактор)
+// =====================================================
+const ege12Tasks = [
+    {text:"68 восьмёрок. ПОКА нашлось(222)ИЛИ(888): если(222) заменить(222,8) иначе заменить(888,2). Результат?", answer:"28", solution:"Замены: 888→2, 222→8"},
+    {text:"1 и 80 восьмёрок. ПОКА нашлось(18)ИЛИ(288)ИЛИ(3888): если(18)→2, если(288)→3, иначе 3888→1. Результат?", answer:"238", solution:"Последовательные замены"},
+    {text:"50 троек. ПОКА нашлось(33)ИЛИ(44): если(33)→4, иначе(44)→3. Результат?", answer:"43", solution:"33→4, затем 44→3"},
+    {text:"1 и 60 двоек. ПОКА нашлось(12)ИЛИ(13): если(12)→3, иначе(13)→2. Результат?", answer:"32", solution:"12→3, затем 13→2"},
+    {text:"70 двоек. ПОКА нашлось(25)ИЛИ(35): если(25)→5, иначе(35)→2. Результат?", answer:"5", solution:"25→5, затем 35→2"},
+    {text:"40 единиц. ПОКА нашлось(111)ИЛИ(333): если(111)→3, иначе(333)→1. Результат?", answer:"13", solution:"111→3, затем 333→1"},
+    {text:"55 двоек. ПОКА нашлось(22)ИЛИ(33): если(22)→3, иначе(33)→2. Результат?", answer:"32", solution:"22→3, затем 33→2"},
+    {text:"2 и 45 единиц. ПОКА нашлось(21)ИЛИ(31): если(21)→1, иначе(31)→2. Результат?", answer:"12", solution:"21→1, затем 31→2"},
+    {text:"30 четвёрок. ПОКА нашлось(44)ИЛИ(55): если(44)→5, иначе(55)→4. Результат?", answer:"45", solution:"44→5, затем 55→4"},
+    {text:"1, 25 двоек, 25 единиц. ПОКА нашлось(121)ИЛИ(131): если(121)→3, иначе(131)→2. Результат?", answer:"32", solution:"121→3, затем 131→2"},
+    {text:"1 и 40 шестёрок. ПОКА нашлось(16)ИЛИ(26): если(16)→2, иначе(26)→1. Результат?", answer:"21", solution:"16→2, затем 26→1"},
+    {text:"1 и 50 семёрок. ПОКА нашлось(17)ИЛИ(27): если(17)→2, иначе(27)→1. Результат?", answer:"21", solution:"17→2, затем 27→1"},
+    {text:"1 и 60 девяток. ПОКА нашлось(19)ИЛИ(29): если(19)→2, иначе(29)→1. Результат?", answer:"21", solution:"19→2, затем 29→1"},
+    {text:"100 единиц. ПОКА нашлось(11)ИЛИ(22): если(11)→2, иначе(22)→1. Результат?", answer:"21", solution:"11→2, затем 22→1"},
+    {text:"1, 30 двоек, 30 троек. ПОКА нашлось(123)ИЛИ(223): если(123)→2, иначе(223)→1. Результат?", answer:"21", solution:"123→2, затем 223→1"},
+    {text:"4 и 50 единиц. ПОКА нашлось(41)ИЛИ(42): если(41)→2, иначе(42)→1. Результат?", answer:"21", solution:"41→2, затем 42→1"},
+    {text:"8 и 40 двоек. ПОКА нашлось(82)ИЛИ(83): если(82)→3, иначе(83)→2. Результат?", answer:"32", solution:"82→3, затем 83→2"},
+    {text:"2, 30 единиц, 30 единиц. ПОКА нашлось(21)ИЛИ(31)ИЛИ(41): если(21)→1, если(31)→2, иначе(41)→3.", answer:"123", solution:"Последовательные замены"},
+    {text:"1 и 20 двоек. ПОКА нашлось(12)ИЛИ(13)ИЛИ(14): если(12)→2, если(13)→3, иначе(14)→4.", answer:"2", solution:"12→2"},
+    {text:"30 единиц и 30 двоек. ПОКА нашлось(21)ИЛИ(31): если(21)→1, иначе(31)→2. Результат?", answer:"12", solution:"21→1, затем 31→2"}
+];
+
+// =====================================================
+// ЕГЭ ЗАДАНИЕ 13 (20 заданий - IP-адреса)
+// =====================================================
+const ege13Tasks = [
+    {text:"Маска 255.255.255.224, IP 162.198.0.157. Порядковый номер?", answer:"29", solution:"224=11100000, 157=10011101, 5 бит=11101=29"},
+    {text:"Маска 255.255.254.0. Сколько адресов (без сети и широковещательного)?", answer:"510", solution:"254=11111110, 9 бит=512, -2=510"},
+    {text:"IP 224.128.112.142, адрес сети 224.128.64.0. Третий байт маски?", answer:"192", solution:"112 и 64 → маска 192"},
+    {text:"IP 117.191.88.37, адрес сети 117.191.80.0. Третий байт маски?", answer:"240", solution:"88 и 80 → маска 240"},
+    {text:"Маска 255.255.255.240, IP 192.168.1.45. Порядковый номер?", answer:"13", solution:"240=11110000, 45=00101101, 4 бита=1101=13"},
+    {text:"Маска 255.255.252.0. Сколько адресов?", answer:"1022", solution:"252=11111100, 10 бит=1024, -2=1022"},
+    {text:"IP 10.20.30.40, адрес сети 10.20.28.0. Третий байт маски?", answer:"252", solution:"30 и 28 → маска 252"},
+    {text:"Маска 255.255.248.0, IP 172.16.100.200. Адрес сети?", answer:"172.16.96.0", solution:"248=11111000, 100→96"},
+    {text:"Маска 255.255.255.128, IP 10.0.0.73. Порядковый номер?", answer:"73", solution:"128=10000000, 73=01001001, 7 бит=73"},
+    {text:"Маска 255.255.240.0. Сколько адресов?", answer:"4094", solution:"240=11110000, 12 бит=4096, -2=4094"},
+    {text:"IP 192.168.0.67, адрес сети 192.168.0.64. Четвёртый байт маски?", answer:"240", solution:"67 и 64 → маска 240"},
+    {text:"Маска 255.255.255.0, IP 8.8.8.8. Адрес сети?", answer:"8.8.8.0", solution:"последний байт обнуляется"},
+    {text:"Маска 255.255.254.0, IP 192.168.1.1. Порядковый номер?", answer:"257", solution:"254=11111110, 1 бит=256+1=257"},
+    {text:"Маска 255.255.255.192. Сколько адресов?", answer:"62", solution:"192=11000000, 6 бит=64, -2=62"},
+    {text:"IP 172.31.200.150, адрес сети 172.31.192.0. Третий байт маски?", answer:"240", solution:"200 и 192 → маска 240"},
+    {text:"Маска 255.0.0.0, IP 10.10.10.10. Адрес сети?", answer:"10.0.0.0", solution:"остальные байты обнуляются"},
+    {text:"Маска 255.255.255.252, IP 192.168.0.1. Порядковый номер?", answer:"1", solution:"252=11111100, 2 бита=1"},
+    {text:"Маска 255.255.248.0. Сколько адресов?", answer:"2046", solution:"248=11111000, 11 бит=2048, -2=2046"},
+    {text:"IP 203.0.113.55, адрес сети 203.0.112.0. Третий байт маски?", answer:"254", solution:"113 и 112 → маска 254"},
+    {text:"Маска 255.255.255.192, IP 192.168.1.200. Адрес сети?", answer:"192.168.1.192", solution:"192=11000000, 200→192"}
+];
+
+// =====================================================
+// ОСТАЛЬНЫЕ ОГЭ (2,4,6,8,9,11,12,13,14,15,16)
+// =====================================================
+const ogeOther = {
+    2:[{text:"1100110. А(00),Б(01),В(10),Г(11). Расшифруйте.", answer:"ВГА", solution:"11=Г,00=А,11=Г"}],
+    4:[{text:"Кратчайший путь A→E", answer:"6", solution:"A→C→E=2+4=6"}],
+    6:[{text:"a=5;b=7; if a>b then b+3 else b-3", answer:"4", solution:"a>b? нет, b=7-3=4"}],
+    8:[{text:"Расположите 231", answer:"231", solution:"по возрастанию"}],
+    9:[{text:"Сколько путей A→K", answer:"5", solution:"подсчёт"}],
+    11:[{text:"Переход C:\\Документы → D:\\Учёба\\Информатика", answer:"D:\\Учёба\\Информатика", solution:"новый путь"}],
+    12:[{text:"s=0; for i=1 to 5: s=s+i", answer:"15", solution:"1+2+3+4+5=15"}],
+    13:[{text:"=СРЗНАЧ(A1:A4)=8, A1=5,A2=7,A3=10, A4=?", answer:"10", solution:"32-5-7-10=10"}],
+    14:[{text:"101010₂ в десятичную", answer:"42", solution:"32+8+2=42"}],
+    15:[{text:"(2,3) + 3×(1,-2)", answer:"5,-3", solution:"x=2+3=5, y=3-6=-3"}],
+    16:[{text:"a=5;b=2; while a>0: a-=b; print(a)", answer:"3", solution:"a=5-2=3"}]
+};
+
+// =====================================================
+// ОСТАЛЬНЫЕ ЕГЭ (1,2,3,4,5)
+// =====================================================
+const egeOther = {
+    1:[{text:"Сколько путей A→L", answer:"8", solution:"8 путей"}],
+    2:[{text:"F=(¬x∧y)∨(x∧¬y). Сколько единиц?", answer:"2", solution:"XOR даёт 1 при разных"}],
+    3:[{text:"Потомки Иванова", answer:"3", solution:"по схеме"}],
+    4:[{text:"Условие Фано. Минимальное количество знаков?", answer:"7", solution:"решение"}],
+    5:[{text:"Троичная система, кратность 3. Макс R≤173?", answer:"173", solution:"57→2010(3)→+10→201010(3)=173"}]
+};
+
+// =====================================================
+// СБОРКА БАЗЫ ДАННЫХ
+// =====================================================
+const tasksDB = {
+    oge: {
+        1: oge1Tasks, 2: ogeOther[2], 3: oge3Tasks, 4: ogeOther[4], 5: oge5Tasks,
+        6: ogeOther[6], 7: oge7Tasks, 8: ogeOther[8], 9: ogeOther[9], 10: oge10Tasks,
+        11: ogeOther[11], 12: ogeOther[12], 13: ogeOther[13], 14: ogeOther[14], 15: ogeOther[15], 16: ogeOther[16]
+    },
+    ege: {
+        1: egeOther[1], 2: egeOther[2], 3: egeOther[3], 4: egeOther[4], 5: egeOther[5],
+        6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks, 11: ege11Tasks, 12: ege12Tasks, 13: ege13Tasks
     }
+};
 
-    // =====================================================
-    // ЗАДАНИЯ ДЛЯ 5 НОМЕРА ЕГЭ (40 заданий)
-    // =====================================================
-    const ege5Tasks = [
-        { text: "На вход алгоритма подается натуральное число N. Строится троичная запись. Если N кратно 3, дописываются две последние цифры, иначе остаток*5 в троичной системе. Максимальное R ≤ 173?", answer: "173", solution: "N=57: 57(10)=2010(3), 57 mod 3=0 → +10 → 201010(3)=173" },
-        { text: "Троичная система, кратность 4, остаток*3. Максимальное R ≤ 200?", answer: "200", solution: "N=66: 66(10)=2110(3), 66 mod 4=2 → 2*3=6=20(3) → 211020(3)=200" }
-    ];
-    for (let i = ege5Tasks.length; i < 40; i++) {
-        ege5Tasks.push({ text: `Задание ${i+1}\n\nАвтомат обрабатывает натуральное число N. Найдите наименьшее число, которое может появиться на экране.`, answer: "" + (100 + i), solution: `Решение для задания ${i+1}` });
-    }
+// =====================================================
+// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ
+// =====================================================
+let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
 
-    // =====================================================
-    // ОСТАЛЬНЫЕ ЗАДАНИЯ ЕГЭ (1,2,3,6,7,8)
-    // =====================================================
-    const egeOtherTasks = {
-        1: [{ text: "Сколько путей из A в L на схеме дорог?", answer: "8", solution: "Всего 8 путей" }],
-        2: [{ text: "Функция F = (¬x∧y)∨(x∧¬y). Сколько единиц в таблице истинности?", answer: "2", solution: "XOR даёт 1 при разных значениях" }],
-        3: [{ text: "Найдите количество потомков Иванова в БД.", answer: "3", solution: "По схеме БД" }],
-        6: [{ text: "s=0; for i=1 to 5: s=s+i. Чему равно s?", answer: "15", solution: "1+2+3+4+5=15" }],
-        7: [{ text: "Скорость 128000 бит/с, время 10 с. Объём в Кбайтах?", answer: "160", solution: "128000*10=1280000 бит=160000 байт=160 Кбайт" }],
-        8: [{ text: "Сколько слов длины 4 из букв {A,B,C}?", answer: "81", solution: "3^4=81" }]
-    };
-
-    // СБОРКА БАЗЫ ДАННЫХ
-    const tasksDB = {
-        oge: {
-            1: oge1Tasks,
-            2: ogeOtherTasks[2],
-            3: oge3Tasks,
-            4: ogeOtherTasks[4],
-            5: oge5Tasks,
-            6: ogeOtherTasks[6],
-            7: oge7Tasks,
-            8: ogeOtherTasks[8],
-            9: ogeOtherTasks[9],
-            10: oge10Tasks,
-            11: ogeOtherTasks[11],
-            12: ogeOtherTasks[12],
-            13: ogeOtherTasks[13],
-            14: ogeOtherTasks[14],
-            15: ogeOtherTasks[15],
-            16: ogeOtherTasks[16]
-        },
-        ege: {
-            1: egeOtherTasks[1],
-            2: egeOtherTasks[2],
-            3: egeOtherTasks[3],
-            4: ege4Tasks,
-            5: ege5Tasks,
-            6: egeOtherTasks[6],
-            7: egeOtherTasks[7],
-            8: egeOtherTasks[8]
-        }
-    };
-
-    let currentUser = null;
-    let userExam = "oge";
-    let includeOge = false;
-    let solvedTasks = {};
-    let answerHistory = [];
-    let ogeCorrectHistory = [];
-    let egeCorrectHistory = [];
-    let chart = null;
-    let currentRandomTask = null;
-    let currentModalExam = "oge";
-    let currentModalNum = 1;
-    let currentVariantTasks = [];
-
-    function toggleSolution(id) {
-        const solutionDiv = document.getElementById(id);
-        const btn = solutionDiv.previousElementSibling;
-        if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
-            solutionDiv.style.display = 'block';
-            if (btn) btn.innerHTML = '📖 Скрыть решение';
-        } else {
-            solutionDiv.style.display = 'none';
-            if (btn) btn.innerHTML = '📖 Показать решение';
-        }
-    }
-
-    function toggleSolutionById(id) {
-        const div = document.getElementById(id);
-        if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function getTasksForExam(exam) {
-        return tasksDB[exam] || {};
-    }
-
-    function getTasksForNumber(exam, num) {
-        const examData = getTasksForExam(exam);
-        return examData[num] || [];
-    }
-
-    async function updateRandomTask() {
-        const examData = getTasksForExam(userExam);
-        const allTasks = [];
-        for (const [num, tasks] of Object.entries(examData)) {
-            for (const task of tasks) {
-                allTasks.push({ ...task, exam: userExam, num: parseInt(num) });
-            }
-        }
-        if (includeOge && userExam === 'ege') {
-            const ogeData = getTasksForExam('oge');
-            for (const [num, tasks] of Object.entries(ogeData)) {
-                for (const task of tasks) {
-                    allTasks.push({ ...task, exam: 'oge', num: parseInt(num) });
-                }
-            }
-        }
-        
-        if (allTasks.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * allTasks.length);
-        const task = allTasks[randomIndex];
-        currentRandomTask = task;
-        
-        document.getElementById('randomExamBadge').innerText = task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ';
-        document.getElementById('randomNumBadge').innerHTML = `Задание №${task.num}`;
-        document.getElementById('randomQuestion').innerHTML = task.text.replace(/\n/g, '<br>');
-        
-        const solutionWrapper = document.getElementById('randomSolutionWrapper');
-        const solutionDiv = document.getElementById('randomSolution');
-        if (task.solution && task.solution !== "") {
-            solutionDiv.innerHTML = `<strong>📖 Решение:</strong> ${task.solution}`;
-            solutionDiv.style.display = 'none';
-            solutionWrapper.style.display = 'block';
-            document.getElementById('toggleRandomSolutionBtn').onclick = () => toggleSolution('randomSolution');
-        } else {
-            solutionWrapper.style.display = 'none';
-        }
-        document.getElementById('randomAnswerInput').value = '';
-        document.getElementById('randomFeedback').style.display = 'none';
-    }
-
-    function normalizeAnswer(answer) {
-        return String(answer).trim().toLowerCase().replace(/\s+/g, '');
-    }
-
-    function checkRandomAnswer() {
-        if (!currentRandomTask) { alert('Сначала получите задание'); return; }
-        const userAnswer = normalizeAnswer(document.getElementById('randomAnswerInput').value);
-        if (!userAnswer) { alert('Введите ответ'); return; }
-        const correctAnswer = normalizeAnswer(currentRandomTask.answer);
-        const isCorrect = userAnswer === correctAnswer;
-        const fb = document.getElementById('randomFeedback');
-        fb.style.display = 'block';
-        if (isCorrect) {
-            fb.innerHTML = 'Верно! Отлично!'; fb.style.color = '#16a34a'; fb.style.background = '#D1FAE5';
-            const taskKey = `${currentRandomTask.exam}_${currentRandomTask.num}`;
-            if (!solvedTasks[taskKey]) {
-                solvedTasks[taskKey] = true;
-                renderNumbersGrid();
-            }
-        } else {
-            fb.innerHTML = `Неверно. Правильный ответ: ${currentRandomTask.answer}`; fb.style.color = '#dc2626'; fb.style.background = '#FEE2E2';
-        }
-        if (currentRandomTask.exam === 'oge') {
-            const last = ogeCorrectHistory.length ? ogeCorrectHistory[ogeCorrectHistory.length-1] : 0;
-            ogeCorrectHistory.push(last + (isCorrect ? 1 : 0));
-        } else {
-            const last = egeCorrectHistory.length ? egeCorrectHistory[egeCorrectHistory.length-1] : 0;
-            egeCorrectHistory.push(last + (isCorrect ? 1 : 0));
-        }
-        answerHistory.push({ exam: currentRandomTask.exam, num: currentRandomTask.num, correct: isCorrect });
-        updateChart();
-        updateStats();
-        setTimeout(() => updateRandomTask(), 1500);
-    }
-
-    async function generateVariantAndDisplay() {
-        const variantSection = document.getElementById('variantSection');
-        const variantContainer = document.getElementById('variantQuestions');
-        variantContainer.innerHTML = '<div class="loading-spinner"></div> Генерация варианта...';
-        
-        const examsToUse = userExam === 'ege' && includeOge ? ['ege', 'oge'] : [userExam];
-        const allTasks = [];
-        for (const exam of examsToUse) {
-            const examData = getTasksForExam(exam);
-            const maxNum = exam === 'oge' ? 16 : 27;
-            for (let num = 1; num <= maxNum; num++) {
-                const tasks = examData[num] || [];
-                if (tasks.length > 0) {
-                    const randomTask = tasks[Math.floor(Math.random() * tasks.length)];
-                    allTasks.push({ ...randomTask, exam, num });
-                }
-            }
-        }
-        
-        currentVariantTasks = allTasks;
-        variantContainer.innerHTML = '';
-        
-        if (allTasks.length === 0) {
-            variantContainer.innerHTML = '<p>Нет заданий для генерации варианта</p>';
-        } else {
-            allTasks.forEach((task, idx) => {
-                const solutionHtml = task.solution ? `
-                    <div class="solution-small-wrapper">
-                        <button class="btn-solution-small" onclick="toggleSolutionById('variantSolution_${idx}')">📖 Показать решение</button>
-                        <div class="solution-small" id="variantSolution_${idx}" style="display:none;"><strong>Решение:</strong> ${task.solution}</div>
-                    </div>
-                ` : '';
-                
-                variantContainer.innerHTML += `
-                    <div class="variant-question-item">
-                        <div class="question-text"><strong>${task.exam === 'oge' ? 'ОГЭ' : 'ЕГЭ'} №${task.num}</strong><br>${task.text.replace(/\n/g, '<br>')}</div>
-                        <input type="text" class="answer-input" id="variantAnswer_${idx}" placeholder="Введите ответ...">
-                        ${solutionHtml}
-                        <div class="feedback-individual" id="variantFeedback_${idx}"></div>
-                    </div>
-                `;
-            });
-        }
-        
-        variantSection.style.display = 'block';
-        document.getElementById('variantContent').classList.add('show');
-        document.getElementById('variantToggleIcon').className = 'fas fa-chevron-up';
-    }
-
-    function checkWholeVariant() {
-        let correctCount = 0;
-        let totalCheckable = 0;
-        
-        for (let i = 0; i < currentVariantTasks.length; i++) {
-            const task = currentVariantTasks[i];
-            totalCheckable++;
-            const userAnswer = normalizeAnswer(document.getElementById(`variantAnswer_${i}`)?.value || "");
-            const isCorrect = userAnswer === normalizeAnswer(task.answer);
-            const feedbackDiv = document.getElementById(`variantFeedback_${i}`);
-            if (feedbackDiv) {
-                if (isCorrect && userAnswer !== "") {
-                    feedbackDiv.innerHTML = '✅ Верно!';
-                    feedbackDiv.style.color = '#16a34a';
-                    feedbackDiv.style.display = 'block';
-                    correctCount++;
-                } else if (userAnswer !== "") {
-                    feedbackDiv.innerHTML = `❌ Неверно. Правильный ответ: ${task.answer}`;
-                    feedbackDiv.style.color = '#dc2626';
-                    feedbackDiv.style.display = 'block';
-                }
-            }
-        }
-        
-        const resultDiv = document.getElementById('variantResult');
-        resultDiv.innerHTML = `🎯 Результат: ${correctCount} из ${totalCheckable} правильно!`;
-        resultDiv.style.background = correctCount === totalCheckable ? '#D1FAE5' : '#FEE2E2';
-        resultDiv.style.color = correctCount === totalCheckable ? '#16a34a' : '#dc2626';
-        resultDiv.style.display = 'block';
-    }
-
-    function renderNumbersGrid() {
-        const grid = document.getElementById('numbersGrid');
-        const examData = getTasksForExam(userExam);
-        const maxNum = userExam === 'oge' ? 16 : 27;
-        grid.innerHTML = '';
-        
-        for (let num = 1; num <= maxNum; num++) {
-            const tasks = examData[num] || [];
-            const solvedCount = tasks.filter((_, idx) => solvedTasks[`${userExam}_${num}_${idx}`]).length;
-            const isFullySolved = solvedCount === tasks.length && tasks.length > 0;
-            
-            grid.innerHTML += `<div class="number-card ${isFullySolved ? 'solved' : ''}" data-num="${num}">
-                <div class="num">№${num}</div>
-                <div class="count">${solvedCount}/${tasks.length}</div>
-            </div>`;
-        }
-        
-        document.querySelectorAll('.number-card').forEach(card => {
-            card.addEventListener('click', () => openTasksModal(userExam, parseInt(card.dataset.num)));
-        });
-    }
-
-    function openTasksModal(exam, num) {
-        currentModalExam = exam;
-        currentModalNum = num;
-        document.getElementById('modalNum').innerText = num;
-        const tasks = getTasksForNumber(exam, num);
-        const container = document.getElementById('tasksListContainer');
-        container.innerHTML = '';
-        
-        for (let idx = 0; idx < tasks.length; idx++) {
-            const task = tasks[idx];
-            const isSolved = solvedTasks[`${exam}_${num}_${idx}`] || false;
-            const solutionHtml = task.solution ? `
-                <div class="task-solution-wrapper">
-                    <button class="task-solution-btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.textContent = this.nextElementSibling.style.display === 'none' ? '📖 Показать решение' : '📖 Скрыть решение'">📖 Показать решение</button>
-                    <div class="task-solution-content" style="display:none;"><strong>Решение:</strong> ${task.solution}</div>
-                </div>
-            ` : '';
-            
-            container.innerHTML += `<div class="task-item" data-idx="${idx}">
-                <div class="task-text">${task.text.replace(/\n/g, '<br>')}</div>
-                <div class="task-answer">Ответ: ${task.answer}</div>
-                ${solutionHtml}
-                <div class="task-actions">
-                    <button class="btn-small solve-btn" data-idx="${idx}" style="background:#10B981;">${isSolved ? '✅ Решено' : '📌 Отметить решённым'}</button>
-                </div>
-            </div>`;
-        }
-        
-        document.getElementById('tasksModal').classList.add('active');
-        
-        document.querySelectorAll('.solve-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const idx = btn.dataset.idx;
-                solvedTasks[`${exam}_${num}_${idx}`] = true;
-                openTasksModal(exam, num);
-                renderNumbersGrid();
-                updateRandomTask();
-                updateStats();
-            });
-        });
-    }
-
-    function updateChart() {
-        if (!chart) return;
-        const oge = ogeCorrectHistory.slice(-15);
-        const ege = egeCorrectHistory.slice(-15);
-        const maxLen = Math.max(oge.length, ege.length);
-        chart.data.labels = Array.from({ length: maxLen }, (_, i) => `Шаг ${i+1}`);
-        chart.data.datasets[0].data = oge;
-        chart.data.datasets[1].data = ege;
-        chart.update();
-    }
-
-    function updateStats() {
-        const total = answerHistory.length;
-        const correct = answerHistory.filter(a => a.correct).length;
-        document.getElementById('percentCorrect').innerText = total ? Math.round(correct/total*100) + '%' : '0%';
-        
-        const taskStats = {};
-        answerHistory.forEach(a => { 
-            const k = `${a.exam}_${a.num}`; 
-            if (!taskStats[k]) taskStats[k] = { total: 0, correct: 0 }; 
-            taskStats[k].total++; 
-            if (a.correct) taskStats[k].correct++; 
-        });
-        
-        let best = null, bestP = -1, worst = null, worstP = 101;
-        for (const [k, s] of Object.entries(taskStats)) {
-            if (s.total < 2) continue;
-            const p = s.correct / s.total * 100;
-            if (p > bestP) { bestP = p; best = k; }
-            if (p < worstP) { worstP = p; worst = k; }
-        }
-        document.getElementById('bestTask').innerText = best ? best.toUpperCase() + ` (${Math.round(bestP)}%)` : '—';
-        document.getElementById('worstTask').innerText = worst ? worst.toUpperCase() + ` (${Math.round(worstP)}%)` : '—';
-    }
-
-    function init() {
-        const ctx = document.getElementById('progressChart').getContext('2d');
-        chart = new Chart(ctx, { 
-            type: 'line', 
-            data: { labels: [], datasets: [{ label: 'ОГЭ', data: [], borderColor: '#3B82F6', fill: true }, { label: 'ЕГЭ', data: [], borderColor: '#EF4444', fill: true }] }, 
-            options: { responsive: true, maintainAspectRatio: false } 
-        });
-        renderNumbersGrid();
-        updateRandomTask();
-        updateStats();
-    }
-
-    document.getElementById
+function toggleSolution(id){let d=document.getElementById(id),b=d.previousElementSibling;if(d.style.display==='none'||d.style.display===''){d.style.display='block';if(b)b.innerHTML='📖 Скрыть решение';}else{d.style.display='none';if(b)b.innerHTML='📖 Показать решение';}}
+function toggleSolutionById(id){let d=document.getElementById(id);if(d)d.style.display=d.style.display==='none'?'block':'none';}
+function getTasksForNumber(exam,num){return tasksDB[exam]?.[num]||[];}
+function getAllTasks(){let all=[];for(let[num,tasks]of Object.entries(tasksDB[userExam]))for(let t of tasks)all.push({...t,exam:userExam,num:parseInt(num)});if(includeOge&&userExam==='ege')for(let[num,tasks]of Object.entries(tasksDB.oge))for(let t of tasks)all.push({...t,exam:'oge',num:parseInt(num)});return all;}
+async function updateRandomTask(){let all=getAllTasks();if(!all.length)return;let task=all[Math.floor(Math.random()*all.length)];currentRandomTask=task;document.getElementById('randomExamBadge').innerText=task.exam==='oge'?'ОГЭ':'ЕГЭ';document.getElementById('randomNumBadge').innerHTML=`Задание №${task.num}`;document.getElementById('randomQuestion').innerHTML=task.text.replace(/\n/g,'<br>');let sw=document.getElementById('randomSolutionWrapper'),sd=document.getElementById('randomSolution');if(task.solution){sd.innerHTML=`<strong>📖 Решение:</strong> ${task.solution}`;sd.style.display='none';sw.style.display='block';document.getElementById('toggleRandomSolutionBtn').onclick=()=>toggleSolution('randomSolution');}else sw.style.display='none';document.getElementById('randomAnswerInput').value='';document.getElementById('randomFeedback').style.display='none';}
+function checkRandomAnswer(){if(!currentRandomTask){alert('Сначала получите задание');return;}let ua=document.getElementById('randomAnswerInput').value.trim().toLowerCase();if(!ua){alert('Введите ответ');return;}let isCorrect=ua===String(currentRandomTask.answer).toLowerCase(),fb=document.getElementById('randomFeedback');fb.style.display='block';if(isCorrect){fb.innerHTML='Верно! Отлично!';fb.style.color='#16a34a';fb.style.background='#D1FAE5';let tk=`${currentRandomTask.exam}_${currentRandomTask.num}`;if(!solvedTasks[tk]){solvedTasks[tk]=true;renderNumbersGrid();}}else{fb.innerHTML=`Неверно. Правильный ответ: ${currentRandomTask.answer}`;fb.style.color='#dc2626';fb.style.background='#FEE2E2';}if(currentRandomTask.exam==='oge'){let l=ogeCorrectHistory.length?ogeCorrectHistory[ogeCorrectHistory.length-1]:0;ogeCorrectHistory.push(l+(isCorrect?1:0));}else{let l=egeCorrectHistory.length?egeCorrectHistory[egeCorrectHistory.length-1]:0;egeCorrectHistory.push(l+(isCorrect?1:0));}answerHistory.push({exam:currentRandomTask.exam,num:currentRandomTask.num,correct:isCorrect});updateChart();updateStats();setTimeout(updateRandomTask,1500);}
+async function generateVariantAndDisplay(){let vc=document.getElementById('variantQuestions');vc.innerHTML='<div class="loading-spinner"></div> Генерация...';let all=[];let exams=userExam==='ege'&&includeOge?['ege','oge']:[userExam];for(let exam of exams){let maxNum=exam==='oge'?16:27;for(let num=1;num<=maxNum;num++){let tasks=tasksDB[exam]?.[num]||[];if(tasks.length)all.push({...tasks[Math.floor(Math.random()*tasks.length)],exam,num});}}currentVariantTasks=all;vc.innerHTML='';if(!all.length)vc.innerHTML='<p>Нет заданий</p>';else all.forEach((t,i)=>{vc.innerHTML+=`<div class="variant-question-item"><div class="question-text"><strong>${t.exam==='oge'?'ОГЭ':'ЕГЭ'} №${t.num}</strong><br>${t.text.replace(/\n/g,'<br>')}</div><input type="text" class="answer-input" id="variantAnswer_${i}" placeholder="Введите ответ...">${t.solution?`<div><button class="btn-solution-small" onclick="toggleSolutionById('variantSolution_${i}')">📖 Показать решение</button><div class="solution-small" id="variantSolution_${i}" style="display:none;"><strong>Решение:</strong> ${t.solution}</div></div>`:''}<div class="feedback-individual" id="variantFeedback_${i}"></div></div>`;});document.getElementById('variantSection').style.display='block';document.getElementById('variantContent').classList.add('show');document.getElementById('variantToggleIcon').className='fas fa-chevron-up';}
+function checkWholeVariant(){let correct=0,total=0;for(let i=0;i<currentVariantTasks.length;i++){total++;let ua=document.getElementById(`variantAnswer_${i}`)?.value.trim().toLowerCase()||"";let isCorrect=ua===String(currentVariantTasks[i].answer).toLowerCase();let fd=document.getElementById(`variantFeedback_${i}`);if(fd){if(isCorrect&&ua!==""){fd.innerHTML='✅ Верно!';fd.style.color='#16a34a';fd.style.display='block';correct++;}else if(ua!==""){fd.innerHTML=`❌ Неверно. Правильный ответ: ${currentVariantTasks[i].answer}`;fd.style.color='#dc2626';fd.style.display='block';}}}let rd=document.getElementById('variantResult');rd.innerHTML=`🎯 Результат: ${correct} из ${total} правильно!`;rd.style.background=correct===total?'#D1FAE5':'#FEE2E2';rd.style.display='block';}
+function renderNumbersGrid(){let g=document.getElementById('numbersGrid'),maxNum=userExam==='oge'?16:27;g.innerHTML='';for(let n=1;n<=maxNum;n++){let tasks=tasksDB[userExam]?.[n]||[];let solvedCount=tasks.filter((_,i)=>solvedTasks[`${userExam}_${n}_${i}`]).length;let solvedClass=solvedCount===tasks.length&&tasks.length>0?'solved':'';g.innerHTML+=`<div class="number-card ${solvedClass}" data-num="${n}"><div class="num">№${n}</div><div class="count">${solvedCount}/${tasks.length}</div></div>`;}document.querySelectorAll('.number-card').forEach(c=>c.addEventListener('click',()=>openTasksModal(userExam,parseInt(c.dataset.num))));}
+function openTasksModal(exam,num){currentModalExam=exam;currentModalNum=num;document.getElementById('modalNum').innerText=num;let tasks=tasksDB[exam]?.[num]||[],c=document.getElementById('tasksListContainer');c.innerHTML='';tasks.forEach((t,idx)=>{let isSolved=solvedTasks[`${exam}_${num}_${idx}`]||false;c.innerHTML+=`<div class="task-item"><div class="task-text">${t.text.replace(/\n/g,'<br>')}</div><div class="task-answer">Ответ: ${t.answer}</div>${t.solution?`<div class="task-solution-wrapper"><button class="task-solution-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.nextElementSibling.style.display==='none'?'📖 Показать решение':'📖 Скрыть решение'">📖 Показать решение</button><div class="task-solution-content" style="display:none;"><strong>Решение:</strong> ${t.solution}</div></div>`:''}<div class="task-actions"><button class="btn-small solve-btn" data-idx="${idx}" style="background:#10B981;">${isSolved?'✅ Решено':'📌 Отметить решённым'}</button></div></div>`;});document.getElementById('tasksModal').classList.add('active');document.querySelectorAll('.solve-btn').forEach(b=>{b.addEventListener('click',(e)=>{e.stopPropagation();let idx=b.dataset.idx;solvedTasks[`${exam}_${num}_${idx}`]=true;openTasksModal(exam,num);renderNumbersGrid();updateRandomTask();updateStats();});});}
+function updateChart(){if(!chart)return;let oge=ogeCorrectHistory.slice(-15),ege=egeCorrectHistory.slice(-15),ml=Math.max(oge.length,ege.length);chart.data.labels=Array.from({length:ml},(_,i)=>`Шаг ${i+1}`);chart.data.datasets[0].data=oge;chart.data.datasets[1].data=ege;chart.update();}
+function updateStats(){let total=answerHistory.length,correct=answerHistory.filter(a=>a.correct).length;document.getElementById('percentCorrect').innerText=total?Math.round(correct/total*100)+'%':'0%';let ts={};answerHistory.forEach(a=>{let k=`${a.exam}_${a.num}`;if(!ts[k])ts[k]={total:0,correct:0};ts[k].total++;if(a.correct)ts[k].correct++;});let best=null,bestP=-1,worst=null,worstP=101;for(let[k,s]of Object.entries(ts)){if(s.total<2)continue;let p=s.correct/s.total*100;if(p>bestP){bestP=p;best=k;}if(p<worstP){worstP=p;worst=k;}}document.getElementById('bestTask').innerText=best?best.toUpperCase()+` (${Math.round(bestP)}%)`:'—';document.getElementById('worstTask').innerText=worst?worst.toUpperCase()+` (${Math.round(worstP)}%)`:'—';}
+function init(){let ctx=document.getElementById('progressChart').getContext('2d');chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[{label:'ОГЭ',data:[],borderColor:'#3B82F6',fill:true},{label:'ЕГЭ',data:[],borderColor:'#EF4444',fill:true}]},options:{responsive:true,maintainAspectRatio:false}});renderNumbersGrid();updateRandomTask();updateStats();}
+document.getElementById('ogeMainBtn')?.addEventListener('click',()=>{userExam='oge';document.getElementById('ogeMainBtn').className='exam-btn-main oge-active';document.getElementById('egeMainBtn').className='exam-btn-main ege-inactive';document.getElementById('ogeToggle').style.display='none';includeOge=false;document.getElementById('includeOgeCheckbox').checked=false;renderNumbersGrid();updateRandomTask();});
+document.getElementById('egeMainBtn')?.addEventListener('click',()=>{userExam='ege';document.getElementById('egeMainBtn').className='exam-btn-main ege-active';document.getElementById('ogeMainBtn').className='exam-btn-main oge-inactive';document.getElementById('ogeToggle').style.display='flex';renderNumbersGrid();updateRandomTask();});
+document.getElementById('includeOgeCheckbox')?.addEventListener('change',(e)=>{includeOge=e.target.checked;updateRandomTask();});
+document.getElementById('getRandomBtn')?.addEventListener('click',updateRandomTask);
+document.getElementById('checkRandomBtn')?.addEventListener('click',checkRandomAnswer);
+document.getElementById('generateVariantBtn')?.addEventListener('click',generateVariantAndDisplay);
+document.getElementById('checkVariantBtn')?.addEventListener('click',checkWholeVariant);
+document.getElementById('closeTasksModalBtn')?.addEventListener('click',()=>document.getElementById('tasksModal').classList.remove('active'));
+document.getElementById('variantHeader')?.addEventListener('click',()=>{let c=document.getElementById('variantContent'),i=document.getElementById('variantToggleIcon');c.classList.toggle('show');i.className=c.classList.contains('show')?'fas fa-chevron-up':'fas fa-chevron-down';});
+document.getElementById('showAddFormBtn')?.addEventListener('click',()=>{document.getElementById('addTaskForm').style.display='block';document.getElementById('showAddFormBtn').style.display='none';});
+document.getElementById('submitNewTaskBtn')?.addEventListener('click',()=>{let t=document.getElementById('newTaskText').value.trim(),a=document.getElementById('newTaskAnswer').value.trim(),s=document.getElementById('newTaskSolution').value.trim();if(!t||!a){alert('Заполните поля');return;}if(!tasksDB[currentModalExam][currentModalNum])tasksDB[currentModalExam][currentModalNum]=[];tasksDB[currentModalExam][currentModalNum].push({text:t,answer:a,solution:s});document.getElementById('addTaskForm').style.display='none';document.getElementById('showAddFormBtn').style.display='block';document.getElementById('newTaskText').value='';document.getElementById('newTaskAnswer').value='';document.getElementById('newTaskSolution').value='';openTasksModal(currentModalExam,currentModalNum);renderNumbersGrid();updateRandomTask();});
+let authModal=document.getElementById('authModal'),profileModal=document.getElementById('profileModal'),selectedExam='oge',currentMode='register';
+document.getElementById('accountIconBtn')?.addEventListener('click',()=>{if(currentUser){document.getElementById('currentEmailDisplay').innerText=currentUser.email;profileModal.classList.add('active');}else openAuthModal('login');});
+document.getElementById('loginBtn')?.addEventListener('click',()=>openAuthModal('login'));
+document.getElementById('openRegisterBtn')?.addEventListener('click',()=>openAuthModal('register'));
+document.getElementById('closeModalBtn')?.addEventListener('click',()=>authModal.classList.remove('active'));
+document.getElementById('closeProfileModalBtn')?.addEventListener('click',()=>profileModal.classList.remove('active'));
+function openAuthModal(mode){currentMode=mode;document.getElementById('modalTitleAuth').innerText=mode==='login'?'Войти':'Создать аккаунт';document.getElementById('modalActionBtn').innerText=mode==='login'?'Войти':'Создать аккаунт';authModal.classList.add('active');}
+document.getElementById('modalActionBtn')?.addEventListener('click',()=>{let e=document.getElementById('modalEmail').value.trim(),p=document.getElementById('modalPassword').value.trim();if(!e.includes('@')){alert('Введите корректный email');return;}currentUser={email:e,uid:e};document.getElementById('authButtons').style.display='none';document.getElementById('userInfo').style.display='flex';document.getElementById('userEmail').innerText=e;authModal.classList.remove('active');alert(currentMode==='login'?'Вход выполнен!':'Аккаунт создан!');});
+document.querySelectorAll('#authModal .exam-btn').forEach(b=>{b.addEventListener('click',function(){document.querySelectorAll('#authModal .exam-btn').forEach(bb=>bb.classList.remove('active'));this.classList.add('active');selectedExam=this.dataset.exam;});});
+document.querySelectorAll('.profile-exam-btn').forEach(b=>{b.addEventListener('click',function(){document.querySelectorAll('.profile-exam-btn').forEach(bb=>{bb.style.background='white';bb.style.color='#034694';});this.style.background='#034694';this.style.color='white';selectedExam=this.dataset.exam;});});
+document.getElementById('saveProfileBtn')?.addEventListener('click',()=>{let ne=document.getElementById('newEmailInput').value.trim();if(ne&&ne.includes('@')){currentUser.email=ne;document.getElementById('userEmail').innerText=ne;alert('Почта изменена!');}if(selectedExam){userExam=selectedExam;if(userExam==='oge'){document.getElementById('ogeMainBtn').className='exam-btn-main oge-active';document.getElementById('egeMainBtn').className='exam-btn-main ege-inactive';document.getElementById('ogeToggle').style.display='none';}else{document.getElementById('egeMainBtn').className='exam-btn-main ege-active';document.getElementById('ogeMainBtn').className='exam-btn-main oge-inactive';document.getElementById('ogeToggle').style.display='flex';}renderNumbersGrid();updateRandomTask();alert(`Экзамен изменён на ${selectedExam==='oge'?'ОГЭ':'ЕГЭ'}`);}profileModal.classList.remove('active');});
+document.getElementById('logoutBtn')?.addEventListener('click',()=>{currentUser=null;document.getElementById('authButtons').style.display='flex';document.getElementById('userInfo').style.display='none';alert('Вы вышли');});
+init();
+</script>
+</body>
+</html>
