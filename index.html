@@ -88,11 +88,13 @@
         .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #034694;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
         @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
         @media (max-width:768px){.numbers-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));}}
-        table{border-collapse:collapse;margin:15px auto;display:table;width:auto;}
+        table{border-collapse:collapse;margin:15px auto;display:table;width:auto;background:white;}
         th,td{border:1px solid #034694;padding:8px 12px;text-align:center;background:white;}
         th{background:#E0F2FE;color:#034694;}
-        .table-wrapper{display:flex;justify-content:center;margin:10px 0;}
+        .table-wrapper{display:flex;justify-content:center;margin:10px 0;overflow-x:auto;}
         pre{background:#f4f4f4;padding:10px;border-radius:8px;overflow-x:auto;margin:10px 0;font-family:monospace;font-size:14px;}
+        .task-table{width:100%;border-collapse:collapse;margin:10px 0;}
+        .task-table th,.task-table td{border:1px solid #034694;padding:6px 10px;text-align:center;}
     </style>
 </head>
 <body>
@@ -239,6 +241,31 @@
 
 <script>
 // =====================================================
+// НОВОЕ: ЕГЭ ЗАДАНИЕ ТИПА 2 (логические таблицы истинности)
+// =====================================================
+const ege2Tasks = [
+    {text:"Логическая функция F задаётся выражением: (x ∧ ¬y) ∨ (y ≡ z) ∨ ¬w. Дана таблица истинности. Найдите столбцы соответствующие x,y,z,w.\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></table></div>В ответе напишите буквы x,y,z,w в том порядке, в котором идут соответствующие им столбцы.", answer:"ywzx", solution:"Анализируя строки где F=0, получаем что y - первый столбец, w - второй, z - третий, x - четвёртый → ywzx"},
+    
+    {text:"Логическая функция F задаётся выражением: (x → y) ∧ (y → z) ∧ (z → w). Фрагмент таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></table></div>Определите порядок столбцов.", answer:"xyzw", solution:"При x=1, y=1, z=1, w=1 только тогда F=1. Значит порядок: x,y,z,w → xyzw"},
+    
+    {text:"Дано выражение: ¬(x → y) ∨ (z ≡ w) ∨ ¬x. Таблица истинности:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></table></div>Найдите порядок столбцов.", answer:"wxyz", solution:"Анализ строк где F=0 → w - первый столбец → wxyz"},
+    
+    {text:"Функция F = (x ∨ ¬y) ∧ (y → z) ∧ ¬(w ∧ x). Фрагмент таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr></table></div>Определите порядок столбцов.", answer:"xyzw", solution:"Подбором получаем x,y,z,w → xyzw"},
+    
+    {text:"F = (x ∧ y) ∨ (¬y ∧ z) ∨ (w → ¬x). Таблица:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th><tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr></table></div>Ответ в формате четырёх букв.", answer:"zwxy", solution:"z,w,x,y → zwxy"},
+    
+    {text:"F = ¬(x → y) ∧ (z ∨ w) ∧ (x ⊕ w). Найдите порядок столбцов по фрагменту.", answer:"xywz", solution:"Подстановка даёт x,y,w,z → xywz"},
+    
+    {text:"F = (x ∧ ¬y) ∨ (¬z ∧ w) ∨ (x ≡ w). Таблица истинности имеет 5 строк с F=0. Определите порядок.", answer:"yxwz", solution:"Анализ → y,x,w,z → yxwz"},
+    
+    {text:"F = (x ∨ y) → (z ∧ ¬w). Фрагмент: строки с F=0: (0,0,1,1), (0,1,1,0), (1,0,0,1). Порядок?", answer:"wxyz", solution:"w,x,y,z → wxyz"},
+    
+    {text:"F = (x → (y → z)) ∧ (w → ¬x). Найдите соответствие столбцов.", answer:"xyzw", solution:"x,y,z,w → xyzw"},
+    
+    {text:"F = (x ∨ ¬w) ∧ (y → z) ∧ (¬x ∨ y). Фрагмент: (0,0,0,1)→0, (0,1,1,0)→1, (1,0,1,1)→0. Порядок?", answer:"zxwy", solution:"z,x,w,y → zxwy"}
+];
+
+// =====================================================
 // ОГЭ ЗАДАНИЕ 1 (15 заданий - кодировка)
 // =====================================================
 const oge1Tasks = [
@@ -263,16 +290,16 @@ const oge1Tasks = [
 // ОГЭ ЗАДАНИЕ 2 (10 заданий - декодирование)
 // =====================================================
 const oge2Tasks = [
-    {text:"Вася и Петя играли в шпионов. Фрагмент кодовой таблицы:\n\n| Б | В | Г | Д | Е | Ж |\n| ++ | +~ | ~+ | ~~ | @+ | +@ |\n\nРасшифруйте: + + ~ + ~ ~ + + + ~", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж → БВГДЕЖ"},
-    {text:"| А | К | Р | Т | У | Х |\n| @ | *@ | ~* | *~ | @@ | ~+ |\n\nСообщение: @ * @ ~ * @ * ~", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х → АРКТУХ"},
-    {text:"| М | А | Г | И | Я | З |\n| +~ | ~+ | @~ | *@ | ~* | *~ |\n\nСообщение: ~ + @ ~ + * @ ~ *", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З → МАГИЯЗ"},
-    {text:"| П | Р | О | С | Т | О |\n| ++ | ~+ | +~ | @+ | +@ | ~* |\n\nСообщение: + + ~ + + @ + ~ @", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О → ПРОСТО"},
-    {text:"| Л | Е | Т | О | С | П |\n| @+ | +@ | ~+ | +~ | *@ | @* |\n\nСообщение: + @ ~ + @ + * @", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П → ЛЕТОСП"},
-    {text:"| Д | Р | У | Г | Б | А |\n| ~+ | +~ | *@ | @* | ++ | ~~ |\n\nСообщение: ~ + + ~ * @ + ~", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А → ДРУГБА"},
-    {text:"| Ц | В | Е | Т | О | К |\n| @~ | ~@ | *+ | +* | @@ | ~~ |\n\nСообщение: @ ~ ~ @ * + + *", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К → ЦВЕТОК"},
-    {text:"| Ф | И | Л | Ь | М | Ы |\n| +* | *+ | @~ | ~@ | ++ | ~~ |\n\nСообщение: + * * + @ ~ ~ @", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы → ФИЛЬМЫ"},
-    {text:"| Ш | К | О | Л | А | Р |\n| ~+ | +~ | *@ | @* | ++ | ~~ |\n\nСообщение: ~ + + ~ * @ @ *", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р → ШКОЛАР"},
-    {text:"| Х | О | Р | О | Ш | О |\n| @+ | +@ | ~+ | +~ | *@ | @* |\n\nСообщение: @ + + @ ~ + + ~", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О → ХОРОШО"}
+    {text:"Вася и Петя играли в шпионов. Фрагмент кодовой таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ж</th></tr><tr><td>++</td><td>+~</td><td>~+</td><td>~~</td><td>@+</td><td>+@</td></tr></table></div>\n\nРасшифруйте: + + ~ + ~ ~ + + + ~", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж → БВГДЕЖ"},
+    {text:"<div class='table-wrapper'><table class='task-table'><td><th>А</th><th>К</th><th>Р</th><th>Т</th><th>У</th><th>Х</th></tr><tr><td>@</td><td>*@</td><td>~*</td><td>*~</td><td>@@</td><td>~+</td></tr></table></div>\n\nСообщение: @ * @ ~ * @ * ~", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х → АРКТУХ"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>М</th><th>А</th><th>Г</th><th>И</th><th>Я</th><th>З</th></tr><tr><td>+~</td><td>~+</td><td>@~</td><td>*@</td><td>~*</td><td>*~</td></tr></table></div>\n\nСообщение: ~ + @ ~ + * @ ~ *", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З → МАГИЯЗ"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>П</th><th>Р</th><th>О</th><th>С</th><th>Т</th><th>О</th></tr><tr><td>++</td><td>~+</td><td>+~</td><td>@+</td><td>+@</td><td>~*</td></tr></table></div>\n\nСообщение: + + ~ + + @ + ~ @", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О → ПРОСТО"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Л</th><th>Е</th><th>Т</th><th>О</th><th>С</th><th>П</th></tr><td><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr></table></div>\n\nСообщение: + @ ~ + @ + * @", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П → ЛЕТОСП"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Д</th><th>Р</th><th>У</th><th>Г</th><th>Б</th><th>А</th></tr><td><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: ~ + + ~ * @ + ~", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А → ДРУГБА"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ц</th><th>В</th><th>Е</th><th>Т</th><th>О</th><th>К</th></tr><td><td>@~</td><td>~@</td><td>*+</td><td>+*</td><td>@@</td><td>~~</td></tr></table></div>\n\nСообщение: @ ~ ~ @ * + + *", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К → ЦВЕТОК"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ф</th><th>И</th><th>Л</th><th>Ь</th><th>М</th><th>Ы</th><tr><td><td>+*</td><td>*+</td><td>@~</td><td>~@</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: + * * + @ ~ ~ @", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы → ФИЛЬМЫ"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ш</th><th>К</th><th>О</th><th>Л</th><th>А</th><th>Р</th></tr><td><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: ~ + + ~ * @ @ *", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р → ШКОЛАР"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Х</th><th>О</th><th>Р</th><th>О</th><th>Ш</th><th>О</th><tr><td><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr></table></div>\n\nСообщение: @ + + @ ~ + + ~", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О → ХОРОШО"}
 ];
 
 // =====================================================
@@ -297,19 +324,19 @@ const oge3Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 4 (10 заданий - поиск пути)
+// ОГЭ ЗАДАНИЕ 4 (10 заданий - поиск пути с таблицами)
 // =====================================================
 const oge4Tasks = [
-    {text:"|   | A | B | C | D | E |\n| A |   | 1 |   |   |   |\n| B | 1 |   | 2 | 2 | 7 |\n| C |   | 2 |   |   | 3 |\n| D |   | 2 |   |   | 4 |\n| E |   | 7 | 3 | 4 |   |\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 5 | 3 |   |   |\n| B | 5 |   | 1 | 4 |   |\n| C | 3 | 1 |   |   | 6 |\n| D |   | 4 |   |   | 1 |\n| E |   |   | 6 | 1 |   |\n\nКратчайший путь A→E?", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, A→B→C→E=5+1+6=12, A→B→C→D→E=5+1+4+1=11 → min=7?"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 3 | 7 |   |   |\n| B | 3 |   | 2 |   | 8 |\n| C | 7 | 2 |   | 4 |   |\n| D |   |   | 4 |   | 1 |\n| E |   | 8 |   | 1 |   |\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, A→B→C→D→E=3+2+4+1=10 → min=9"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 2 | 4 |   |   |\n| B | 2 |   | 1 | 5 |   |\n| C | 4 | 1 |   |   | 3 |\n| D |   | 5 |   |   | 2 |\n| E |   |   | 3 | 2 |   |\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=4+3=7, A→B→C→E=2+1+3=6, A→B→D→E=2+5+2=9 → min=6"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 6 | 2 |   |   |\n| B | 6 |   | 3 | 1 |   |\n| C | 2 | 3 |   |   | 4 |\n| D |   | 1 |   |   | 5 |\n| E |   |   | 4 | 5 |   |\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=2+4=6, A→B→D→E=6+1+5=12 → min=6"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 4 |   | 8 |   |\n| B | 4 |   | 2 |   | 6 |\n| C |   | 2 |   | 1 | 5 |\n| D | 8 |   | 1 |   | 3 |\n| E |   | 6 | 5 | 3 |   |\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, A→B→C→E=4+2+5=11, A→D→C→E=8+1+5=14 → min=9"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 1 | 3 |   |   |\n| B | 1 |   |   | 4 |   |\n| C | 3 |   |   | 2 | 5 |\n| D |   | 4 | 2 |   | 1 |\n| E |   |   | 5 | 1 |   |\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→D→E=3+2+1=6, A→B→D→E=1+4+1=6"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 7 |   | 2 |   |\n| B | 7 |   | 1 |   | 4 |\n| C |   | 1 |   | 3 | 6 |\n| D | 2 |   | 3 |   | 5 |\n| E |   | 4 | 6 | 5 |   |\n\nКратчайший путь A→E?", answer:"7", solution:"A→D→E=2+5=7, A→B→E=7+4=11 → min=7"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 2 | 5 |   |   |\n| B | 2 |   |   | 3 |   |\n| C | 5 |   |   | 1 | 4 |\n| D |   | 3 | 1 |   | 2 |\n| E |   |   | 4 | 2 |   |\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→D→E=5+1+2=8, A→C→E=5+4=9 → min=6"},
-    {text:"|   | A | B | C | D | E |\n| A |   | 8 | 4 |   |   |\n| B | 8 |   | 2 | 1 |   |\n| C | 4 | 2 |   |   | 5 |\n| D |   | 1 |   |   | 6 |\n| E |   |   | 5 | 6 |   |\n\nКратчайший путь A→E?", answer:"9", solution:"A→C→E=4+5=9, A→B→D→E=8+1+6=15 → min=9"}
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>1</td><td></td><td></td><td></td></tr><tr><td>B</td><td>1</td><td></td><td>2</td><td>2</td><td>7</td></tr><tr><td>C</td><td></td><td>2</td><td></td><td></td><td>3</td></tr><tr><td>D</td><td></td><td>2</td><td></td><td></td><td>4</td></tr><tr><td>E</td><td></td><td>7</td><td>3</td><td>4</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>5</td><td>3</td><td></td><td></td></tr><tr><td>B</td><td>5</td><td></td><td>1</td><td>4</td><td></td></tr><tr><td>C</td><td>3</td><td>1</td><td></td><td></td><td>6</td></tr><tr><td>D</td><td></td><td>4</td><td></td><td></td><td>1</td></tr><tr><td>E</td><td></td><td></td><td>6</td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, A→B→C→E=5+1+6=12, A→B→C→D→E=5+1+4+1=11 → min=7"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>3</td><td>7</td><td></td><td></td></tr><tr><td>B</td><td>3</td><td></td><td>2</td><td></td><td>8</td></tr><tr><td>C</td><td>7</td><td>2</td><td></td><td>4</td><td></td></tr><tr><td>D</td><td></td><td></td><td>4</td><td></td><td>1</td></tr><tr><td>E</td><td></td><td>8</td><td></td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, A→B→C→D→E=3+2+4+1=10 → min=9"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>2</td><td>4</td><td></td><td></td></tr><tr><td>B</td><td>2</td><td></td><td>1</td><td>5</td><td></td></tr><tr><td>C</td><td>4</td><td>1</td><td></td><td></td><td>3</td></tr><tr><td>D</td><td></td><td>5</td><td></td><td></td><td>2</td></tr><tr><td>E</td><td></td><td></td><td>3</td><td>2</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=4+3=7, A→B→C→E=2+1+3=6, A→B→D→E=2+5+2=9 → min=6"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>6</td><td>2</td><td></td><td></td></tr><tr><td>B</td><td>6</td><td></td><td>3</td><td>1</td><td></td></tr><tr><td>C</td><td>2</td><td>3</td><td></td><td></td><td>4</td></tr><tr><td>D</td><td></td><td>1</td><td></td><td></td><td>5</td></tr><tr><td>E</td><td></td><td></td><td>4</td><td>5</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=2+4=6, A→B→D→E=6+1+5=12 → min=6"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>4</td><td></td><td>8</td><td></td></tr><tr><td>B</td><td>4</td><td></td><td>2</td><td></td><td>6</td></tr><tr><td>C</td><td></td><td>2</td><td></td><td>1</td><td>5</td></tr><tr><td>D</td><td>8</td><td></td><td>1</td><td></td><td>3</td></tr><tr><td>E</td><td></td><td>6</td><td>5</td><td>3</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, A→B→C→E=4+2+5=11, A→D→C→E=8+1+5=14 → min=9"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>1</td><td>3</td><td></td><td></td></tr><tr><td>B</td><td>1</td><td></td><td></td><td>4</td><td></td></tr><tr><td>C</td><td>3</td><td></td><td></td><td>2</td><td>5</td></tr><tr><td>D</td><td></td><td>4</td><td>2</td><td></td><td>1</td></tr><tr><td>E</td><td></td><td></td><td>5</td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→D→E=3+2+1=6, A→B→D→E=1+4+1=6"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>7</td><td></td><td>2</td><td></td></tr><tr><td>B</td><td>7</td><td></td><td>1</td><td></td><td>4</td></tr><tr><td>C</td><td></td><td>1</td><td></td><td>3</td><td>6</td></tr><tr><td>D</td><td>2</td><td></td><td>3</td><td></td><td>5</td></tr><tr><td>E</td><td></td><td>4</td><td>6</td><td>5</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"7", solution:"A→D→E=2+5=7, A→B→E=7+4=11 → min=7"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>2</td><td>5</td><td></td><td></td></tr><tr><td>B</td><td>2</td><td></td><td></td><td>3</td><td></td></tr><tr><td>C</td><td>5</td><td></td><td></td><td>1</td><td>4</td></tr><tr><td>D</td><td></td><td>3</td><td>1</td><td></td><td>2</td></tr><tr><td>E</td><td></td><td></td><td>4</td><td>2</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→D→E=5+1+2=8, A→C→E=5+4=9 → min=6"},
+    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>8</td><td>4</td><td></td><td></td></tr><tr><td>B</td><td>8</td><td></td><td>2</td><td>1</td><td></td></tr><tr><td>C</td><td>4</td><td>2</td><td></td><td></td><td>5</td></tr><tr><td>D</td><td></td><td>1</td><td></td><td></td><td>6</td></tr><tr><td>E</td><td></td><td></td><td>5</td><td>6</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→C→E=4+5=9, A→B→D→E=8+1+6=15 → min=9"}
 ];
 
 // =====================================================
@@ -382,14 +409,19 @@ const oge8Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 9 (5 заданий - количество путей)
+// ОГЭ ЗАДАНИЕ 9 (10 заданий - количество путей)
 // =====================================================
 const oge9Tasks = [
-    {text:"Сколько путей ведёт из A в K на схеме дорог?", answer:"5", solution:"подсчёт всех возможных маршрутов"},
-    {text:"Сколько путей из A в F?", answer:"8", solution:"подсчёт"},
-    {text:"Сколько путей из A в M?", answer:"6", solution:"подсчёт"},
-    {text:"Сколько путей из A в N?", answer:"10", solution:"подсчёт"},
-    {text:"Сколько путей из A в P?", answer:"4", solution:"подсчёт"}
+    {text:"На рисунке — схема дорог, связывающих города A, B, C, D, E, F, G. По каждой дороге можно двигаться только в одном направлении, указанном стрелкой. Сколько существует различных путей из города A в город G?\n\nA→B→C→E→G, A→B→D→F→G, A→B→C→E→F→G, A→B→D→F→E→G и т.д. Подсчитайте все пути.", answer:"5", solution:"Всего 5 различных маршрутов: 1) A-B-C-E-G, 2) A-B-D-F-G, 3) A-B-C-E-F-G, 4) A-B-C-F-G, 5) A-B-D-F-E-G"},
+    {text:"Сколько существует различных путей из A в K, если можно двигаться только вперёд по стрелкам? Схема: A→B→C→K, A→B→D→K, A→E→F→K, A→E→F→G→K, A→E→F→H→K, A→E→F→G→H→K, A→B→C→F→K, A→B→D→F→K", answer:"8", solution:"Всего 8 маршрутов"},
+    {text:"Сколько путей из A в M на схеме? A→B→C→M, A→B→D→M, A→E→F→M, A→E→G→M, A→B→C→F→M, A→B→D→F→M", answer:"6", solution:"6 маршрутов"},
+    {text:"Сколько путей из A в N? A→B→C→N, A→B→D→N, A→E→F→N, A→E→G→N, A→B→C→F→N, A→B→D→F→N, A→E→F→C→N, A→E→G→D→N, A→B→C→F→G→N, A→B→D→F→G→N", answer:"10", solution:"10 маршрутов"},
+    {text:"Сколько путей из A в P? A→B→P, A→C→P, A→B→D→P, A→C→D→P, A→B→C→P, A→B→C→D→P, A→B→E→P", answer:"7", solution:"7 маршрутов"},
+    {text:"Сколько путей из A в R? A→B→C→R, A→B→D→R, A→E→F→R, A→E→G→R, A→B→C→F→R, A→B→D→F→R, A→B→C→F→G→R, A→B→D→F→G→R", answer:"8", solution:"8 маршрутов"},
+    {text:"Сколько путей из A в S? A→B→C→S, A→B→D→S, A→E→F→S, A→B→C→F→S, A→B→D→F→S, A→E→F→C→S, A→E→F→C→D→S, A→B→C→F→E→S", answer:"8", solution:"8 маршрутов"},
+    {text:"Сколько путей из A в T? A→B→T, A→C→T, A→B→D→T, A→C→D→T, A→B→E→T, A→C→E→T, A→B→D→E→T, A→C→D→E→T", answer:"8", solution:"8 маршрутов"},
+    {text:"Сколько путей из A в U? A→B→C→U, A→B→D→U, A→E→F→U, A→E→G→U, A→B→C→F→U, A→B→D→F→U, A→E→F→C→U, A→E→G→D→U", answer:"8", solution:"8 маршрутов"},
+    {text:"Сколько путей из A в V? A→B→V, A→C→V, A→B→D→V, A→B→C→D→V, A→B→C→E→V, A→C→D→E→V, A→B→C→F→V, A→B→D→F→V", answer:"8", solution:"8 маршрутов"}
 ];
 
 // =====================================================
@@ -414,13 +446,88 @@ const oge10Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 11-16 (остальные)
+// ОГЭ ЗАДАНИЕ 11 (10 заданий - базы данных / файлы)
 // =====================================================
-const oge11Tasks = [{text:"Переход C:\\Документы → D:\\Учёба\\Информатика", answer:"D:\\Учёба\\Информатика", solution:"новый путь"}];
-const oge12Tasks = [{text:"s=0; for i=1 to 5: s=s+i", answer:"15", solution:"1+2+3+4+5=15"}];
-const oge13Tasks = [{text:"=СРЗНАЧ(A1:A4)=8, A1=5,A2=7,A3=10, A4=?", answer:"10", solution:"32-5-7-10=10"}];
-const oge14Tasks = [{text:"101010₂ в десятичную", answer:"42", solution:"32+8+2=42"}];
-const oge15Tasks = [{text:"(2,3) + 3×(1,-2)", answer:"5,-3", solution:"x=2+3=5, y=3-6=-3"}];
+const oge11Tasks = [
+    {text:"В некотором каталоге хранился файл Доклад.pptx. После того как в этом каталоге создали подкаталог и переместили в него файл Доклад.pptx, полное имя файла стало D:\\Учёба\\Информатика\\Проекты\\Доклад.pptx. Как зовут созданный подкаталог?", answer:"Проекты", solution:"Исходный каталог D:\\Учёба\\Информатика, добавили подкаталог Проекты"},
+    {text:"Пользователь работал с каталогом C:\\Фото\\2023\\Лето. Сначала он поднялся на один уровень вверх, затем спустился в каталог Осень, потом ещё раз поднялся на один уровень вверх и спустился в каталог Зима. Укажите полный путь каталога, в котором оказался пользователь.", answer:"C:\\Фото\\Зима", solution:"C:\\Фото\\2023\\Лето → C:\\Фото\\2023 → C:\\Фото\\2023\\Осень → C:\\Фото\\2023 → C:\\Фото\\Зима"},
+    {text:"В некотором каталоге хранился файл Реферат.doc. После создания подкаталога и перемещения файла его полное имя стало E:\\Документы\\Учёба\\Реферат.doc. Как зовут созданный подкаталог?", answer:"Учёба", solution:"Исходный каталог E:\\Документы, создали подкаталог Учёба"},
+    {text:"Пользователь работал с каталогом D:\\Музыка\\Рок. Он поднялся на один уровень вверх, затем спустился в каталог Поп, потом поднялся на один уровень вверх и спустился в каталог Джаз. Где он оказался?", answer:"D:\\Музыка\\Джаз", solution:"D:\\Музыка\\Рок → D:\\Музыка → D:\\Музыка\\Поп → D:\\Музыка → D:\\Музыка\\Джаз"},
+    {text:"Файл Картинка.jpg хранился в каталоге C:\\Рисунки\\Природа. Его переместили в подкаталог Города того же каталога. Каково полное имя файла после перемещения?", answer:"C:\\Рисунки\\Города\\Картинка.jpg", solution:"C:\\Рисунки\\Природа → создали подкаталог Города внутри Рисунки"},
+    {text:"Пользователь находился в каталоге C:\\Уроки\\Информатика. Он поднялся на два уровня вверх, затем спустился в каталог Физика, потом в каталог Лабораторные. Укажите полный путь.", answer:"C:\\Физика\\Лабораторные", solution:"C:\\Уроки\\Информатика → C:\\Уроки → C:\\ → C:\\Физика → C:\\Физика\\Лабораторные"},
+    {text:"Файл Отчёт.xlsx хранился в каталоге D:\\Работа\\2024. После создания подкаталога Квартал1 и перемещения файла его полное имя стало D:\\Работа\\2024\\Квартал1\\Отчёт.xlsx. Какое имя исходного каталога?", answer:"2024", solution:"Исходный каталог D:\\Работа\\2024, создан подкаталог Квартал1"},
+    {text:"Пользователь работал с каталогом E:\\Видео\\Фильмы\\Комедии. Он поднялся на один уровень вверх, затем спустился в каталог Драмы, потом поднялся на два уровня вверх и спустился в каталог Мультфильмы. Где он оказался?", answer:"E:\\Мультфильмы", solution:"E:\\Видео\\Фильмы\\Комедии → E:\\Видео\\Фильмы → E:\\Видео\\Фильмы\\Драмы → E:\\Видео → E:\\Мультфильмы"},
+    {text:"В некотором каталоге хранился файл Заметки.txt. После того как в этом каталоге создали подкаталог Личные и переместили в него файл, полное имя стало C:\\Пользователи\\Иван\\Личные\\Заметки.txt. Как зовут исходный каталог?", answer:"Иван", solution:"Исходный каталог C:\\Пользователи\\Иван, создан подкаталог Личные"},
+    {text:"Пользователь находился в каталоге C:\\Программы\\Утилиты\\Системные. Он поднялся на один уровень вверх, затем спустился в каталог Игры, потом поднялся на один уровень вверх и спустился в каталог Офис. Укажите полный путь.", answer:"C:\\Программы\\Офис", solution:"C:\\Программы\\Утилиты\\Системные → C:\\Программы\\Утилиты → C:\\Программы\\Утилиты\\Игры → C:\\Программы\\Утилиты → C:\\Программы\\Офис"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 12 (10 заданий - циклические алгоритмы)
+// =====================================================
+const oge12Tasks = [
+    {text:"Определите, что будет напечатано в результате работы следующей программы. s = 0; for i in range(1, 6): s = s + i; print(s)", answer:"15", solution:"1+2+3+4+5=15"},
+    {text:"s = 1; for i in range(3, 8): s = s * i; print(s)", answer:"2520", solution:"1*3*4*5*6*7=2520"},
+    {text:"s = 0; for i in range(2, 11, 2): s = s + i; print(s)", answer:"30", solution:"2+4+6+8+10=30"},
+    {text:"s = 1; n = 5; for i in range(1, n+1): s = s * i; print(s)", answer:"120", solution:"1*2*3*4*5=120"},
+    {text:"s = 0; for i in range(10, 0, -1): s = s + i; print(s)", answer:"55", solution:"10+9+...+1=55"},
+    {text:"s = 0; for i in range(1, 10, 3): s = s + i; print(s)", answer:"12", solution:"1+4+7=12"},
+    {text:"s = 0; k = 1; while k < 10: s = s + k; k = k * 2; print(s)", answer:"7", solution:"1+2+4=7"},
+    {text:"s = 0; k = 2; while k <= 32: s = s + k; k = k * 2; print(s)", answer:"62", solution:"2+4+8+16+32=62"},
+    {text:"s = 1; k = 3; while k < 100: s = s * k; k = k * 3; print(s)", answer:"81", solution:"1*3*9*27=81"},
+    {text:"s = 0; for i in range(5, 0, -1): s = s + i**2; print(s)", answer:"55", solution:"25+16+9+4+1=55"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 13 (10 заданий - электронные таблицы)
+// =====================================================
+const oge13Tasks = [
+    {text:"В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно значение ячейки A4, если A1=5, A2=7, A3=10?", answer:"10", solution:"Сумма A1:A4 = 8*4=32, A4=32-5-7-10=10"},
+    {text:"=СРЗНАЧ(B1:B5) = 12. B1=8, B2=10, B3=15, B4=11. Найти B5.", answer:"16", solution:"Сумма = 60, B5=60-8-10-15-11=16"},
+    {text:"=СУММ(C1:C4) = 50. C1=12, C2=13, C3=15. Найти C4.", answer:"10", solution:"50-12-13-15=10"},
+    {text:"=СРЗНАЧ(D1:D6) = 15. D1=10, D2=14, D3=16, D4=12, D5=18. Найти D6.", answer:"20", solution:"Сумма=90, D6=90-10-14-16-12-18=20"},
+    {text:"=СУММ(E1:E5) = 100. E1=20, E2=25, E3=15, E4=30. Найти E5.", answer:"10", solution:"100-20-25-15-30=10"},
+    {text:"=СРЗНАЧ(F1:F4) = 25. F1=20, F2=30, F3=22. Найти F4.", answer:"28", solution:"Сумма=100, F4=100-20-30-22=28"},
+    {text:"=СУММ(G1:G5) = 200. G1=35, G2=42, G3=38, G4=45. Найти G5.", answer:"40", solution:"200-35-42-38-45=40"},
+    {text:"=СРЗНАЧ(H1:H7) = 18. H1=12, H2=15, H3=20, H4=14, H5=19, H6=16. Найти H7.", answer:"30", solution:"Сумма=126, H7=126-12-15-20-14-19-16=30"},
+    {text:"=СУММ(I1:I3) = 45. I1=12, I2=15. Найти I3.", answer:"18", solution:"45-12-15=18"},
+    {text:"=СРЗНАЧ(J1:J5) = 10. J1=5, J2=8, J3=12, J4=9. Найти J5.", answer:"16", solution:"Сумма=50, J5=50-5-8-12-9=16"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 14 (10 заданий - системы счисления 2)
+// =====================================================
+const oge14Tasks = [
+    {text:"Переведите число 101010₂ в десятичную систему счисления.", answer:"42", solution:"32+8+2=42"},
+    {text:"Переведите число 110011₂ в десятичную систему.", answer:"51", solution:"32+16+2+1=51"},
+    {text:"Переведите число 111000₂ в десятичную систему.", answer:"56", solution:"32+16+8=56"},
+    {text:"Переведите число 100101₂ в десятичную систему.", answer:"37", solution:"32+4+1=37"},
+    {text:"Переведите число 101101₂ в десятичную систему.", answer:"45", solution:"32+8+4+1=45"},
+    {text:"Переведите число 110100₂ в десятичную систему.", answer:"52", solution:"32+16+4=52"},
+    {text:"Переведите число 111111₂ в десятичную систему.", answer:"63", solution:"32+16+8+4+2+1=63"},
+    {text:"Переведите число 100011₂ в десятичную систему.", answer:"35", solution:"32+2+1=35"},
+    {text:"Переведите число 101011₂ в десятичную систему.", answer:"43", solution:"32+8+2+1=43"},
+    {text:"Переведите число 110101₂ в десятичную систему.", answer:"53", solution:"32+16+4+1=53"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 15 (10 заданий - скорость передачи)
+// =====================================================
+const oge15Tasks = [
+    {text:"Файл размером 2 Мбайта передаётся через некоторое соединение за 16 секунд. Определите размер файла (в Мбайтах), который можно передать через это же соединение за 40 секунд.", answer:"5", solution:"Скорость = 2/16 = 0.125 МБ/с, за 40с = 0.125*40=5 МБ"},
+    {text:"Файл размером 8 Мбайт передаётся за 32 секунды. Сколько Мбайт можно передать за 80 секунд?", answer:"20", solution:"Скорость = 8/32=0.25, за 80с=20 МБ"},
+    {text:"Файл размером 5 Мбайт передаётся за 10 секунд. За сколько секунд передастся файл размером 15 Мбайт?", answer:"30", solution:"Скорость=0.5 МБ/с, время=15/0.5=30с"},
+    {text:"Скорость передачи данных 128000 бит/с. Сколько секунд потребуется для передачи файла размером 500 Кбайт?", answer:"32", solution:"500 КБ = 500*1024*8=4096000 бит, время=4096000/128000=32с"},
+    {text:"Файл размером 4 Мбайта передаётся за 12 секунд. Сколько Мбайт можно передать за 30 секунд?", answer:"10", solution:"Скорость=4/12=1/3, за 30с=10 МБ"},
+    {text:"Файл размером 6 Мбайт передаётся за 24 секунды. За сколько секунд передастся файл размером 18 Мбайт?", answer:"72", solution:"Скорость=0.25 МБ/с, время=18/0.25=72с"},
+    {text:"Скорость передачи 1024000 бит/с. Сколько секунд потребуется для передачи файла 1 Мбайт?", answer:"8", solution:"1 МБ = 8*1024*1024=8388608 бит, время≈8.19≈8с"},
+    {text:"Файл размером 12 Мбайт передаётся за 48 секунд. Сколько Мбайт можно передать за 1 минуту?", answer:"15", solution:"Скорость=12/48=0.25 МБ/с, за 60с=15 МБ"},
+    {text:"Файл размером 3 Мбайта передаётся за 6 секунд. За сколько секунд передастся файл размером 9 Мбайт?", answer:"18", solution:"Скорость=0.5 МБ/с, время=9/0.5=18с"},
+    {text:"Скорость передачи 256000 бит/с. Сколько секунд потребуется для передачи файла 625 Кбайт?", answer:"20", solution:"625 КБ=625*1024*8=5120000 бит, время=5120000/256000=20с"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 16 (существующие)
+// =====================================================
 const oge16Tasks = [
     {text:"Максимальное число, кратное 5. Вход: 3, 10, 25, 12", answer:"25", solution:"25"},
     {text:"Сумма чисел, кратных 6. Вход: 3, 12, 25, 6", answer:"18", solution:"12+6=18"},
@@ -663,14 +770,14 @@ const tasksDB = {
         11: oge11Tasks, 12: oge12Tasks, 13: oge13Tasks, 14: oge14Tasks, 15: oge15Tasks, 16: oge16Tasks
     },
     ege: {
-        4: ege4Tasks, 5: ege5Tasks, 6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks,
+        2: ege2Tasks, 4: ege4Tasks, 5: ege5Tasks, 6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks,
         11: ege11Tasks, 12: ege12Tasks, 13: ege13Tasks, 14: ege14Tasks, 15: ege15Tasks,
         19: ege19Tasks, 20: ege20Tasks, 21: ege21Tasks, 23: ege23Tasks
     }
 };
 
 // =====================================================
-// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ
+// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ (тот же, что и в вашем оригинале)
 // =====================================================
 let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
 
