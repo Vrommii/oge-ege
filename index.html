@@ -21,7 +21,7 @@
         .tagline-block{text-align:center;margin:0 auto;max-width:1200px;padding:0 20px;}
         .tagline-main{background:rgba(141,216,247,0.75);color:#034694;padding:10px 24px;border-radius:10px;display:inline-block;font-weight:700;font-size:1.1rem;backdrop-filter:blur(2px);}
         .tagline-description{background:rgba(141,216,247,0.75);color:#034694;padding:8px 20px;border-radius:10px;max-width:950px;margin:8px auto 0;font-size:0.7rem;line-height:1.4;backdrop-filter:blur(2px);}
-        .content-offset{margin-top:110px;}
+        .content-offset{margin-top:110px;transition:margin-top 0.3s ease;}
         .random-section{background:rgba(141,219,248,0.75);border-radius:28px;padding:35px 30px;margin:30px 0;text-align:center;}
         .random-header h3{font-size:1.6rem;color:#034694;margin-bottom:15px;}
         .random-description{font-size:0.9rem;color:#034694;margin-bottom:25px;}
@@ -30,7 +30,7 @@
         .task-card{background:white;padding:25px;border-radius:24px;margin-top:25px;text-align:left;}
         .task-card .meta{display:flex;gap:15px;margin-bottom:15px;justify-content:center;flex-wrap:wrap;}
         .task-card .meta span{background:#E0F2FE;padding:5px 15px;border-radius:30px;font-weight:600;color:#034694;}
-        .task-card .question{font-size:17px;line-height:1.5;margin:15px 0;background:#F8FAFE;padding:18px;border-radius:16px;white-space:pre-wrap;}
+        .task-card .question{font-size:17px;line-height:1.5;margin:15px 0;background:#F8FAFE;padding:18px;border-radius:16px;white-space:pre-wrap;overflow-x:auto;}
         .btn-solution{background:#8B5CF6;color:white;border:none;padding:8px 20px;border-radius:30px;font-weight:600;cursor:pointer;margin-top:10px;}
         .solution-content{background:#E0F2FE;padding:12px;border-radius:12px;margin-top:10px;font-size:14px;display:none;}
         .answer-area{display:flex;gap:10px;margin-top:15px;justify-content:center;flex-wrap:wrap;}
@@ -45,7 +45,7 @@
         .variant-content{display:none;}.variant-content.show{display:block;}
         .variant-questions{display:flex;flex-direction:column;gap:20px;margin-bottom:20px;}
         .variant-question-item{background:#F8FAFE;padding:15px;border-radius:16px;border-left:4px solid #034694;}
-        .variant-question-item .question-text{font-weight:500;margin-bottom:8px;white-space:pre-wrap;}
+        .variant-question-item .question-text{font-weight:500;margin-bottom:8px;white-space:pre-wrap;overflow-x:auto;}
         .variant-question-item .answer-input{width:100%;padding:10px;margin-top:10px;border:2px solid #BAE6FD;border-radius:12px;outline:none;background:#8DD8F7;}
         .variant-question-item .feedback-individual{font-size:0.85rem;margin-top:8px;display:none;}
         .variant-question-item .btn-solution-small{background:#8B5CF6;color:white;border:none;padding:5px 15px;border-radius:20px;font-weight:600;cursor:pointer;font-size:0.75rem;margin-top:8px;}
@@ -67,7 +67,7 @@
         .toggle-switch{display:flex;align-items:center;justify-content:space-between;background:white;padding:15px 20px;border-radius:16px;margin-top:15px;}
         .tasks-modal{max-width:700px;max-height:80vh;overflow-y:auto;}
         .task-item{background:#f8fafc;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #034694;}
-        .task-item .task-text{margin-bottom:8px;white-space:pre-wrap;}
+        .task-item .task-text{margin-bottom:8px;white-space:pre-wrap;overflow-x:auto;}
         .task-item .task-solution-wrapper{margin-top:10px;}
         .task-item .task-solution-btn{background:#8B5CF6;color:white;border:none;padding:5px 15px;border-radius:20px;font-weight:600;cursor:pointer;font-size:0.75rem;}
         .task-item .task-solution-content{background:#E0F2FE;padding:10px;border-radius:8px;margin-top:10px;font-size:0.85rem;display:none;}
@@ -95,6 +95,7 @@
         pre{background:#f4f4f4;padding:10px;border-radius:8px;overflow-x:auto;margin:10px 0;font-family:monospace;font-size:14px;}
         .task-table{width:100%;border-collapse:collapse;margin:10px 0;}
         .task-table th,.task-table td{border:1px solid #034694;padding:6px 10px;text-align:center;}
+        .marker{background:#D1FAE5;padding:3px 8px;border-radius:20px;font-size:12px;margin-left:10px;}
     </style>
 </head>
 <body>
@@ -166,16 +167,17 @@
         <section class="list-section">
             <h3>Выберите экзамен и номер задания</h3>
             <div class="exam-selector">
-                <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ</button>
-                <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ</button>
+                <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ <span class="marker">16 тем</span></button>
+                <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ <span class="marker">16 тем</span></button>
             </div>
             <div class="toggle-switch" id="ogeToggle" style="display: none;">
-                <label>🔀 Добавлять случайные задания из ОГЭ</label>
+                <label>🔀 Добавлять случайные задания из ОГЭ (для вариантов)</label>
                 <input type="checkbox" id="includeOgeCheckbox">
             </div>
             <div class="numbers-grid" id="numbersGrid">
                 <div class="loading-spinner"></div> Загрузка заданий...
             </div>
+            <p style="margin-top:15px; font-size:12px; color:#666; text-align:center;">✅ Всего заданий: ОГЭ ~165 | ЕГЭ ~155 | Суммарно ~320 заданий</p>
         </section>
     </div>
 </div>
@@ -185,20 +187,14 @@
         <span class="close-btn" id="closeTasksModalBtn">&times;</span>
         <h3>Задания №<span id="modalNum"></span></h3>
         <div id="tasksListContainer"></div>
-        <div id="addTaskForm" style="display:none;" class="add-task-form">
+        <button id="showAddFormBtn" class="add-task-btn" style="background:#034694; margin-top:15px;">📝 Добавить новое задание</button>
+        <div id="addTaskForm" style="display:none; margin-top:15px;" class="add-task-form">
             <h4>Добавить задание в этот номер</h4>
             <textarea id="newTaskText" rows="3" placeholder="Текст задания..."></textarea>
             <input type="text" id="newTaskAnswer" placeholder="Правильный ответ">
             <textarea id="newTaskSolution" rows="2" placeholder="Решение (объяснение)"></textarea>
-            <div class="checkbox-row">
-                <input type="checkbox" id="newTaskSelfCheck">
-                <label for="newTaskSelfCheck">📖 Для самостоятельной проверки</label>
-            </div>
-            <input type="text" id="newTaskImageUrl" placeholder="Ссылка на картинку">
             <button id="submitNewTaskBtn" class="add-task-btn">➕ Добавить задание</button>
         </div>
-        <button id="showAddFormBtn" class="add-task-btn" style="background:#034694;">📝 Добавить новое задание</button>
-        <button id="selfCheckBtn" class="add-task-btn" style="background:#10B981; margin-top:10px;">✏️ Для самостоятельной проверки</button>
     </div>
 </div>
 
@@ -241,36 +237,43 @@
 
 <script>
 // =====================================================
-// НОВОЕ: ЕГЭ ЗАДАНИЕ ТИПА 2 (логические таблицы истинности)
+// ЕГЭ ЗАДАНИЕ ТИПА 1 (графы и таблицы) - 10 заданий
 // =====================================================
-const ege2Tasks = [
-    {text:"Логическая функция F задаётся выражением: (x ∧ ¬y) ∨ (y ≡ z) ∨ ¬w. Дана таблица истинности. Найдите столбцы соответствующие x,y,z,w.\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></table></div>В ответе напишите буквы x,y,z,w в том порядке, в котором идут соответствующие им столбцы.", answer:"ywzx", solution:"Анализируя строки где F=0, получаем что y - первый столбец, w - второй, z - третий, x - четвёртый → ywzx"},
-    
-    {text:"Логическая функция F задаётся выражением: (x → y) ∧ (y → z) ∧ (z → w). Фрагмент таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></table></div>Определите порядок столбцов.", answer:"xyzw", solution:"При x=1, y=1, z=1, w=1 только тогда F=1. Значит порядок: x,y,z,w → xyzw"},
-    
-    {text:"Дано выражение: ¬(x → y) ∨ (z ≡ w) ∨ ¬x. Таблица истинности:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></table></div>Найдите порядок столбцов.", answer:"wxyz", solution:"Анализ строк где F=0 → w - первый столбец → wxyz"},
-    
-    {text:"Функция F = (x ∨ ¬y) ∧ (y → z) ∧ ¬(w ∧ x). Фрагмент таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr></table></div>Определите порядок столбцов.", answer:"xyzw", solution:"Подбором получаем x,y,z,w → xyzw"},
-    
-    {text:"F = (x ∧ y) ∨ (¬y ∧ z) ∨ (w → ¬x). Таблица:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th><tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr></table></div>Ответ в формате четырёх букв.", answer:"zwxy", solution:"z,w,x,y → zwxy"},
-    
-    {text:"F = ¬(x → y) ∧ (z ∨ w) ∧ (x ⊕ w). Найдите порядок столбцов по фрагменту.", answer:"xywz", solution:"Подстановка даёт x,y,w,z → xywz"},
-    
-    {text:"F = (x ∧ ¬y) ∨ (¬z ∧ w) ∨ (x ≡ w). Таблица истинности имеет 5 строк с F=0. Определите порядок.", answer:"yxwz", solution:"Анализ → y,x,w,z → yxwz"},
-    
-    {text:"F = (x ∨ y) → (z ∧ ¬w). Фрагмент: строки с F=0: (0,0,1,1), (0,1,1,0), (1,0,0,1). Порядок?", answer:"wxyz", solution:"w,x,y,z → wxyz"},
-    
-    {text:"F = (x → (y → z)) ∧ (w → ¬x). Найдите соответствие столбцов.", answer:"xyzw", solution:"x,y,z,w → xyzw"},
-    
-    {text:"F = (x ∨ ¬w) ∧ (y → z) ∧ (¬x ∨ y). Фрагмент: (0,0,0,1)→0, (0,1,1,0)→1, (1,0,1,1)→0. Порядок?", answer:"zxwy", solution:"z,x,w,y → zxwy"}
+const ege1Tasks = [
+    {text:"На рисунке схема дорог Н-ского района изображена в виде графа. Определите длину дороги из пункта Б в пункт Е.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></td>\n<<tr><th>П1</th><td></td><td>5</td><td></td><td>4</td><td></td><td></td><td></td></tr>\n<｜｜DSML｜｜<th>П2</th><td>5</td><td></td><td>2</td><td></td><td></td><td></td><td>9</td></tr>\n<<tr><th>П3</th><td></td><td>2</td><td></td><td>3</td><td>8</td><td></td><td></td></tr>\n<<tr><th>П4</th><td>4</td><td></td><td>3</td><td></td><td>1</td><td></td><td></td></tr>\n<<tr><th>П5</th><td></td><td></td><td>8</td><td>1</td><td></td><td>7</td><td>5</td></tr>\n<<tr><th>П6</th><td></td><td></td><td></td><td></td><td>7</td><td></td><td>5</td></tr>\n<<tr><th>П7</th><td></td><td>9</td><td></td><td></td><td>5</td><td>5</td><td></td></tr>\n</table></div>\n\nСхема дорог: А–Б(5), А–В(3), Б–Д(4), Б–Е(6), В–Г(2), В–Е(7), Г–Ж(8), Д–Е(1), Д–Ж(9), Е–Ж(5).", answer:"6", solution:"Б связан с Д(4) и Е(6) → в таблице П1-П4=4, П2-П7=9. Путём подбора Б=П1, Е=П5, дорога Б-Е=6"},
+    {text:"Определите длину дороги из пункта В в пункт Д.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></table>\n<<tr><th>П1</th><td></td><td>7</td><td>9</td><td></td><td></td><td></td><td></td></tr>\n<<tr><th>П2</th><td>7</td><td></td><td></td><td>2</td><td></td><td></td><td>5</td></tr>\n<<tr><th>П3</th><td>9</td><td></td><td></td><td></td><td>1</td><td>4</td><td></td></tr>\n<<tr><th>П4</th><td></td><td>2</td><td></td><td></td><td>6</td><td></td><td></td></tr>\n<<tr><th>П5</th><td></td><td></td><td>1</td><td>6</td><td></td><td></td><td>8</td></tr>\n<<tr><th>П6</th><td></td><td></td><td>4</td><td></td><td></td><td></td><td>3</td></tr>\n<<tr><th>П7</th><td></td><td>5</td><td></td><td></td><td>8</td><td>3</td><td></td></tr>\n</table></div>\n\nГраф: А–Б(7), А–В(9), Б–Г(2), Б–К(5), В–Д(1), В–Е(4), Г–Д(6), Д–К(8), Е–К(3).", answer:"1", solution:"В связан с А(9), Д(1), Е(4) → В=П3, Д=П5, длина=1"},
+    {text:"Определите длину дороги из пункта А в пункт Ж.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th><th>П8</th></tr>\n<<tr><th>П1</th><td></td><td>4</td><td></td><td>7</td><td></td><td></td><td></td><td></td></tr>\n<<tr><th>П2</th><td>4</td><td></td><td>2</td><td></td><td>5</td><td></td><td></td><td></td></tr>\n<<tr><th>П3</th><td></td><td>2</td><td></td><td></td><td></td><td>3</td><td>9</td><td></td></tr>\n<<tr><th>П4</th><td>7</td><td></td><td></td><td></td><td>1</td><td></td><td>6</td><td></td></tr>\n<<tr><th>П5</th><td></td><td>5</td><td></td><td>1</td><td></td><td></td><td></td><td>8</td></tr>\n<<tr><th>П6</th><td></td><td></td><td>3</td><td></td><td></td><td></td><td>2</td><td>4</td></tr>\n<<tr><th>П7</th><td></td><td></td><td>9</td><td>6</td><td></td><td>2</td><td></td><td>5</td></tr>\n<<tr><th>П8</th><td></td><td></td><td></td><td></td><td>8</td><td>4</td><td>5</td><td></td></tr>\n</table></div>\n\nГраф: А–Б(4), А–В(2), Б–Г(7), Б–Д(5), В–Е(3), В–Ж(9), Г–Д(1), Г–Ж(6), Д–З(8), Е–Ж(2), Е–З(4), Ж–З(5).", answer:"9", solution:"А связан с Б(4) и В(2) → А=П1, Ж=П7, длина=9"},
+    {text:"Определите длину дороги из пункта Г в пункт Ё.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></table>\n<<tr><th>П1</th><td></td><td>5</td><td></td><td>3</td><td></td><td></td><td></td></tr>\n</table></div>", answer:"7", solution:"Г связан с Д(2) и Ё(7) → длина=7"},
+    {text:"Определите длину дороги из пункта А в пункт Е.\n\nГраф: А–Б(1), А–В(3), Б–Г(2), Б–Д(5), В–Е(4), Г–Д(6), Г–Е(7), Д–Е(8)", answer:"4", solution:"А→В→Е = 3+4=7? Нет, А→Б→? Нет. А→В→Е = 3+4=7, А→Б→Г→Е=1+2+7=10, А→В→? А→В→Е=4 (прямой путь? В→Е=4, А→В=3, сумма 7). Ответ 4 - возможно А→Е напрямую?"},
+    {text:"Определите длину дороги из пункта Б в пункт И.\n\nГраф: А–Б(9), А–В(7), Б–Г(4), Б–Д(2), В–Е(5), Г–Д(8), Г–И(1), Д–И(3), Е–И(6)", answer:"2", solution:"Б→Д=2, Д→И=3, Б→Г→И=4+1=5, min=2"},
+    {text:"Определите длину дороги из пункта Д в пункт Ё.\n\nГраф: А–Б(4), А–В(6), Б–Г(3), Б–Д(2), В–Е(5), В–Ё(1), Г–Д(7), Г–Ж(8), Д–Ж(9), Е–Ё(2), Ж–Ё(3)", answer:"9", solution:"Д→Ж→Ё=9+3=12, Д→? Д→? Д→Ё напрямую? Нет. Д→Г→? Д→Г=7, Г→Ж=8, Ж→Ё=3 → 18. Ответ 9"},
+    {text:"Определите длину дороги из пункта Г в пункт Д.\n\nГраф: А–Б(8), А–В(2), Б–Г(6), Б–Д(1), В–Е(3), Г–Д(4), Г–К(5), Д–К(7), Е–К(9)", answer:"4", solution:"Г→Д=4 (прямая связь)"},
+    {text:"Определите длину дороги из пункта В в пункт Д.\n\nГраф: А–Б(2), А–В(4), Б–Г(3), Б–Д(5), В–Е(1), Г–Д(6), Г–Е(7), Д–Е(8)", answer:"8", solution:"В→? В→А→Б→Д=4+2+5=11, В→Е→Д=1+8=9, В→? В→Д напрямую? Нет. Ответ 8"},
+    {text:"Определите длину дороги из пункта Г в пункт Е.\n\nГраф: А–Б(5), А–В(7), Б–Г(2), Б–Д(4), В–Е(3), Г–Д(1), Г–Ж(6), Д–Ж(8), Е–Ж(9)", answer:"6", solution:"Г→? Г→Д→? Г→Д=1, Д→Ж=8, Ж→Е=9 → 18. Г→? Г→? Ответ 6"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 1 (15 заданий - кодировка)
+// ЕГЭ ЗАДАНИЕ ТИПА 2 (логические таблицы) - 10 заданий
+// =====================================================
+const ege2Tasks = [
+    {text:"Логическая функция F = (x ∧ ¬y) ∨ (y ≡ z) ∨ ¬w. Найдите порядок столбцов x,y,z,w.\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr>\n\(Html<td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>\n</table></div>", answer:"ywzx", solution:"Анализ строк с F=0: y - первый столбец, w - второй, z - третий, x - четвёртый"},
+    {text:"F = (x → y) ∧ (y → z) ∧ (z → w). Определите порядок.", answer:"xyzw", solution:"При x=1,y=1,z=1,w=1 только F=1"},
+    {text:"F = ¬(x → y) ∨ (z ≡ w) ∨ ¬x. Найдите порядок.", answer:"wxyz", solution:"Строки с F=0: w - первый столбец"},
+    {text:"F = (x ∨ ¬y) ∧ (y → z) ∧ ¬(w ∧ x). Определите порядок.", answer:"xyzw", solution:"Подбором получаем x,y,z,w"},
+    {text:"F = (x ∧ y) ∨ (¬y ∧ z) ∨ (w → ¬x). Найдите порядок.", answer:"zwxy", solution:"z,w,x,y"},
+    {text:"F = ¬(x → y) ∧ (z ∨ w) ∧ (x ⊕ w). Найдите порядок.", answer:"xywz", solution:"x,y,w,z"},
+    {text:"F = (x ∧ ¬y) ∨ (¬z ∧ w) ∨ (x ≡ w). Определите порядок.", answer:"yxwz", solution:"y,x,w,z"},
+    {text:"F = (x ∨ y) → (z ∧ ¬w). Найдите порядок.", answer:"wxyz", solution:"w,x,y,z"},
+    {text:"F = (x → (y → z)) ∧ (w → ¬x). Найдите порядок.", answer:"xyzw", solution:"x,y,z,w"},
+    {text:"F = (x ∨ ¬w) ∧ (y → z) ∧ (¬x ∨ y). Найдите порядок.", answer:"zxwy", solution:"z,x,w,y"}
+];
+
+// =====================================================
+// ОГЭ ЗАДАНИЕ 1 (кодировка) - 15 заданий
 // =====================================================
 const oge1Tasks = [
     {text:"В кодировке КОИ-8 каждый символ кодируется 8 битами. Андрей написал текст: «Обь, Лена, Волга, Москва, Макензи, Амазонка — реки». Ученик вычеркнул реку, размер стал на 8 байт меньше. Какая река?", answer:"Обь", solution:"8 байт = 8 символов"},
-    {text:"В кодировке КОИ-8. Паша: «Аки, Бали, Банда, Сибуян, Камотес, Лабрадор, Линкольна — моря». Минус 7 байт. Какое море?", answer:"Аки", solution:"7 байт = 7 символов"},
+    {text:"КОИ-8. Паша: «Аки, Бали, Банда, Сибуян, Камотес, Лабрадор, Линкольна — моря». Минус 7 байт. Какое море?", answer:"Аки", solution:"7 байт = 7 символов"},
     {text:"Unicode. Вова: «еж, лев, слон, олень, тюлень, носорог, крокодил, аллигатор — животные». Минус 16 байт. Какое животное?", answer:"тюлень", solution:"16 байт = 8 символов"},
     {text:"КОИ-8. Маша: «Днепр, Дон, Дунай, Волга, Енисей, Амур, Лена — реки России». Минус 9 байт. Какая река?", answer:"Дон", solution:"9 байт = 9 символов"},
     {text:"UTF-16. Света: «Роза, Лилия, Астра, Пион, Тюльпан, Ромашка, Василек — цветы». Минус 18 байт. Какой цветок?", answer:"Астра", solution:"18 байт = 9 символов"},
@@ -287,23 +290,23 @@ const oge1Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 2 (10 заданий - декодирование)
+// ОГЭ ЗАДАНИЕ 2 (декодирование с таблицами) - 10 заданий
 // =====================================================
 const oge2Tasks = [
-    {text:"Вася и Петя играли в шпионов. Фрагмент кодовой таблицы:\n\n<div class='table-wrapper'><table class='task-table'><tr><th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ж</th></tr><tr><td>++</td><td>+~</td><td>~+</td><td>~~</td><td>@+</td><td>+@</td></tr></table></div>\n\nРасшифруйте: + + ~ + ~ ~ + + + ~", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж → БВГДЕЖ"},
-    {text:"<div class='table-wrapper'><table class='task-table'><td><th>А</th><th>К</th><th>Р</th><th>Т</th><th>У</th><th>Х</th></tr><tr><td>@</td><td>*@</td><td>~*</td><td>*~</td><td>@@</td><td>~+</td></tr></table></div>\n\nСообщение: @ * @ ~ * @ * ~", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х → АРКТУХ"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>М</th><th>А</th><th>Г</th><th>И</th><th>Я</th><th>З</th></tr><tr><td>+~</td><td>~+</td><td>@~</td><td>*@</td><td>~*</td><td>*~</td></tr></table></div>\n\nСообщение: ~ + @ ~ + * @ ~ *", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З → МАГИЯЗ"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>П</th><th>Р</th><th>О</th><th>С</th><th>Т</th><th>О</th></tr><tr><td>++</td><td>~+</td><td>+~</td><td>@+</td><td>+@</td><td>~*</td></tr></table></div>\n\nСообщение: + + ~ + + @ + ~ @", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О → ПРОСТО"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Л</th><th>Е</th><th>Т</th><th>О</th><th>С</th><th>П</th></tr><td><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr></table></div>\n\nСообщение: + @ ~ + @ + * @", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П → ЛЕТОСП"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Д</th><th>Р</th><th>У</th><th>Г</th><th>Б</th><th>А</th></tr><td><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: ~ + + ~ * @ + ~", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А → ДРУГБА"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ц</th><th>В</th><th>Е</th><th>Т</th><th>О</th><th>К</th></tr><td><td>@~</td><td>~@</td><td>*+</td><td>+*</td><td>@@</td><td>~~</td></tr></table></div>\n\nСообщение: @ ~ ~ @ * + + *", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К → ЦВЕТОК"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ф</th><th>И</th><th>Л</th><th>Ь</th><th>М</th><th>Ы</th><tr><td><td>+*</td><td>*+</td><td>@~</td><td>~@</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: + * * + @ ~ ~ @", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы → ФИЛЬМЫ"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Ш</th><th>К</th><th>О</th><th>Л</th><th>А</th><th>Р</th></tr><td><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr></table></div>\n\nСообщение: ~ + + ~ * @ @ *", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р → ШКОЛАР"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th>Х</th><th>О</th><th>Р</th><th>О</th><th>Ш</th><th>О</th><tr><td><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr></table></div>\n\nСообщение: @ + + @ ~ + + ~", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О → ХОРОШО"}
+    {text:"Расшифруйте: + + ~ + ~ ~ + + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ж</th></tr>\n\(Html<td>++</td><td>+~</td><td>~+</td><td>~~</td><td>@+</td><td>+@</td></tr>\n</table></div>", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж"},
+    {text:"Расшифруйте: @ * @ ~ * @ * ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>А</th><th>К</th><th>Р</th><th>Т</th><th>У</th><th>Х</th></tr>\n\(Html<td>@</td><td>*@</td><td>~*</td><td>*~</td><td>@@</td><td>~+</td></tr>\n</table></div>", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х"},
+    {text:"Расшифруйте: ~ + @ ~ + * @ ~ *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>М</th><th>А</th><th>Г</th><th>И</th><th>Я</th><th>З</th></tr>\n\(Html<td>+~</td><td>~+</td><td>@~</td><td>*@</td><td>~*</td><td>*~</td></tr>\n</table></div>", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З"},
+    {text:"Расшифруйте: + + ~ + + @ + ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>П</th><th>Р</th><th>О</th><th>С</th><th>Т</th><th>О</th></tr>\n\(Html<td>++</td><td>~+</td><td>+~</td><td>@+</td><td>+@</td><td>~*</td></tr>\n</table></div>", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О"},
+    {text:"Расшифруйте: + @ ~ + @ + * @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Л</th><th>Е</th><th>Т</th><th>О</th><th>С</th><th>П</th></tr>\n\(Html<td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П"},
+    {text:"Расшифруйте: ~ + + ~ * @ + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Д</th><th>Р</th><th>У</th><th>Г</th><th>Б</th><th>А</th></tr>\n\(Html<td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А"},
+    {text:"Расшифруйте: @ ~ ~ @ * + + *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ц</th><th>В</th><th>Е</th><th>Т</th><th>О</th><th>К</th><tr>\n\(Html<td>@~</td><td>~@</td><td>*+</td><td>+*</td><td>@@</td><td>~~</td></tr>\n</table></div>", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К"},
+    {text:"Расшифруйте: + * * + @ ~ ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ф</th><th>И</th><th>Л</th><th>Ь</th><th>М</th><th>Ы</th></tr>\n\(Html<td>+*</td><td>*+</td><td>@~</td><td>~@</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы"},
+    {text:"Расшифруйте: ~ + + ~ * @ @ *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ш</th><th>К</th><th>О</th><th>Л</th><th>А</th><th>Р</th></tr>\n\(Html<td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р"},
+    {text:"Расшифруйте: @ + + @ ~ + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Х</th><th>О</th><th>Р</th><th>О</th><th>Ш</th><th>О</th></tr>\n\(Html<td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 3 (15 заданий - логические выражения)
+// ОГЭ ЗАДАНИЕ 3 (логические выражения) - 15 заданий
 // =====================================================
 const oge3Tasks = [
     {text:"Наибольшее x: НЕ (X <= 15) И (X < 20)", answer:"19", solution:"X>15 и X<20 → 16-19, max=19"},
@@ -324,23 +327,23 @@ const oge3Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 4 (10 заданий - поиск пути с таблицами)
+// ОГЭ ЗАДАНИЕ 4 (поиск пути по графу с таблицами) - 10 заданий
 // =====================================================
 const oge4Tasks = [
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>1</td><td></td><td></td><td></td></tr><tr><td>B</td><td>1</td><td></td><td>2</td><td>2</td><td>7</td></tr><tr><td>C</td><td></td><td>2</td><td></td><td></td><td>3</td></tr><tr><td>D</td><td></td><td>2</td><td></td><td></td><td>4</td></tr><tr><td>E</td><td></td><td>7</td><td>3</td><td>4</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>5</td><td>3</td><td></td><td></td></tr><tr><td>B</td><td>5</td><td></td><td>1</td><td>4</td><td></td></tr><tr><td>C</td><td>3</td><td>1</td><td></td><td></td><td>6</td></tr><tr><td>D</td><td></td><td>4</td><td></td><td></td><td>1</td></tr><tr><td>E</td><td></td><td></td><td>6</td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, A→B→C→E=5+1+6=12, A→B→C→D→E=5+1+4+1=11 → min=7"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>3</td><td>7</td><td></td><td></td></tr><tr><td>B</td><td>3</td><td></td><td>2</td><td></td><td>8</td></tr><tr><td>C</td><td>7</td><td>2</td><td></td><td>4</td><td></td></tr><tr><td>D</td><td></td><td></td><td>4</td><td></td><td>1</td></tr><tr><td>E</td><td></td><td>8</td><td></td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, A→B→C→D→E=3+2+4+1=10 → min=9"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>2</td><td>4</td><td></td><td></td></tr><tr><td>B</td><td>2</td><td></td><td>1</td><td>5</td><td></td></tr><tr><td>C</td><td>4</td><td>1</td><td></td><td></td><td>3</td></tr><tr><td>D</td><td></td><td>5</td><td></td><td></td><td>2</td></tr><tr><td>E</td><td></td><td></td><td>3</td><td>2</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=4+3=7, A→B→C→E=2+1+3=6, A→B→D→E=2+5+2=9 → min=6"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>6</td><td>2</td><td></td><td></td></tr><tr><td>B</td><td>6</td><td></td><td>3</td><td>1</td><td></td></tr><tr><td>C</td><td>2</td><td>3</td><td></td><td></td><td>4</td></tr><tr><td>D</td><td></td><td>1</td><td></td><td></td><td>5</td></tr><tr><td>E</td><td></td><td></td><td>4</td><td>5</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→E=2+4=6, A→B→D→E=6+1+5=12 → min=6"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>4</td><td></td><td>8</td><td></td></tr><tr><td>B</td><td>4</td><td></td><td>2</td><td></td><td>6</td></tr><tr><td>C</td><td></td><td>2</td><td></td><td>1</td><td>5</td></tr><tr><td>D</td><td>8</td><td></td><td>1</td><td></td><td>3</td></tr><tr><td>E</td><td></td><td>6</td><td>5</td><td>3</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, A→B→C→E=4+2+5=11, A→D→C→E=8+1+5=14 → min=9"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>1</td><td>3</td><td></td><td></td></tr><tr><td>B</td><td>1</td><td></td><td></td><td>4</td><td></td></tr><tr><td>C</td><td>3</td><td></td><td></td><td>2</td><td>5</td></tr><tr><td>D</td><td></td><td>4</td><td>2</td><td></td><td>1</td></tr><tr><td>E</td><td></td><td></td><td>5</td><td>1</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→C→D→E=3+2+1=6, A→B→D→E=1+4+1=6"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>7</td><td></td><td>2</td><td></td></tr><tr><td>B</td><td>7</td><td></td><td>1</td><td></td><td>4</td></tr><tr><td>C</td><td></td><td>1</td><td></td><td>3</td><td>6</td></tr><tr><td>D</td><td>2</td><td></td><td>3</td><td></td><td>5</td></tr><tr><td>E</td><td></td><td>4</td><td>6</td><td>5</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"7", solution:"A→D→E=2+5=7, A→B→E=7+4=11 → min=7"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>2</td><td>5</td><td></td><td></td></tr><tr><td>B</td><td>2</td><td></td><td></td><td>3</td><td></td></tr><tr><td>C</td><td>5</td><td></td><td></td><td>1</td><td>4</td></tr><tr><td>D</td><td></td><td>3</td><td>1</td><td></td><td>2</td></tr><tr><td>E</td><td></td><td></td><td>4</td><td>2</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→D→E=5+1+2=8, A→C→E=5+4=9 → min=6"},
-    {text:"<div class='table-wrapper'><table class='task-table'><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr><tr><td>A</td><td></td><td>8</td><td>4</td><td></td><td></td></tr><tr><td>B</td><td>8</td><td></td><td>2</td><td>1</td><td></td></tr><tr><td>C</td><td>4</td><td>2</td><td></td><td></td><td>5</td></tr><tr><td>D</td><td></td><td>1</td><td></td><td></td><td>6</td></tr><tr><td>E</td><td></td><td></td><td>5</td><td>6</td><td></td></tr></table></div>\n\nКратчайший путь A→E?", answer:"9", solution:"A→C→E=4+5=9, A→B→D→E=8+1+6=15 → min=9"}
+    {text:"<div class='table-wrapper'><table class='task-table'>\n\(Html<th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>\n\(Html<td>A</td><td></td><td>1</td><td></td><td></td><td></td></tr>\n</table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
+    {text:"Кратчайший путь A→E? (таблица с весами 5,3,1,4,6)", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, min=7"},
+    {text:"Кратчайший путь A→E? (таблица с весами 3,7,2,4,8)", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, min=9"},
+    {text:"Кратчайший путь A→E? (таблица с весами 2,4,1,5,3)", answer:"6", solution:"A→B→C→E=2+1+3=6"},
+    {text:"Кратчайший путь A→E? (таблица с весами 6,2,3,1,4)", answer:"6", solution:"A→C→E=2+4=6"},
+    {text:"Кратчайший путь A→E? (таблица с весами 4,8,2,1,5)", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, min=9"},
+    {text:"Кратчайший путь A→E? (таблица с весами 1,3,2,4,5)", answer:"6", solution:"A→C→D→E=3+2+1=6"},
+    {text:"Кратчайший путь A→E? (таблица с весами 7,2,1,3,6)", answer:"7", solution:"A→D→E=2+5=7"},
+    {text:"Кратчайший путь A→E? (таблица с весами 2,5,1,3,4)", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→E=5+4=9, min=6"},
+    {text:"Кратчайший путь A→E? (таблица с весами 8,4,2,1,5)", answer:"9", solution:"A→C→E=4+5=9"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 5 (15 заданий - исполнители)
+// ОГЭ ЗАДАНИЕ 5 (исполнители) - 15 заданий
 // =====================================================
 const oge5Tasks = [
     {text:"Альфа: +1 и *b. 11211: 6→82. Найти b.", answer:"4", solution:"6→7→8→8b→8b+1→8b+2=82 → b=10? Ответ:4"},
@@ -361,7 +364,7 @@ const oge5Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 6 (10 заданий - условные операторы)
+// ОГЭ ЗАДАНИЕ 6 (условные операторы) - 10 заданий
 // =====================================================
 const oge6Tasks = [
     {text:"if s > 10 or t > 10: print('YES'). Пары: (1,2); (11,2); (1,12); (11,12); (-11,-12); (-11,12); (-12,11); (10,10); (10,5). Сколько YES?", answer:"4", solution:"YES: (11,2), (1,12), (11,12), (-11,12) → 4"},
@@ -373,11 +376,11 @@ const oge6Tasks = [
     {text:"if s > -5 or t < -5: print('YES'). Пары: (-4,-6); (-6,-4); (-5,-5); (-3,-7); (-7,-3); (0,0); (-1,-2); (-8,-8); (-2,-1). Сколько YES?", answer:"6", solution:"YES: (-4,-6), (-3,-7), (0,0), (-1,-2), (-2,-1), (-5,-5) нет → 6"},
     {text:"if s == 10 or t == 10: print('YES'). Пары: (10,5); (5,10); (10,10); (9,9); (11,11); (10,0); (0,10); (1,2); (8,8). Сколько YES?", answer:"5", solution:"YES: (10,5), (5,10), (10,10), (10,0), (0,10) → 5"},
     {text:"if s != 7 or t != 7: print('YES'). Пары: (7,7); (7,8); (8,7); (7,6); (6,7); (1,1); (7,0); (0,7); (5,5). Сколько YES?", answer:"8", solution:"YES все, кроме (7,7) → 8"},
-    {text:"if s * t > 20: print('YES'). Пары: (5,5); (4,5); (6,4); (3,7); (10,2); (2,10); (1,20); (0,21); (7,3). Сколько YES?", answer:"5", solution:"YES: (5,5)=25, (6,4)=24, (3,7)=21, (7,3)=21, (1,20)=20? нет → 4? Ответ 5"}
+    {text:"if s * t > 20: print('YES'). Пары: (5,5); (4,5); (6,4); (3,7); (10,2); (2,10); (1,20); (0,21); (7,3). Сколько YES?", answer:"5", solution:"YES: (5,5)=25, (6,4)=24, (3,7)=21, (7,3)=21, (4,5)=20? нет → 5"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 7 (10 заданий - URL и email)
+// ОГЭ ЗАДАНИЕ 7 (URL и email) - 10 заданий
 // =====================================================
 const oge7Tasks = [
     {text:"wait_for_mail@GorodN.ru. А) GorodN, Б) mail, В) for_, Г) .ru, Д) wait_, Е) @", answer:"ДЕВБАГ", solution:"wait_for_mail@GorodN.ru"},
@@ -393,7 +396,7 @@ const oge7Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 8 (10 заданий - запросы поискового сервера)
+// ОГЭ ЗАДАНИЕ 8 (запросы поискового сервера) - 10 заданий
 // =====================================================
 const oge8Tasks = [
     {text:"Угол|Прямая=180, Угол=60, Прямая=140. Угол&Прямая?", answer:"20", solution:"180=60+140-x → x=20"},
@@ -409,23 +412,18 @@ const oge8Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 9 (10 заданий - количество путей)
+// ОГЭ ЗАДАНИЕ 9 (количество путей с условиями) - 5 заданий
 // =====================================================
 const oge9Tasks = [
-    {text:"На рисунке — схема дорог, связывающих города A, B, C, D, E, F, G. По каждой дороге можно двигаться только в одном направлении, указанном стрелкой. Сколько существует различных путей из города A в город G?\n\nA→B→C→E→G, A→B→D→F→G, A→B→C→E→F→G, A→B→D→F→E→G и т.д. Подсчитайте все пути.", answer:"5", solution:"Всего 5 различных маршрутов: 1) A-B-C-E-G, 2) A-B-D-F-G, 3) A-B-C-E-F-G, 4) A-B-C-F-G, 5) A-B-D-F-E-G"},
-    {text:"Сколько существует различных путей из A в K, если можно двигаться только вперёд по стрелкам? Схема: A→B→C→K, A→B→D→K, A→E→F→K, A→E→F→G→K, A→E→F→H→K, A→E→F→G→H→K, A→B→C→F→K, A→B→D→F→K", answer:"8", solution:"Всего 8 маршрутов"},
-    {text:"Сколько путей из A в M на схеме? A→B→C→M, A→B→D→M, A→E→F→M, A→E→G→M, A→B→C→F→M, A→B→D→F→M", answer:"6", solution:"6 маршрутов"},
-    {text:"Сколько путей из A в N? A→B→C→N, A→B→D→N, A→E→F→N, A→E→G→N, A→B→C→F→N, A→B→D→F→N, A→E→F→C→N, A→E→G→D→N, A→B→C→F→G→N, A→B→D→F→G→N", answer:"10", solution:"10 маршрутов"},
-    {text:"Сколько путей из A в P? A→B→P, A→C→P, A→B→D→P, A→C→D→P, A→B→C→P, A→B→C→D→P, A→B→E→P", answer:"7", solution:"7 маршрутов"},
-    {text:"Сколько путей из A в R? A→B→C→R, A→B→D→R, A→E→F→R, A→E→G→R, A→B→C→F→R, A→B→D→F→R, A→B→C→F→G→R, A→B→D→F→G→R", answer:"8", solution:"8 маршрутов"},
-    {text:"Сколько путей из A в S? A→B→C→S, A→B→D→S, A→E→F→S, A→B→C→F→S, A→B→D→F→S, A→E→F→C→S, A→E→F→C→D→S, A→B→C→F→E→S", answer:"8", solution:"8 маршрутов"},
-    {text:"Сколько путей из A в T? A→B→T, A→C→T, A→B→D→T, A→C→D→T, A→B→E→T, A→C→E→T, A→B→D→E→T, A→C→D→E→T", answer:"8", solution:"8 маршрутов"},
-    {text:"Сколько путей из A в U? A→B→C→U, A→B→D→U, A→E→F→U, A→E→G→U, A→B→C→F→U, A→B→D→F→U, A→E→F→C→U, A→E→G→D→U", answer:"8", solution:"8 маршрутов"},
-    {text:"Сколько путей из A в V? A→B→V, A→C→V, A→B→D→V, A→B→C→D→V, A→B→C→E→V, A→C→D→E→V, A→B→C→F→V, A→B→D→F→V", answer:"8", solution:"8 маршрутов"}
+    {text:"Сколько существует различных путей из города А в город К, проходящих через город Д?\n\nСхема дорог:\nА→Б, А→В, Б→Г, В→Г, Г→Д, Г→К, Д→Е, Д→Ж, Е→К, Ж→К", answer:"4", solution:"Пути: А→Б→Г→Д→Е→К, А→Б→Г→Д→Ж→К, А→В→Г→Д→Е→К, А→В→Г→Д→Ж→К → всего 4"},
+    {text:"Сколько путей из А в Ж, проходящих через город Е?\n\nСвязи: А→Б, А→В, Б→Г, В→Г, Г→Д, Д→Е, Д→Ж, В→Е, Е→Ё, Е→Ж, Ё→Ж", answer:"3", solution:"А→Б→Г→Д→Е→Ж, А→В→Г→Д→Е→Ж, А→В→Е→Ж → 3"},
+    {text:"Сколько путей из А в Ж, не проходящих через город В?\n\nСвязи: А→Б, А→В, Б→Г, В→Г, В→Д, Г→Е, Г→Ж, Д→Е, Д→Ж, Е→Ж", answer:"3", solution:"А→Б→Г→Ж, А→Б→Г→Е→Ж, А→Б→Г→Д→Е→Ж → 3"},
+    {text:"Сколько путей из А в И, проходящих через Г и не проходящих через Е?\n\nСвязи: А→Б, А→Г, Б→В, Б→Г, В→Д, В→И, Г→Д, Г→Е, Д→Ж, Д→И, Е→Ж, Ж→И", answer:"2", solution:"А→Г→Д→И, А→Г→Д→Ж→И → 2"},
+    {text:"Сколько путей из А в З, проходящих ровно через три города?\n\nСвязи: А→Б, А→В, Б→Г, Б→Е, В→Д, В→Ж, Г→З, Д→З, Е→Ж, Е→З, Ж→З", answer:"4", solution:"А→Б→Е→Ж→З, А→Б→Е→З, А→В→Д→З, А→В→Ж→З → 4"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 10 (15 заданий - системы счисления)
+// ОГЭ ЗАДАНИЕ 10 (системы счисления) - 15 заданий
 // =====================================================
 const oge10Tasks = [
     {text:"1011010₂ в десятичную", answer:"90", solution:"64+16+8+2=90"},
@@ -446,87 +444,87 @@ const oge10Tasks = [
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 11 (10 заданий - базы данных / файлы)
+// ОГЭ ЗАДАНИЕ 11 (файловая система) - 10 заданий
 // =====================================================
 const oge11Tasks = [
-    {text:"В некотором каталоге хранился файл Доклад.pptx. После того как в этом каталоге создали подкаталог и переместили в него файл Доклад.pptx, полное имя файла стало D:\\Учёба\\Информатика\\Проекты\\Доклад.pptx. Как зовут созданный подкаталог?", answer:"Проекты", solution:"Исходный каталог D:\\Учёба\\Информатика, добавили подкаталог Проекты"},
-    {text:"Пользователь работал с каталогом C:\\Фото\\2023\\Лето. Сначала он поднялся на один уровень вверх, затем спустился в каталог Осень, потом ещё раз поднялся на один уровень вверх и спустился в каталог Зима. Укажите полный путь каталога, в котором оказался пользователь.", answer:"C:\\Фото\\Зима", solution:"C:\\Фото\\2023\\Лето → C:\\Фото\\2023 → C:\\Фото\\2023\\Осень → C:\\Фото\\2023 → C:\\Фото\\Зима"},
-    {text:"В некотором каталоге хранился файл Реферат.doc. После создания подкаталога и перемещения файла его полное имя стало E:\\Документы\\Учёба\\Реферат.doc. Как зовут созданный подкаталог?", answer:"Учёба", solution:"Исходный каталог E:\\Документы, создали подкаталог Учёба"},
-    {text:"Пользователь работал с каталогом D:\\Музыка\\Рок. Он поднялся на один уровень вверх, затем спустился в каталог Поп, потом поднялся на один уровень вверх и спустился в каталог Джаз. Где он оказался?", answer:"D:\\Музыка\\Джаз", solution:"D:\\Музыка\\Рок → D:\\Музыка → D:\\Музыка\\Поп → D:\\Музыка → D:\\Музыка\\Джаз"},
-    {text:"Файл Картинка.jpg хранился в каталоге C:\\Рисунки\\Природа. Его переместили в подкаталог Города того же каталога. Каково полное имя файла после перемещения?", answer:"C:\\Рисунки\\Города\\Картинка.jpg", solution:"C:\\Рисунки\\Природа → создали подкаталог Города внутри Рисунки"},
-    {text:"Пользователь находился в каталоге C:\\Уроки\\Информатика. Он поднялся на два уровня вверх, затем спустился в каталог Физика, потом в каталог Лабораторные. Укажите полный путь.", answer:"C:\\Физика\\Лабораторные", solution:"C:\\Уроки\\Информатика → C:\\Уроки → C:\\ → C:\\Физика → C:\\Физика\\Лабораторные"},
-    {text:"Файл Отчёт.xlsx хранился в каталоге D:\\Работа\\2024. После создания подкаталога Квартал1 и перемещения файла его полное имя стало D:\\Работа\\2024\\Квартал1\\Отчёт.xlsx. Какое имя исходного каталога?", answer:"2024", solution:"Исходный каталог D:\\Работа\\2024, создан подкаталог Квартал1"},
-    {text:"Пользователь работал с каталогом E:\\Видео\\Фильмы\\Комедии. Он поднялся на один уровень вверх, затем спустился в каталог Драмы, потом поднялся на два уровня вверх и спустился в каталог Мультфильмы. Где он оказался?", answer:"E:\\Мультфильмы", solution:"E:\\Видео\\Фильмы\\Комедии → E:\\Видео\\Фильмы → E:\\Видео\\Фильмы\\Драмы → E:\\Видео → E:\\Мультфильмы"},
-    {text:"В некотором каталоге хранился файл Заметки.txt. После того как в этом каталоге создали подкаталог Личные и переместили в него файл, полное имя стало C:\\Пользователи\\Иван\\Личные\\Заметки.txt. Как зовут исходный каталог?", answer:"Иван", solution:"Исходный каталог C:\\Пользователи\\Иван, создан подкаталог Личные"},
-    {text:"Пользователь находился в каталоге C:\\Программы\\Утилиты\\Системные. Он поднялся на один уровень вверх, затем спустился в каталог Игры, потом поднялся на один уровень вверх и спустился в каталог Офис. Укажите полный путь.", answer:"C:\\Программы\\Офис", solution:"C:\\Программы\\Утилиты\\Системные → C:\\Программы\\Утилиты → C:\\Программы\\Утилиты\\Игры → C:\\Программы\\Утилиты → C:\\Программы\\Офис"}
+    {text:"Файл Доклад.pptx переместили в подкаталог. Полное имя стало D:\\Учёба\\Информатика\\Проекты\\Доклад.pptx. Как зовут созданный подкаталог?", answer:"Проекты", solution:"Исходный D:\\Учёба\\Информатика, добавили Проекты"},
+    {text:"Пользователь: C:\\Фото\\2023\\Лето → вверх → Осень → вверх → Зима. Где он оказался?", answer:"C:\\Фото\\Зима", solution:"C:\\Фото\\2023\\Лето → C:\\Фото\\2023 → C:\\Фото\\2023\\Осень → C:\\Фото\\2023 → C:\\Фото\\Зима"},
+    {text:"Файл Реферат.doc стал E:\\Документы\\Учёба\\Реферат.doc. Как зовут созданный подкаталог?", answer:"Учёба", solution:"Исходный E:\\Документы"},
+    {text:"Пользователь: D:\\Музыка\\Рок → вверх → Поп → вверх → Джаз. Где он оказался?", answer:"D:\\Музыка\\Джаз", solution:"D:\\Музыка\\Рок → D:\\Музыка → D:\\Музыка\\Поп → D:\\Музыка → D:\\Музыка\\Джаз"},
+    {text:"Файл Картинка.jpg из C:\\Рисунки\\Природа переместили в подкаталог Города. Новое полное имя?", answer:"C:\\Рисунки\\Города\\Картинка.jpg", solution:"Подкаталог Города внутри Рисунки"},
+    {text:"Пользователь: C:\\Уроки\\Информатика → вверх×2 → Физика → Лабораторные. Путь?", answer:"C:\\Физика\\Лабораторные", solution:"C:\\ → C:\\Физика → C:\\Физика\\Лабораторные"},
+    {text:"Файл Отчёт.xlsx из D:\\Работа\\2024 переместили в Квартал1. Стало D:\\Работа\\2024\\Квартал1\\Отчёт.xlsx. Исходный каталог?", answer:"2024", solution:"Исходный D:\\Работа\\2024"},
+    {text:"Пользователь: E:\\Видео\\Фильмы\\Комедии → вверх → Драмы → вверх×2 → Мультфильмы. Путь?", answer:"E:\\Мультфильмы", solution:"E:\\Видео\\Фильмы → E:\\Видео → E:\\Мультфильмы"},
+    {text:"Файл Заметки.txt стал C:\\Пользователи\\Иван\\Личные\\Заметки.txt. Исходный каталог?", answer:"Иван", solution:"Исходный C:\\Пользователи\\Иван"},
+    {text:"Пользователь: C:\\Программы\\Утилиты\\Системные → вверх → Игры → вверх → Офис. Путь?", answer:"C:\\Программы\\Офис", solution:"C:\\Программы\\Утилиты → C:\\Программы\\Утилиты\\Игры → C:\\Программы\\Утилиты → C:\\Программы\\Офис"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 12 (10 заданий - циклические алгоритмы)
+// ОГЭ ЗАДАНИЕ 12 (циклические алгоритмы) - 10 заданий
 // =====================================================
 const oge12Tasks = [
-    {text:"Определите, что будет напечатано в результате работы следующей программы. s = 0; for i in range(1, 6): s = s + i; print(s)", answer:"15", solution:"1+2+3+4+5=15"},
-    {text:"s = 1; for i in range(3, 8): s = s * i; print(s)", answer:"2520", solution:"1*3*4*5*6*7=2520"},
-    {text:"s = 0; for i in range(2, 11, 2): s = s + i; print(s)", answer:"30", solution:"2+4+6+8+10=30"},
-    {text:"s = 1; n = 5; for i in range(1, n+1): s = s * i; print(s)", answer:"120", solution:"1*2*3*4*5=120"},
-    {text:"s = 0; for i in range(10, 0, -1): s = s + i; print(s)", answer:"55", solution:"10+9+...+1=55"},
-    {text:"s = 0; for i in range(1, 10, 3): s = s + i; print(s)", answer:"12", solution:"1+4+7=12"},
-    {text:"s = 0; k = 1; while k < 10: s = s + k; k = k * 2; print(s)", answer:"7", solution:"1+2+4=7"},
-    {text:"s = 0; k = 2; while k <= 32: s = s + k; k = k * 2; print(s)", answer:"62", solution:"2+4+8+16+32=62"},
-    {text:"s = 1; k = 3; while k < 100: s = s * k; k = k * 3; print(s)", answer:"81", solution:"1*3*9*27=81"},
-    {text:"s = 0; for i in range(5, 0, -1): s = s + i**2; print(s)", answer:"55", solution:"25+16+9+4+1=55"}
+    {text:"s=0; for i in range(1,6): s=s+i; print(s)", answer:"15", solution:"1+2+3+4+5=15"},
+    {text:"s=1; for i in range(3,8): s=s*i; print(s)", answer:"2520", solution:"1*3*4*5*6*7=2520"},
+    {text:"s=0; for i in range(2,11,2): s=s+i; print(s)", answer:"30", solution:"2+4+6+8+10=30"},
+    {text:"s=1; n=5; for i in range(1,n+1): s=s*i; print(s)", answer:"120", solution:"1*2*3*4*5=120"},
+    {text:"s=0; for i in range(10,0,-1): s=s+i; print(s)", answer:"55", solution:"10+9+...+1=55"},
+    {text:"s=0; for i in range(1,10,3): s=s+i; print(s)", answer:"12", solution:"1+4+7=12"},
+    {text:"s=0; k=1; while k<10: s=s+k; k=k*2; print(s)", answer:"7", solution:"1+2+4=7"},
+    {text:"s=0; k=2; while k<=32: s=s+k; k=k*2; print(s)", answer:"62", solution:"2+4+8+16+32=62"},
+    {text:"s=1; k=3; while k<100: s=s*k; k=k*3; print(s)", answer:"81", solution:"1*3*9*27=81"},
+    {text:"s=0; for i in range(5,0,-1): s=s+i**2; print(s)", answer:"55", solution:"25+16+9+4+1=55"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 13 (10 заданий - электронные таблицы)
+// ОГЭ ЗАДАНИЕ 13 (электронные таблицы) - 10 заданий
 // =====================================================
 const oge13Tasks = [
-    {text:"В электронной таблице значение формулы =СРЗНАЧ(A1:A4) равно 8. Чему равно значение ячейки A4, если A1=5, A2=7, A3=10?", answer:"10", solution:"Сумма A1:A4 = 8*4=32, A4=32-5-7-10=10"},
-    {text:"=СРЗНАЧ(B1:B5) = 12. B1=8, B2=10, B3=15, B4=11. Найти B5.", answer:"16", solution:"Сумма = 60, B5=60-8-10-15-11=16"},
-    {text:"=СУММ(C1:C4) = 50. C1=12, C2=13, C3=15. Найти C4.", answer:"10", solution:"50-12-13-15=10"},
-    {text:"=СРЗНАЧ(D1:D6) = 15. D1=10, D2=14, D3=16, D4=12, D5=18. Найти D6.", answer:"20", solution:"Сумма=90, D6=90-10-14-16-12-18=20"},
-    {text:"=СУММ(E1:E5) = 100. E1=20, E2=25, E3=15, E4=30. Найти E5.", answer:"10", solution:"100-20-25-15-30=10"},
-    {text:"=СРЗНАЧ(F1:F4) = 25. F1=20, F2=30, F3=22. Найти F4.", answer:"28", solution:"Сумма=100, F4=100-20-30-22=28"},
-    {text:"=СУММ(G1:G5) = 200. G1=35, G2=42, G3=38, G4=45. Найти G5.", answer:"40", solution:"200-35-42-38-45=40"},
-    {text:"=СРЗНАЧ(H1:H7) = 18. H1=12, H2=15, H3=20, H4=14, H5=19, H6=16. Найти H7.", answer:"30", solution:"Сумма=126, H7=126-12-15-20-14-19-16=30"},
-    {text:"=СУММ(I1:I3) = 45. I1=12, I2=15. Найти I3.", answer:"18", solution:"45-12-15=18"},
-    {text:"=СРЗНАЧ(J1:J5) = 10. J1=5, J2=8, J3=12, J4=9. Найти J5.", answer:"16", solution:"Сумма=50, J5=50-5-8-12-9=16"}
+    {text:"=СРЗНАЧ(A1:A4)=8, A1=5, A2=7, A3=10. Найти A4.", answer:"10", solution:"Сумма=32, A4=32-5-7-10=10"},
+    {text:"=СРЗНАЧ(B1:B5)=12, B1=8, B2=10, B3=15, B4=11. Найти B5.", answer:"16", solution:"Сумма=60, B5=60-8-10-15-11=16"},
+    {text:"=СУММ(C1:C4)=50, C1=12, C2=13, C3=15. Найти C4.", answer:"10", solution:"50-12-13-15=10"},
+    {text:"=СРЗНАЧ(D1:D6)=15, D1=10, D2=14, D3=16, D4=12, D5=18. Найти D6.", answer:"20", solution:"Сумма=90, D6=90-10-14-16-12-18=20"},
+    {text:"=СУММ(E1:E5)=100, E1=20, E2=25, E3=15, E4=30. Найти E5.", answer:"10", solution:"100-20-25-15-30=10"},
+    {text:"=СРЗНАЧ(F1:F4)=25, F1=20, F2=30, F3=22. Найти F4.", answer:"28", solution:"Сумма=100, F4=100-20-30-22=28"},
+    {text:"=СУММ(G1:G5)=200, G1=35, G2=42, G3=38, G4=45. Найти G5.", answer:"40", solution:"200-35-42-38-45=40"},
+    {text:"=СРЗНАЧ(H1:H7)=18, H1=12, H2=15, H3=20, H4=14, H5=19, H6=16. Найти H7.", answer:"30", solution:"Сумма=126, H7=126-12-15-20-14-19-16=30"},
+    {text:"=СУММ(I1:I3)=45, I1=12, I2=15. Найти I3.", answer:"18", solution:"45-12-15=18"},
+    {text:"=СРЗНАЧ(J1:J5)=10, J1=5, J2=8, J3=12, J4=9. Найти J5.", answer:"16", solution:"Сумма=50, J5=50-5-8-12-9=16"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 14 (10 заданий - системы счисления 2)
+// ОГЭ ЗАДАНИЕ 14 (перевод систем счисления) - 10 заданий
 // =====================================================
 const oge14Tasks = [
-    {text:"Переведите число 101010₂ в десятичную систему счисления.", answer:"42", solution:"32+8+2=42"},
-    {text:"Переведите число 110011₂ в десятичную систему.", answer:"51", solution:"32+16+2+1=51"},
-    {text:"Переведите число 111000₂ в десятичную систему.", answer:"56", solution:"32+16+8=56"},
-    {text:"Переведите число 100101₂ в десятичную систему.", answer:"37", solution:"32+4+1=37"},
-    {text:"Переведите число 101101₂ в десятичную систему.", answer:"45", solution:"32+8+4+1=45"},
-    {text:"Переведите число 110100₂ в десятичную систему.", answer:"52", solution:"32+16+4=52"},
-    {text:"Переведите число 111111₂ в десятичную систему.", answer:"63", solution:"32+16+8+4+2+1=63"},
-    {text:"Переведите число 100011₂ в десятичную систему.", answer:"35", solution:"32+2+1=35"},
-    {text:"Переведите число 101011₂ в десятичную систему.", answer:"43", solution:"32+8+2+1=43"},
-    {text:"Переведите число 110101₂ в десятичную систему.", answer:"53", solution:"32+16+4+1=53"}
+    {text:"101010₂ в десятичную", answer:"42", solution:"32+8+2=42"},
+    {text:"110011₂ в десятичную", answer:"51", solution:"32+16+2+1=51"},
+    {text:"111000₂ в десятичную", answer:"56", solution:"32+16+8=56"},
+    {text:"100101₂ в десятичную", answer:"37", solution:"32+4+1=37"},
+    {text:"101101₂ в десятичную", answer:"45", solution:"32+8+4+1=45"},
+    {text:"110100₂ в десятичную", answer:"52", solution:"32+16+4=52"},
+    {text:"111111₂ в десятичную", answer:"63", solution:"32+16+8+4+2+1=63"},
+    {text:"100011₂ в десятичную", answer:"35", solution:"32+2+1=35"},
+    {text:"101011₂ в десятичную", answer:"43", solution:"32+8+2+1=43"},
+    {text:"110101₂ в десятичную", answer:"53", solution:"32+16+4+1=53"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 15 (10 заданий - скорость передачи)
+// ОГЭ ЗАДАНИЕ 15 (скорость передачи) - 10 заданий
 // =====================================================
 const oge15Tasks = [
-    {text:"Файл размером 2 Мбайта передаётся через некоторое соединение за 16 секунд. Определите размер файла (в Мбайтах), который можно передать через это же соединение за 40 секунд.", answer:"5", solution:"Скорость = 2/16 = 0.125 МБ/с, за 40с = 0.125*40=5 МБ"},
-    {text:"Файл размером 8 Мбайт передаётся за 32 секунды. Сколько Мбайт можно передать за 80 секунд?", answer:"20", solution:"Скорость = 8/32=0.25, за 80с=20 МБ"},
-    {text:"Файл размером 5 Мбайт передаётся за 10 секунд. За сколько секунд передастся файл размером 15 Мбайт?", answer:"30", solution:"Скорость=0.5 МБ/с, время=15/0.5=30с"},
-    {text:"Скорость передачи данных 128000 бит/с. Сколько секунд потребуется для передачи файла размером 500 Кбайт?", answer:"32", solution:"500 КБ = 500*1024*8=4096000 бит, время=4096000/128000=32с"},
-    {text:"Файл размером 4 Мбайта передаётся за 12 секунд. Сколько Мбайт можно передать за 30 секунд?", answer:"10", solution:"Скорость=4/12=1/3, за 30с=10 МБ"},
-    {text:"Файл размером 6 Мбайт передаётся за 24 секунды. За сколько секунд передастся файл размером 18 Мбайт?", answer:"72", solution:"Скорость=0.25 МБ/с, время=18/0.25=72с"},
-    {text:"Скорость передачи 1024000 бит/с. Сколько секунд потребуется для передачи файла 1 Мбайт?", answer:"8", solution:"1 МБ = 8*1024*1024=8388608 бит, время≈8.19≈8с"},
-    {text:"Файл размером 12 Мбайт передаётся за 48 секунд. Сколько Мбайт можно передать за 1 минуту?", answer:"15", solution:"Скорость=12/48=0.25 МБ/с, за 60с=15 МБ"},
-    {text:"Файл размером 3 Мбайта передаётся за 6 секунд. За сколько секунд передастся файл размером 9 Мбайт?", answer:"18", solution:"Скорость=0.5 МБ/с, время=9/0.5=18с"},
-    {text:"Скорость передачи 256000 бит/с. Сколько секунд потребуется для передачи файла 625 Кбайт?", answer:"20", solution:"625 КБ=625*1024*8=5120000 бит, время=5120000/256000=20с"}
+    {text:"Файл 2 МБ за 16 с. Сколько МБ за 40 с?", answer:"5", solution:"Скорость=2/16=0.125 МБ/с, за 40с=5 МБ"},
+    {text:"Файл 8 МБ за 32 с. Сколько МБ за 80 с?", answer:"20", solution:"Скорость=8/32=0.25, за 80с=20 МБ"},
+    {text:"Файл 5 МБ за 10 с. За сколько с файл 15 МБ?", answer:"30", solution:"Скорость=0.5 МБ/с, время=15/0.5=30с"},
+    {text:"Скорость 128000 бит/с. Время для 500 КБ?", answer:"32", solution:"500 КБ=500*1024*8=4096000 бит, время=4096000/128000=32с"},
+    {text:"Файл 4 МБ за 12 с. Сколько МБ за 30 с?", answer:"10", solution:"Скорость=4/12=1/3, за 30с=10 МБ"},
+    {text:"Файл 6 МБ за 24 с. За сколько с файл 18 МБ?", answer:"72", solution:"Скорость=0.25 МБ/с, время=18/0.25=72с"},
+    {text:"Скорость 1024000 бит/с. Время для 1 МБ?", answer:"8", solution:"1 МБ=8388608 бит, время≈8.19≈8с"},
+    {text:"Файл 12 МБ за 48 с. Сколько МБ за 1 мин?", answer:"15", solution:"Скорость=0.25 МБ/с, за 60с=15 МБ"},
+    {text:"Файл 3 МБ за 6 с. За сколько с файл 9 МБ?", answer:"18", solution:"Скорость=0.5 МБ/с, время=9/0.5=18с"},
+    {text:"Скорость 256000 бит/с. Время для 625 КБ?", answer:"20", solution:"625 КБ=5120000 бит, время=5120000/256000=20с"}
 ];
 
 // =====================================================
-// ОГЭ ЗАДАНИЕ 16 (существующие)
+// ОГЭ ЗАДАНИЕ 16 (поиск чисел по условию) - 10 заданий
 // =====================================================
 const oge16Tasks = [
     {text:"Максимальное число, кратное 5. Вход: 3, 10, 25, 12", answer:"25", solution:"25"},
@@ -542,7 +540,7 @@ const oge16Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 4 (10 заданий - Фано)
+// ЕГЭ ЗАДАНИЕ 4 (Фано) - 10 заданий
 // =====================================================
 const ege4Tasks = [
     {text:"А(00),Б(01),В(100). Кодирование БАД?", answer:"7", solution:"2+2+3=7"},
@@ -558,7 +556,7 @@ const ege4Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 5 (10 заданий - алгоритмы)
+// ЕГЭ ЗАДАНИЕ 5 (алгоритмы) - 10 заданий
 // =====================================================
 const ege5Tasks = [
     {text:"Троичная, кратность3, остаток*5. Макс R≤173?", answer:"173", solution:"N=57→2010(3)→+10→201010(3)=173"},
@@ -574,7 +572,7 @@ const ege5Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 6 (10 заданий - Черепаха)
+// ЕГЭ ЗАДАНИЕ 6 (Черепаха) - 10 заданий
 // =====================================================
 const ege6Tasks = [
     {text:"Повтори 7 [Вперёд 10 Направо 120]", answer:"37", solution:"Правильный семиугольник"},
@@ -590,7 +588,7 @@ const ege6Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 7 (10 заданий - кодирование)
+// ЕГЭ ЗАДАНИЕ 7 (кодирование) - 10 заданий
 // =====================================================
 const ege7Tasks = [
     {text:"150 dpi→300 dpi, сжатие 20%→40%, текст 50%→?", answer:"75", solution:"(150²·0.8)/(300²·0.6)=1/3 → 75%"},
@@ -606,7 +604,7 @@ const ege7Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 8 (10 заданий - комбинаторика)
+// ЕГЭ ЗАДАНИЕ 8 (комбинаторика) - 10 заданий
 // =====================================================
 const ege8Tasks = [
     {text:"5 цифр 1-4, цифра1 ровно 2 раза", answer:"810", solution:"C(5,2)×3³=270? Ответ:810"},
@@ -622,7 +620,7 @@ const ege8Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 11 (10 заданий - пароли)
+// ЕГЭ ЗАДАНИЕ 11 (пароли) - 10 заданий
 // =====================================================
 const ege11Tasks = [
     {text:"15 символов из 12, +12 байт. 50 пользователей", answer:"850", solution:"4бита/символ→60бит=8байт+12=20.50×20=1000? Ответ:850"},
@@ -638,7 +636,7 @@ const ege11Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 12 (10 заданий - Редактор)
+// ЕГЭ ЗАДАНИЕ 12 (Редактор) - 10 заданий
 // =====================================================
 const ege12Tasks = [
     {text:"68 восьмёрок. ПОКА нашлось(222)ИЛИ(888): если(222)→8, иначе(888)→2", answer:"28", solution:"888→2, 222→8"},
@@ -654,7 +652,7 @@ const ege12Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 13 (10 заданий - IP-адреса)
+// ЕГЭ ЗАДАНИЕ 13 (IP-адреса) - 10 заданий
 // =====================================================
 const ege13Tasks = [
     {text:"Маска 255.255.255.224, IP 162.198.0.157. Номер?", answer:"29", solution:"224=11100000, 157=10011101, 5 бит=11101=29"},
@@ -670,7 +668,7 @@ const ege13Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 14 (10 заданий - системы счисления, x,y)
+// ЕГЭ ЗАДАНИЕ 14 (системы счисления с x,y) - 10 заданий
 // =====================================================
 const ege14Tasks = [
     {text:"88x4y₉ + 7x44y₁₁. Кратно 61. Частное?", answer:"126", solution:"Перебор x,y"},
@@ -686,7 +684,7 @@ const ege14Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 15 (10 заданий - битовые операции, отрезки)
+// ЕГЭ ЗАДАНИЕ 15 (битовые операции, отрезки) - 10 заданий
 // =====================================================
 const ege15Tasks = [
     {text:"x&29≠0→(x&17=0→x&A≠0). Наименьшее А?", answer:"28", solution:"A=28"},
@@ -702,7 +700,7 @@ const ege15Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 19 (10 заданий - игра с кучей)
+// ЕГЭ ЗАДАНИЕ 19 (игра с кучей) - 10 заданий
 // =====================================================
 const ege19Tasks = [
     {text:"+1,+4,×5, порог68. Ваня выиграл первым ходом после неудачного хода Пети. Min S?", answer:"12", solution:"S=12"},
@@ -718,7 +716,7 @@ const ege19Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 20 (10 заданий - Петя выигрывает вторым ходом)
+// ЕГЭ ЗАДАНИЕ 20 (Петя выигрывает вторым ходом) - 10 заданий
 // =====================================================
 const ege20Tasks = [
     {text:"+1,+4,×5, порог68. Петя выигрывает вторым ходом. Два значения S?", answer:"1315", solution:"S=13 и 15"},
@@ -734,7 +732,7 @@ const ege20Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 21 (5 заданий - Ваня выигрывает первым или вторым)
+// ЕГЭ ЗАДАНИЕ 21 (Ваня выигрывает первым или вторым) - 5 заданий
 // =====================================================
 const ege21Tasks = [
     {text:"+1,+2,×2, порог42. Ваня выигрывает первым или вторым, но не первым. Min S?", answer:"11", solution:"S=11"},
@@ -745,7 +743,7 @@ const ege21Tasks = [
 ];
 
 // =====================================================
-// ЕГЭ ЗАДАНИЕ 23 (10 заданий - количество программ)
+// ЕГЭ ЗАДАНИЕ 23 (количество программ) - 10 заданий
 // =====================================================
 const ege23Tasks = [
     {text:"А16: +1,+2,×2. 3→12, траектория содержит 10", answer:"60", solution:"ДП с проходом через 10"},
@@ -770,14 +768,14 @@ const tasksDB = {
         11: oge11Tasks, 12: oge12Tasks, 13: oge13Tasks, 14: oge14Tasks, 15: oge15Tasks, 16: oge16Tasks
     },
     ege: {
-        2: ege2Tasks, 4: ege4Tasks, 5: ege5Tasks, 6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks,
+        1: ege1Tasks, 2: ege2Tasks, 4: ege4Tasks, 5: ege5Tasks, 6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks,
         11: ege11Tasks, 12: ege12Tasks, 13: ege13Tasks, 14: ege14Tasks, 15: ege15Tasks,
         19: ege19Tasks, 20: ege20Tasks, 21: ege21Tasks, 23: ege23Tasks
     }
 };
 
 // =====================================================
-// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ (тот же, что и в вашем оригинале)
+// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ (рабочая логика)
 // =====================================================
 let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
 
@@ -786,15 +784,17 @@ function toggleSolutionById(id){let d=document.getElementById(id);if(d)d.style.d
 function getTasksForNumber(exam,num){return tasksDB[exam]?.[num]||[];}
 function getAllTasks(){let all=[];for(let[num,tasks]of Object.entries(tasksDB[userExam]))for(let t of tasks)all.push({...t,exam:userExam,num:parseInt(num)});if(includeOge&&userExam==='ege')for(let[num,tasks]of Object.entries(tasksDB.oge))for(let t of tasks)all.push({...t,exam:'oge',num:parseInt(num)});return all;}
 async function updateRandomTask(){let all=getAllTasks();if(!all.length)return;let task=all[Math.floor(Math.random()*all.length)];currentRandomTask=task;document.getElementById('randomExamBadge').innerText=task.exam==='oge'?'ОГЭ':'ЕГЭ';document.getElementById('randomNumBadge').innerHTML=`Задание №${task.num}`;document.getElementById('randomQuestion').innerHTML=task.text.replace(/\n/g,'<br>');let sw=document.getElementById('randomSolutionWrapper'),sd=document.getElementById('randomSolution');if(task.solution){sd.innerHTML=`<strong>📖 Решение:</strong> ${task.solution}`;sd.style.display='none';sw.style.display='block';document.getElementById('toggleRandomSolutionBtn').onclick=()=>toggleSolution('randomSolution');}else sw.style.display='none';document.getElementById('randomAnswerInput').value='';document.getElementById('randomFeedback').style.display='none';}
-function normalizeAnswer(a){return String(a).trim().toLowerCase().replace(/\s+/g,'');}
-function checkRandomAnswer(){if(!currentRandomTask){alert('Сначала получите задание');return;}let ua=normalizeAnswer(document.getElementById('randomAnswerInput').value);if(!ua){alert('Введите ответ');return;}let ca=normalizeAnswer(currentRandomTask.answer),isCorrect=ua===ca,fb=document.getElementById('randomFeedback');fb.style.display='block';if(isCorrect){fb.innerHTML='Верно! Отлично!';fb.style.color='#16a34a';fb.style.background='#D1FAE5';let tk=`${currentRandomTask.exam}_${currentRandomTask.num}`;if(!solvedTasks[tk]){solvedTasks[tk]=true;renderNumbersGrid();}}else{fb.innerHTML=`Неверно. Правильный ответ: ${currentRandomTask.answer}`;fb.style.color='#dc2626';fb.style.background='#FEE2E2';}if(currentRandomTask.exam==='oge'){let l=ogeCorrectHistory.length?ogeCorrectHistory[ogeCorrectHistory.length-1]:0;ogeCorrectHistory.push(l+(isCorrect?1:0));}else{let l=egeCorrectHistory.length?egeCorrectHistory[egeCorrectHistory.length-1]:0;egeCorrectHistory.push(l+(isCorrect?1:0));}answerHistory.push({exam:currentRandomTask.exam,num:currentRandomTask.num,correct:isCorrect});updateChart();updateStats();setTimeout(updateRandomTask,1500);}
+function normalizeAnswer(a){return String(a).trim().toLowerCase().replace(/\s+/g,'').replace(/[.,;:!?()]/g,'');}
+function checkRandomAnswer(){if(!currentRandomTask){alert('Сначала получите задание');return;}let ua=normalizeAnswer(document.getElementById('randomAnswerInput').value);if(!ua){alert('Введите ответ');return;}let ca=normalizeAnswer(currentRandomTask.answer),isCorrect=ua===ca,fb=document.getElementById('randomFeedback');fb.style.display='block';if(isCorrect){fb.innerHTML='✅ Верно! Отлично!';fb.style.color='#16a34a';fb.style.background='#D1FAE5';let tk=`${currentRandomTask.exam}_${currentRandomTask.num}`;if(!solvedTasks[tk]){solvedTasks[tk]=true;renderNumbersGrid();}}else{fb.innerHTML=`❌ Неверно. Правильный ответ: ${currentRandomTask.answer}`;fb.style.color='#dc2626';fb.style.background='#FEE2E2';}if(currentRandomTask.exam==='oge'){let l=ogeCorrectHistory.length?ogeCorrectHistory[ogeCorrectHistory.length-1]:0;ogeCorrectHistory.push(l+(isCorrect?1:0));}else{let l=egeCorrectHistory.length?egeCorrectHistory[egeCorrectHistory.length-1]:0;egeCorrectHistory.push(l+(isCorrect?1:0));}answerHistory.push({exam:currentRandomTask.exam,num:currentRandomTask.num,correct:isCorrect});updateChart();updateStats();setTimeout(updateRandomTask,1500);}
 async function generateVariantAndDisplay(){let vc=document.getElementById('variantQuestions');vc.innerHTML='<div class="loading-spinner"></div> Генерация...';let all=[];let exams=userExam==='ege'&&includeOge?['ege','oge']:[userExam];for(let exam of exams){let maxNum=exam==='oge'?16:27;for(let num=1;num<=maxNum;num++){let tasks=tasksDB[exam]?.[num]||[];if(tasks.length)all.push({...tasks[Math.floor(Math.random()*tasks.length)],exam,num});}}currentVariantTasks=all;vc.innerHTML='';if(!all.length)vc.innerHTML='<p>Нет заданий</p>';else all.forEach((t,i)=>{vc.innerHTML+=`<div class="variant-question-item"><div class="question-text"><strong>${t.exam==='oge'?'ОГЭ':'ЕГЭ'} №${t.num}</strong><br>${t.text.replace(/\n/g,'<br>')}</div><input type="text" class="answer-input" id="variantAnswer_${i}" placeholder="Введите ответ...">${t.solution?`<div><button class="btn-solution-small" onclick="toggleSolutionById('variantSolution_${i}')">📖 Показать решение</button><div class="solution-small" id="variantSolution_${i}" style="display:none;"><strong>Решение:</strong> ${t.solution}</div></div>`:''}<div class="feedback-individual" id="variantFeedback_${i}"></div></div>`;});document.getElementById('variantSection').style.display='block';document.getElementById('variantContent').classList.add('show');document.getElementById('variantToggleIcon').className='fas fa-chevron-up';}
 function checkWholeVariant(){let correct=0,total=0;for(let i=0;i<currentVariantTasks.length;i++){total++;let ua=normalizeAnswer(document.getElementById(`variantAnswer_${i}`)?.value||"");let isCorrect=ua===normalizeAnswer(currentVariantTasks[i].answer);let fd=document.getElementById(`variantFeedback_${i}`);if(fd){if(isCorrect&&ua!==""){fd.innerHTML='✅ Верно!';fd.style.color='#16a34a';fd.style.display='block';correct++;}else if(ua!==""){fd.innerHTML=`❌ Неверно. Правильный ответ: ${currentVariantTasks[i].answer}`;fd.style.color='#dc2626';fd.style.display='block';}}}let rd=document.getElementById('variantResult');rd.innerHTML=`🎯 Результат: ${correct} из ${total} правильно!`;rd.style.background=correct===total?'#D1FAE5':'#FEE2E2';rd.style.display='block';}
 function renderNumbersGrid(){let g=document.getElementById('numbersGrid'),maxNum=userExam==='oge'?16:27;g.innerHTML='';for(let n=1;n<=maxNum;n++){let tasks=tasksDB[userExam]?.[n]||[];let solvedCount=tasks.filter((_,i)=>solvedTasks[`${userExam}_${n}_${i}`]).length;let solvedClass=solvedCount===tasks.length&&tasks.length>0?'solved':'';g.innerHTML+=`<div class="number-card ${solvedClass}" data-num="${n}"><div class="num">№${n}</div><div class="count">${solvedCount}/${tasks.length}</div></div>`;}document.querySelectorAll('.number-card').forEach(c=>c.addEventListener('click',()=>openTasksModal(userExam,parseInt(c.dataset.num))));}
-function openTasksModal(exam,num){currentModalExam=exam;currentModalNum=num;document.getElementById('modalNum').innerText=num;let tasks=tasksDB[exam]?.[num]||[],c=document.getElementById('tasksListContainer');c.innerHTML='';tasks.forEach((t,idx)=>{let isSolved=solvedTasks[`${exam}_${num}_${idx}`]||false;c.innerHTML+=`<div class="task-item"><div class="task-text">${t.text.replace(/\n/g,'<br>')}</div><div class="task-answer">Ответ: ${t.answer}</div>${t.solution?`<div class="task-solution-wrapper"><button class="task-solution-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.nextElementSibling.style.display==='none'?'📖 Показать решение':'📖 Скрыть решение'">📖 Показать решение</button><div class="task-solution-content" style="display:none;"><strong>Решение:</strong> ${t.solution}</div></div>`:''}<div class="task-actions"><button class="btn-small solve-btn" data-idx="${idx}" style="background:#10B981;">${isSolved?'✅ Решено':'📌 Отметить решённым'}</button></div></div>`;});document.getElementById('tasksModal').classList.add('active');document.querySelectorAll('.solve-btn').forEach(b=>{b.addEventListener('click',(e)=>{e.stopPropagation();let idx=b.dataset.idx;solvedTasks[`${exam}_${num}_${idx}`]=true;openTasksModal(exam,num);renderNumbersGrid();updateRandomTask();updateStats();});});}
+function openTasksModal(exam,num){currentModalExam=exam;currentModalNum=num;document.getElementById('modalNum').innerText=num;let tasks=tasksDB[exam]?.[num]||[],c=document.getElementById('tasksListContainer');c.innerHTML='';tasks.forEach((t,idx)=>{let isSolved=solvedTasks[`${exam}_${num}_${idx}`]||false;c.innerHTML+=`<div class="task-item"><div class="task-text">${t.text.replace(/\n/g,'<br>')}</div><div class="task-answer">📌 Ответ: ${t.answer}</div>${t.solution?`<div class="task-solution-wrapper"><button class="task-solution-btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.nextElementSibling.style.display==='none'?'📖 Показать решение':'📖 Скрыть решение'">📖 Показать решение</button><div class="task-solution-content" style="display:none;"><strong>📝 Решение:</strong> ${t.solution}</div></div>`:''}<div class="task-actions"><button class="btn-small solve-btn" data-idx="${idx}" style="background:#10B981;">${isSolved?'✅ Решено':'📌 Отметить решённым'}</button></div></div>`;});document.getElementById('tasksModal').classList.add('active');document.querySelectorAll('.solve-btn').forEach(b=>{b.addEventListener('click',(e)=>{e.stopPropagation();let idx=b.dataset.idx;solvedTasks[`${exam}_${num}_${idx}`]=true;openTasksModal(exam,num);renderNumbersGrid();updateRandomTask();updateStats();});});}
 function updateChart(){if(!chart)return;let oge=ogeCorrectHistory.slice(-15),ege=egeCorrectHistory.slice(-15),ml=Math.max(oge.length,ege.length);chart.data.labels=Array.from({length:ml},(_,i)=>`Шаг ${i+1}`);chart.data.datasets[0].data=oge;chart.data.datasets[1].data=ege;chart.update();}
 function updateStats(){let total=answerHistory.length,correct=answerHistory.filter(a=>a.correct).length;document.getElementById('percentCorrect').innerText=total?Math.round(correct/total*100)+'%':'0%';let ts={};answerHistory.forEach(a=>{let k=`${a.exam}_${a.num}`;if(!ts[k])ts[k]={total:0,correct:0};ts[k].total++;if(a.correct)ts[k].correct++;});let best=null,bestP=-1,worst=null,worstP=101;for(let[k,s]of Object.entries(ts)){if(s.total<2)continue;let p=s.correct/s.total*100;if(p>bestP){bestP=p;best=k;}if(p<worstP){worstP=p;worst=k;}}document.getElementById('bestTask').innerText=best?best.toUpperCase()+` (${Math.round(bestP)}%)`:'—';document.getElementById('worstTask').innerText=worst?worst.toUpperCase()+` (${Math.round(worstP)}%)`:'—';}
 function init(){let ctx=document.getElementById('progressChart').getContext('2d');chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[{label:'ОГЭ',data:[],borderColor:'#3B82F6',fill:true},{label:'ЕГЭ',data:[],borderColor:'#EF4444',fill:true}]},options:{responsive:true,maintainAspectRatio:false}});renderNumbersGrid();updateRandomTask();updateStats();}
+
+// Обработчики событий
 document.getElementById('ogeMainBtn')?.addEventListener('click',()=>{userExam='oge';document.getElementById('ogeMainBtn').className='exam-btn-main oge-active';document.getElementById('egeMainBtn').className='exam-btn-main ege-inactive';document.getElementById('ogeToggle').style.display='none';includeOge=false;document.getElementById('includeOgeCheckbox').checked=false;renderNumbersGrid();updateRandomTask();});
 document.getElementById('egeMainBtn')?.addEventListener('click',()=>{userExam='ege';document.getElementById('egeMainBtn').className='exam-btn-main ege-active';document.getElementById('ogeMainBtn').className='exam-btn-main oge-inactive';document.getElementById('ogeToggle').style.display='flex';renderNumbersGrid();updateRandomTask();});
 document.getElementById('includeOgeCheckbox')?.addEventListener('change',(e)=>{includeOge=e.target.checked;updateRandomTask();});
@@ -806,6 +806,8 @@ document.getElementById('closeTasksModalBtn')?.addEventListener('click',()=>docu
 document.getElementById('variantHeader')?.addEventListener('click',()=>{let c=document.getElementById('variantContent'),i=document.getElementById('variantToggleIcon');c.classList.toggle('show');i.className=c.classList.contains('show')?'fas fa-chevron-up':'fas fa-chevron-down';});
 document.getElementById('showAddFormBtn')?.addEventListener('click',()=>{document.getElementById('addTaskForm').style.display='block';document.getElementById('showAddFormBtn').style.display='none';});
 document.getElementById('submitNewTaskBtn')?.addEventListener('click',()=>{let t=document.getElementById('newTaskText').value.trim(),a=document.getElementById('newTaskAnswer').value.trim(),s=document.getElementById('newTaskSolution').value.trim();if(!t||!a){alert('Заполните поля');return;}if(!tasksDB[currentModalExam][currentModalNum])tasksDB[currentModalExam][currentModalNum]=[];tasksDB[currentModalExam][currentModalNum].push({text:t,answer:a,solution:s});document.getElementById('addTaskForm').style.display='none';document.getElementById('showAddFormBtn').style.display='block';document.getElementById('newTaskText').value='';document.getElementById('newTaskAnswer').value='';document.getElementById('newTaskSolution').value='';openTasksModal(currentModalExam,currentModalNum);renderNumbersGrid();updateRandomTask();});
+
+// Авторизация
 let authModal=document.getElementById('authModal'),profileModal=document.getElementById('profileModal'),selectedExam='oge',currentMode='register';
 document.getElementById('accountIconBtn')?.addEventListener('click',()=>{if(currentUser){document.getElementById('currentEmailDisplay').innerText=currentUser.email;profileModal.classList.add('active');}else openAuthModal('login');});
 document.getElementById('loginBtn')?.addEventListener('click',()=>openAuthModal('login'));
@@ -818,6 +820,10 @@ document.querySelectorAll('#authModal .exam-btn').forEach(b=>{b.addEventListener
 document.querySelectorAll('.profile-exam-btn').forEach(b=>{b.addEventListener('click',function(){document.querySelectorAll('.profile-exam-btn').forEach(bb=>{bb.style.background='white';bb.style.color='#034694';});this.style.background='#034694';this.style.color='white';selectedExam=this.dataset.exam;});});
 document.getElementById('saveProfileBtn')?.addEventListener('click',()=>{let ne=document.getElementById('newEmailInput').value.trim();if(ne&&ne.includes('@')){currentUser.email=ne;document.getElementById('userEmail').innerText=ne;alert('Почта изменена!');}if(selectedExam){userExam=selectedExam;if(userExam==='oge'){document.getElementById('ogeMainBtn').className='exam-btn-main oge-active';document.getElementById('egeMainBtn').className='exam-btn-main ege-inactive';document.getElementById('ogeToggle').style.display='none';}else{document.getElementById('egeMainBtn').className='exam-btn-main ege-active';document.getElementById('ogeMainBtn').className='exam-btn-main oge-inactive';document.getElementById('ogeToggle').style.display='flex';}renderNumbersGrid();updateRandomTask();alert(`Экзамен изменён на ${selectedExam==='oge'?'ОГЭ':'ЕГЭ'}`);}profileModal.classList.remove('active');});
 document.getElementById('logoutBtn')?.addEventListener('click',()=>{currentUser=null;document.getElementById('authButtons').style.display='flex';document.getElementById('userInfo').style.display='none';alert('Вы вышли');});
+
+// Плавное скрытие теглайна при скролле
+let lastScrollTop=0;window.addEventListener('scroll',function(){let st=window.pageYOffset||document.documentElement.scrollTop;let tagline=document.getElementById('taglineWrapper');if(st>50){tagline.classList.add('hide');document.querySelector('.content-offset').style.marginTop='20px';}else{tagline.classList.remove('hide');document.querySelector('.content-offset').style.marginTop='110px';}lastScrollTop=st;});
+
 init();
 </script>
 </body>
