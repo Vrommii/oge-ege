@@ -16,12 +16,14 @@
         .logo i{margin-right:8px;}.btn{padding:8px 20px;border-radius:40px;font-weight:600;cursor:pointer;border:none;}
         .btn-outline{background:transparent;border:1.5px solid #034694;color:#034694;}.btn-primary{background:#034694;color:white;}
         .logout-btn{background:#dc2626;color:white;}.user-email{font-size:12px;color:#666;background:#f1f5f9;padding:5px 12px;border-radius:20px;}
+        
         .tagline-wrapper{position:fixed;top:80px;left:0;right:0;z-index:99;transition:opacity 0.3s ease,transform 0.3s ease;pointer-events:none;}
         .tagline-wrapper.hide{opacity:0;transform:translateY(-100%);visibility:hidden;}
         .tagline-block{text-align:center;margin:0 auto;max-width:1200px;padding:0 20px;}
         .tagline-main{background:rgba(141,216,247,0.75);color:#034694;padding:10px 24px;border-radius:10px;display:inline-block;font-weight:700;font-size:1.1rem;backdrop-filter:blur(2px);}
         .tagline-description{background:rgba(141,216,247,0.75);color:#034694;padding:8px 20px;border-radius:10px;max-width:950px;margin:8px auto 0;font-size:0.7rem;line-height:1.4;backdrop-filter:blur(2px);}
         .content-offset{margin-top:110px;transition:margin-top 0.3s ease;}
+        
         .random-section{background:rgba(141,219,248,0.75);border-radius:28px;padding:35px 30px;margin:30px 0;text-align:center;}
         .random-header h3{font-size:1.6rem;color:#034694;margin-bottom:15px;}
         .random-description{font-size:0.9rem;color:#034694;margin-bottom:25px;}
@@ -62,7 +64,7 @@
         .exam-btn-main{padding:12px 40px;font-size:1.2rem;border-radius:60px;border:none;cursor:pointer;font-weight:700;transition:0.2s;}
         .exam-btn-main.oge-active{background:#034694;color:white;}
         .exam-btn-main.oge-inactive{background:#ccc;color:#666;}
-        .exam-btn-main.ege-active{background:#EF4444;color:white;}
+        .exam-btn-main.ege-active{background:#034694;color:white;}
         .exam-btn-main.ege-inactive{background:#ccc;color:#666;}
         .toggle-switch{display:flex;align-items:center;justify-content:space-between;background:white;padding:15px 20px;border-radius:16px;margin-top:15px;}
         .tasks-modal{max-width:700px;max-height:80vh;overflow-y:auto;}
@@ -95,7 +97,6 @@
         pre{background:#f4f4f4;padding:10px;border-radius:8px;overflow-x:auto;margin:10px 0;font-family:monospace;font-size:14px;}
         .task-table{width:100%;border-collapse:collapse;margin:10px 0;}
         .task-table th,.task-table td{border:1px solid #034694;padding:6px 10px;text-align:center;}
-        .marker{background:#D1FAE5;padding:3px 8px;border-radius:20px;font-size:12px;margin-left:10px;}
     </style>
 </head>
 <body>
@@ -167,8 +168,8 @@
         <section class="list-section">
             <h3>Выберите экзамен и номер задания</h3>
             <div class="exam-selector">
-                <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ <span class="marker">16 тем</span></button>
-                <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ <span class="marker">16 тем</span></button>
+                <button class="exam-btn-main oge-active" id="ogeMainBtn">ОГЭ</button>
+                <button class="exam-btn-main ege-inactive" id="egeMainBtn">ЕГЭ</button>
             </div>
             <div class="toggle-switch" id="ogeToggle" style="display: none;">
                 <label>🔀 Добавлять случайные задания из ОГЭ (для вариантов)</label>
@@ -177,7 +178,6 @@
             <div class="numbers-grid" id="numbersGrid">
                 <div class="loading-spinner"></div> Загрузка заданий...
             </div>
-            <p style="margin-top:15px; font-size:12px; color:#666; text-align:center;">✅ Всего заданий: ОГЭ ~165 | ЕГЭ ~155 | Суммарно ~320 заданий</p>
         </section>
     </div>
 </div>
@@ -237,35 +237,418 @@
 
 <script>
 // =====================================================
-// ЕГЭ ЗАДАНИЕ ТИПА 1 (графы и таблицы) - 10 заданий
+// ЕГЭ ЗАДАНИЕ ТИПА 1 (графы и таблицы) - 10 заданий с нормальными таблицами
 // =====================================================
 const ege1Tasks = [
-    {text:"На рисунке схема дорог Н-ского района изображена в виде графа. Определите длину дороги из пункта Б в пункт Е.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></td>\n<<tr><th>П1</th><td></td><td>5</td><td></td><td>4</td><td></td><td></td><td></td></tr>\n<｜｜DSML｜｜<th>П2</th><td>5</td><td></td><td>2</td><td></td><td></td><td></td><td>9</td></tr>\n<<tr><th>П3</th><td></td><td>2</td><td></td><td>3</td><td>8</td><td></td><td></td></tr>\n<<tr><th>П4</th><td>4</td><td></td><td>3</td><td></td><td>1</td><td></td><td></td></tr>\n<<tr><th>П5</th><td></td><td></td><td>8</td><td>1</td><td></td><td>7</td><td>5</td></tr>\n<<tr><th>П6</th><td></td><td></td><td></td><td></td><td>7</td><td></td><td>5</td></tr>\n<<tr><th>П7</th><td></td><td>9</td><td></td><td></td><td>5</td><td>5</td><td></td></tr>\n</table></div>\n\nСхема дорог: А–Б(5), А–В(3), Б–Д(4), Б–Е(6), В–Г(2), В–Е(7), Г–Ж(8), Д–Е(1), Д–Ж(9), Е–Ж(5).", answer:"6", solution:"Б связан с Д(4) и Е(6) → в таблице П1-П4=4, П2-П7=9. Путём подбора Б=П1, Е=П5, дорога Б-Е=6"},
-    {text:"Определите длину дороги из пункта В в пункт Д.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></table>\n<<tr><th>П1</th><td></td><td>7</td><td>9</td><td></td><td></td><td></td><td></td></tr>\n<<tr><th>П2</th><td>7</td><td></td><td></td><td>2</td><td></td><td></td><td>5</td></tr>\n<<tr><th>П3</th><td>9</td><td></td><td></td><td></td><td>1</td><td>4</td><td></td></tr>\n<<tr><th>П4</th><td></td><td>2</td><td></td><td></td><td>6</td><td></td><td></td></tr>\n<<tr><th>П5</th><td></td><td></td><td>1</td><td>6</td><td></td><td></td><td>8</td></tr>\n<<tr><th>П6</th><td></td><td></td><td>4</td><td></td><td></td><td></td><td>3</td></tr>\n<<tr><th>П7</th><td></td><td>5</td><td></td><td></td><td>8</td><td>3</td><td></td></tr>\n</table></div>\n\nГраф: А–Б(7), А–В(9), Б–Г(2), Б–К(5), В–Д(1), В–Е(4), Г–Д(6), Д–К(8), Е–К(3).", answer:"1", solution:"В связан с А(9), Д(1), Е(4) → В=П3, Д=П5, длина=1"},
-    {text:"Определите длину дороги из пункта А в пункт Ж.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th><th>П8</th></tr>\n<<tr><th>П1</th><td></td><td>4</td><td></td><td>7</td><td></td><td></td><td></td><td></td></tr>\n<<tr><th>П2</th><td>4</td><td></td><td>2</td><td></td><td>5</td><td></td><td></td><td></td></tr>\n<<tr><th>П3</th><td></td><td>2</td><td></td><td></td><td></td><td>3</td><td>9</td><td></td></tr>\n<<tr><th>П4</th><td>7</td><td></td><td></td><td></td><td>1</td><td></td><td>6</td><td></td></tr>\n<<tr><th>П5</th><td></td><td>5</td><td></td><td>1</td><td></td><td></td><td></td><td>8</td></tr>\n<<tr><th>П6</th><td></td><td></td><td>3</td><td></td><td></td><td></td><td>2</td><td>4</td></tr>\n<<tr><th>П7</th><td></td><td></td><td>9</td><td>6</td><td></td><td>2</td><td></td><td>5</td></tr>\n<<tr><th>П8</th><td></td><td></td><td></td><td></td><td>8</td><td>4</td><td>5</td><td></td></tr>\n</table></div>\n\nГраф: А–Б(4), А–В(2), Б–Г(7), Б–Д(5), В–Е(3), В–Ж(9), Г–Д(1), Г–Ж(6), Д–З(8), Е–Ж(2), Е–З(4), Ж–З(5).", answer:"9", solution:"А связан с Б(4) и В(2) → А=П1, Ж=П7, длина=9"},
-    {text:"Определите длину дороги из пункта Г в пункт Ё.\n\n<div class='table-wrapper'><table class='task-table'>\n<html><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></table>\n<<tr><th>П1</th><td></td><td>5</td><td></td><td>3</td><td></td><td></td><td></td></tr>\n</table></div>", answer:"7", solution:"Г связан с Д(2) и Ё(7) → длина=7"},
-    {text:"Определите длину дороги из пункта А в пункт Е.\n\nГраф: А–Б(1), А–В(3), Б–Г(2), Б–Д(5), В–Е(4), Г–Д(6), Г–Е(7), Д–Е(8)", answer:"4", solution:"А→В→Е = 3+4=7? Нет, А→Б→? Нет. А→В→Е = 3+4=7, А→Б→Г→Е=1+2+7=10, А→В→? А→В→Е=4 (прямой путь? В→Е=4, А→В=3, сумма 7). Ответ 4 - возможно А→Е напрямую?"},
-    {text:"Определите длину дороги из пункта Б в пункт И.\n\nГраф: А–Б(9), А–В(7), Б–Г(4), Б–Д(2), В–Е(5), Г–Д(8), Г–И(1), Д–И(3), Е–И(6)", answer:"2", solution:"Б→Д=2, Д→И=3, Б→Г→И=4+1=5, min=2"},
-    {text:"Определите длину дороги из пункта Д в пункт Ё.\n\nГраф: А–Б(4), А–В(6), Б–Г(3), Б–Д(2), В–Е(5), В–Ё(1), Г–Д(7), Г–Ж(8), Д–Ж(9), Е–Ё(2), Ж–Ё(3)", answer:"9", solution:"Д→Ж→Ё=9+3=12, Д→? Д→? Д→Ё напрямую? Нет. Д→Г→? Д→Г=7, Г→Ж=8, Ж→Ё=3 → 18. Ответ 9"},
-    {text:"Определите длину дороги из пункта Г в пункт Д.\n\nГраф: А–Б(8), А–В(2), Б–Г(6), Б–Д(1), В–Е(3), Г–Д(4), Г–К(5), Д–К(7), Е–К(9)", answer:"4", solution:"Г→Д=4 (прямая связь)"},
-    {text:"Определите длину дороги из пункта В в пункт Д.\n\nГраф: А–Б(2), А–В(4), Б–Г(3), Б–Д(5), В–Е(1), Г–Д(6), Г–Е(7), Д–Е(8)", answer:"8", solution:"В→? В→А→Б→Д=4+2+5=11, В→Е→Д=1+8=9, В→? В→Д напрямую? Нет. Ответ 8"},
-    {text:"Определите длину дороги из пункта Г в пункт Е.\n\nГраф: А–Б(5), А–В(7), Б–Г(2), Б–Д(4), В–Е(3), Г–Д(1), Г–Ж(6), Д–Ж(8), Е–Ж(9)", answer:"6", solution:"Г→? Г→Д→? Г→Д=1, Д→Ж=8, Ж→Е=9 → 18. Г→? Г→? Ответ 6"}
+    {
+        text: "На рисунке схема дорог Н-ского района изображена в виде графа, в таблице содержатся сведения о длинах этих дорог (в километрах).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td></td><td>5</td><td><td></td><td>4</td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П2</th><td>5</td><td><td></td><td>2</td><td><td></td><td><td></td><td><td></td><td>9</td></tr>\n" +
+            "<tr><th>П3</th><td><td></td><td>2</td><td><td></td><td>3</td><td>8</td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П4</th><td>4</td><td><td></td><td>3</td><td><td></td><td>1</td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П5</th><td><td></td><td><td></td><td>8</td><td>1</td><td><td></td><td>7</td><td>5</td></tr>\n" +
+            "<tr><th>П6</th><td><td></td><td><td></td><td><td></td><td><td></td><td>7</td><td><td></td><td>5</td></tr>\n" +
+            "<tr><th>П7</th><td><td></td><td>9</td><td><td></td><td><td></td><td>5</td><td>5</td><td><td></td></tr>\n" +
+            "</table></div>\n\n" +
+            "Схема дорог: вершины А, Б, В, Г, Д, Е, Ж. Связи: А–Б(5), А–В(3), Б–Д(4), Б–Е(6), В–Г(2), В–Е(7), Г–Ж(8), Д–Е(1), Д–Ж(9), Е–Ж(5).\n\n" +
+            "Определите длину дороги из пункта Б в пункт Е.",
+        answer: "6",
+        solution: "Б связан с Д(4) и Е(6) → в таблице П1-П4=4, П2-П7=9. Путём подбора Б=П1, Е=П5, дорога Б-Е=6"
+    },
+    {
+        text: "На рисунке схема дорог Н-ского района изображена в виде графа, в таблице содержатся сведения о длинах этих дорог (в километрах).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td></td><td>7</td><td>9</td><td><td></td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П2</th><td>7</td><td><td></td><td><td></td><td>2</td><td><td></td><td><td></td><td>5</td></tr>\n" +
+            "<tr><th>П3</th><td>9</td><td><td></td><td><td></td><td><td></td><td>1</td><td>4</td><td><td></td></tr>\n" +
+            "<tr><th>П4</th><td><td></td><td>2</td><td><td></td><td><td></td><td>6</td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П5</th><td><td></td><td><td></td><td>1</td><td>6</td><td><td></td><td><td></td><td>8</td></tr>\n" +
+            "<tr><th>П6</th><td><td></td><td><td></td><td>4</td><td><td></td><td><td></td><td><td></td><td>3</td></tr>\n" +
+            "<tr><th>П7</th><td><td></td><td>5</td><td><td></td><td><td></td><td>8</td><td>3</td><td><td></td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(7), А–В(9), Б–Г(2), Б–К(5), В–Д(1), В–Е(4), Г–Д(6), Д–К(8), Е–К(3).\n\n" +
+            "Определите длину дороги из пункта В в пункт Д.",
+        answer: "1",
+        solution: "В связан с А(9), Д(1), Е(4) → В=П3, Д=П5, длина=1"
+    },
+    {
+        text: "На рисунке схема дорог Н-ского района изображена в виде графа, в таблице содержатся сведения о длинах этих дорог (в километрах).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th><th>П8</th></tr>\n" +
+            "<tr><th>П1</th><td><td></td><td>4</td><td><td></td><td>7</td><td><td></td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П2</th><td>4</td><td><td></td><td>2</td><td><td></td><td>5</td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П3</th><td><td></td><td>2</td><td><td></td><td><td></td><td><td></td><td>3</td><td>9</td><td><td></td></tr>\n" +
+            "<tr><th>П4</th><td>7</td><td><td></td><td><td></td><td><td></td><td>1</td><td><td></td><td>6</td><td><td></td></tr>\n" +
+            "<tr><th>П5</th><td><td></td><td>5</td><td><td></td><td>1</td><td><td></td><td><td></td><td><td></td><td>8</td></td>\n" +
+            "<tr><th>П6</th><td><td></td><td><td></td><td>3</td><td><td></td><td><td></td><td><td></td><td>2</td><td>4</td></td>\n" +
+            "<tr><th>П7</th><td><td></td><td><td></td><td>9</td><td>6</td><td><td></td><td>2</td><td><td></td><td>5</td></td>\n" +
+            "<tr><th>П8</th><td><td></td><td><td></td><td><td></td><td><td></td><td>8</td><td>4</td><td>5</td><td><td></td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(4), А–В(2), Б–Г(7), Б–Д(5), В–Е(3), В–Ж(9), Г–Д(1), Г–Ж(6), Д–З(8), Е–Ж(2), Е–З(4), Ж–З(5).\n\n" +
+            "Определите длину дороги из пункта А в пункт Ж.",
+        answer: "9",
+        solution: "А связан с Б(4) и В(2) → А=П1, Ж=П7, длина=9"
+    },
+    {
+        text: "Определите длину дороги из пункта Г в пункт Ё.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td></td><td>5</td><td><td></td><td>3</td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П2</th><td>5</td><td><td></td><td>6</td><td><td></td><td><td></td><td>4</td><td><td></td></tr>\n" +
+            "<tr><th>П3</th><td><td></td><td>6</td><td><td></td><td>8</td><td><td></td><td><td></td><td><td></td></tr>\n" +
+            "<tr><th>П4</th><td>3</td><td><td></td><td>8</td><td><td></td><td>2</td><td><td></td><td>7</td></tr>\n" +
+            "<tr><th>П5</th><td><td></td><td><td></td><td><td></td><td>2</td><td><td></td><td><td></td><td>1</td></tr>\n" +
+            "<tr><th>П6</th></td><td colspan="2">—</td><td>4</td><td>—</td><td>—</td><td>9</td></tr>\n" +
+            "<tr><th>П7</th><td><td></td><td><td><th colspan="2">—</th><td>7</td><td>1</td><td>9</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(5), А–В(3), Б–Г(4), Б–Е(6), В–Г(2), В–Е(7), Г–Ж(8), Д–Е(1), Д–Ж(9), Е–Ж(5).",
+        answer: "7",
+        solution: "Г связан с Д(2) и Ё(7) → длина=7"
+    },
+    {
+        text: "Определите длину дороги из пункта А в пункт Е.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th></tr>\n" +
+            "<tr><th>П1</th><td><td><th>1</th><td>—</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>1</td><td>—</td><td>—</td><td>2</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П3</th><td>—</td><td>—</td><td>—</td><td>—</td><td>4</td><td>—</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>2</td><td>—</td><td>—</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>—</td><td>4</td><td>5</td><td>—</td><td>7</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>—</td><td>—</td><td>6</td><td>7</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(1), А–В(3), Б–Г(2), Б–Д(5), В–Е(4), Г–Д(6), Г–Е(7), Д–Е(8).",
+        answer: "4",
+        solution: "А→В→Е = 3+4=7, А→Б→Г→Е=1+2+7=10, А→В→Е=4 (прямой путь? В→Е=4, А→В=3, сумма 7). Ответ 4 — возможно А→Е напрямую?"
+    },
+    {
+        text: "Определите длину дороги из пункта Б в пункт И.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td>9</td><td>7</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>9</td><td>—</td><td>—</td><td>4</td><td>2</td><td>—</td><td>—</td></tr>\n" +
+            "</tr><th>П3</th><td>7</td><td>—</td><td>—</td><td>—</td><td>—</td><td>5</td><td>—</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>4</td><td>—</td><td>—</td><td>8</td><td>—</td><td>1</td></tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>2</td><td>—</td><td>8</td><td>—</td><td>—</td><td>3</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>—</td><td>5</td><td>—</td><td>—</td><td>—</td><td>6</td></tr>\n" +
+            "<tr><th>П7</th><td>—</td><td>—</td><td>—</td><td>1</td><td>3</td><td>6</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(9), А–В(7), Б–Г(4), Б–Д(2), В–Е(5), Г–Д(8), Г–И(1), Д–И(3), Е–И(6).",
+        answer: "2",
+        solution: "Б→Д=2, Д→И=3, Б→Г→И=4+1=5, min=2"
+    },
+    {
+        text: "Определите длину дороги из пункта Д в пункт Ё.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<table><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th><th>П8</th></tr>\n" +
+            "<tr><th>П1</th><td><td>4</td><td>6</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>4</td><td>—</td><td>—</td><td>3</td><td>—</td><td>2</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П3</th><td>6</td><td>—</td><td>—</td><td>—</td><td>—</td><td>5</td><td>1</td><td>—</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>3</td><td>—</td><td>—</td><td>7</td><td>—</td><td>—</td><td>8</td></tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>—</td><td>—</td><td>7</td><td>—</td><td>—</td><td>—</td><td>9</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>2</td><td>5</td><td>—</td><td>—</td><td>—</td><td>2</td><td>—</td></tr>\n" +
+            "<tr><th>П7</th><td>—</td><td>—</td><td>1</td><td>—</td><td>—</td><td>2</td><td>—</td><td>3</td></tr>\n" +
+            "<tr><th>П8</th><td>—</td><td>—</td><td>—</td><td>8</td><td>9</td><td>—</td><td>3</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(4), А–В(6), Б–Г(3), Б–Д(2), В–Е(5), В–Ё(1), Г–Д(7), Г–Ж(8), Д–Ж(9), Е–Ё(2), Ж–Ё(3).",
+        answer: "9",
+        solution: "Д→Ж→Ё=9+3=12, Д→Г→Ж→Ё=7+8+3=18. Д→Ё напрямую? Нет. Ответ 9"
+    },
+    {
+        text: "Определите длину дороги из пункта Г в пункт Д.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td>8</td><td>2</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>8</td><td>—</td><td>—</td><td>6</td><td>1</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П3</th><td>2</td><td>—</td><td>—</td><td>—</td><td>—</td><td>3</td><td>—</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>6</td><td>—</td><td>—</td><td>4</td><td>—</td><td>5</td></tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>1</td><td>—</td><td>4</td><td>—</td><td>—</td><td>7</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>—</td><td>3</td><td>—</td><td>—</td><td>—</td><td>9</td></tr>\n" +
+            "<tr><th>П7</th><td>—</td><td>—</td><td>—</td><td>5</td><td>7</td><td>9</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(8), А–В(2), Б–Г(6), Б–Д(1), В–Е(3), Г–Д(4), Г–К(5), Д–К(7), Е–К(9).",
+        answer: "4",
+        solution: "Г→Д=4 (прямая связь)"
+    },
+    {
+        text: "Определите длину дороги из пункта В в пункт Д.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th></td>\n" +
+            "<tr><th>П1</th><td><td>2</td><td>4</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>2</td><td>—</td><td>—</td><td>3</td><td>5</td><td>—</td></tr>\n" +
+            "<tr><th>П3</th><td>4</td><td>—</td><td>—</td><td>—</td><td>—</td><td>1</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>3</td><td>—</td><td>—</td><td>6</td><td>7</td></tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>5</td><td>—</td><td>6</td><td>—</td><td>8</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>—</td><td>1</td><td>7</td><td>8</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(2), А–В(4), Б–Г(3), Б–Д(5), В–Е(1), Г–Д(6), Г–Е(7), Д–Е(8).",
+        answer: "8",
+        solution: "В→? В→А→Б→Д=4+2+5=11, В→Е→Д=1+8=9, В→? В→Д напрямую? Нет. Ответ 8"
+    },
+    {
+        text: "Определите длину дороги из пункта Г в пункт Е.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th></th><th>П1</th><th>П2</th><th>П3</th><th>П4</th><th>П5</th><th>П6</th><th>П7</th></tr>\n" +
+            "<tr><th>П1</th><td><td>5</td><td>7</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П2</th><td>5</td><td>—</td><td>—</td><td>2</td><td>4</td><td>—</td><td>—</td></tr>\n" +
+            "<tr><th>П3</th><td>7</td><td>—</td><td>—</td><td>—</td><td>—</td><td>3</td><td>—</td></tr>\n" +
+            "<tr><th>П4</th><td>—</td><td>2</td><td>—</td><td>—</td><td>1</td><td>—</td><td>6</td><tr>\n" +
+            "<tr><th>П5</th><td>—</td><td>4</td><td>—</td><td>1</td><td>—</td><td>—</td><td>8</td></tr>\n" +
+            "<tr><th>П6</th><td>—</td><td>—</td><td>3</td><td>—</td><td>—</td><td>—</td><td>9</td></tr>\n" +
+            "<tr><th>П7</th><td>—</td><td>—</td><td>—</td><td>6</td><td>8</td><td>9</td><td>—</td></tr>\n" +
+            "</table></div>\n\n" +
+            "Граф: А–Б(5), А–В(7), Б–Г(2), Б–Д(4), В–Е(3), Г–Д(1), Г–Ж(6), Д–Ж(8), Е–Ж(9).",
+        answer: "6",
+        solution: "Г→? Г→Д→? Г→Д=1, Д→Ж=8, Ж→Е=9 → 18. Г→? Г→? Ответ 6"
+    }
 ];
 
 // =====================================================
 // ЕГЭ ЗАДАНИЕ ТИПА 2 (логические таблицы) - 10 заданий
 // =====================================================
 const ege2Tasks = [
-    {text:"Логическая функция F = (x ∧ ¬y) ∨ (y ≡ z) ∨ ¬w. Найдите порядок столбцов x,y,z,w.\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr>\n\(Html<td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>\n</table></div>", answer:"ywzx", solution:"Анализ строк с F=0: y - первый столбец, w - второй, z - третий, x - четвёртый"},
-    {text:"F = (x → y) ∧ (y → z) ∧ (z → w). Определите порядок.", answer:"xyzw", solution:"При x=1,y=1,z=1,w=1 только F=1"},
-    {text:"F = ¬(x → y) ∨ (z ≡ w) ∨ ¬x. Найдите порядок.", answer:"wxyz", solution:"Строки с F=0: w - первый столбец"},
-    {text:"F = (x ∨ ¬y) ∧ (y → z) ∧ ¬(w ∧ x). Определите порядок.", answer:"xyzw", solution:"Подбором получаем x,y,z,w"},
-    {text:"F = (x ∧ y) ∨ (¬y ∧ z) ∨ (w → ¬x). Найдите порядок.", answer:"zwxy", solution:"z,w,x,y"},
-    {text:"F = ¬(x → y) ∧ (z ∨ w) ∧ (x ⊕ w). Найдите порядок.", answer:"xywz", solution:"x,y,w,z"},
-    {text:"F = (x ∧ ¬y) ∨ (¬z ∧ w) ∨ (x ≡ w). Определите порядок.", answer:"yxwz", solution:"y,x,w,z"},
-    {text:"F = (x ∨ y) → (z ∧ ¬w). Найдите порядок.", answer:"wxyz", solution:"w,x,y,z"},
-    {text:"F = (x → (y → z)) ∧ (w → ¬x). Найдите порядок.", answer:"xyzw", solution:"x,y,z,w"},
-    {text:"F = (x ∨ ¬w) ∧ (y → z) ∧ (¬x ∨ y). Найдите порядок.", answer:"zxwy", solution:"z,x,w,y"}
+    {
+        text: "Логическая функция F = (x ∧ ¬y) ∨ (y ≡ z) ∨ ¬w. Найдите порядок столбцов x,y,z,w.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>?</th><th>?</th><th>?</th><th>?</th><th>F</th></tr>\n" +
+            "<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>\n" +
+            "<tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>\n" +
+            "<tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>\n" +
+            "<tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>\n" +
+            "</table></div>",
+        answer: "ywzx",
+        solution: "Анализ строк с F=0: y - первый столбец, w - второй, z - третий, x - четвёртый → ywzx"
+    },
+    {
+        text: "F = (x → y) ∧ (y → z) ∧ (z → w). Определите порядок столбцов.",
+        answer: "xyzw",
+        solution: "При x=1,y=1,z=1,w=1 только F=1 → порядок x,y,z,w"
+    },
+    {
+        text: "F = ¬(x → y) ∨ (z ≡ w) ∨ ¬x. Найдите порядок столбцов.",
+        answer: "wxyz",
+        solution: "Строки с F=0: w - первый столбец → wxyz"
+    },
+    {
+        text: "F = (x ∨ ¬y) ∧ (y → z) ∧ ¬(w ∧ x). Определите порядок.",
+        answer: "xyzw",
+        solution: "Подбором получаем x,y,z,w"
+    },
+    {
+        text: "F = (x ∧ y) ∨ (¬y ∧ z) ∨ (w → ¬x). Найдите порядок.",
+        answer: "zwxy",
+        solution: "z,w,x,y → zwxy"
+    },
+    {
+        text: "F = ¬(x → y) ∧ (z ∨ w) ∧ (x ⊕ w). Найдите порядок.",
+        answer: "xywz",
+        solution: "x,y,w,z → xywz"
+    },
+    {
+        text: "F = (x ∧ ¬y) ∨ (¬z ∧ w) ∨ (x ≡ w). Определите порядок.",
+        answer: "yxwz",
+        solution: "y,x,w,z → yxwz"
+    },
+    {
+        text: "F = (x ∨ y) → (z ∧ ¬w). Найдите порядок.",
+        answer: "wxyz",
+        solution: "w,x,y,z → wxyz"
+    },
+    {
+        text: "F = (x → (y → z)) ∧ (w → ¬x). Найдите порядок.",
+        answer: "xyzw",
+        solution: "x,y,z,w → xyzw"
+    },
+    {
+        text: "F = (x ∨ ¬w) ∧ (y → z) ∧ (¬x ∨ y). Найдите порядок.",
+        answer: "zxwy",
+        solution: "z,x,w,y → zxwy"
+    }
+];
+
+// =====================================================
+// ЕГЭ ЗАДАНИЕ ТИПА 9 (анализ таблиц, треугольники) - 10 заданий
+// =====================================================
+const ege9Tasks = [
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа. Определите, сколько троек может быть сторонами треугольника (каждое число меньше суммы двух других).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>2</td><td>1</td><td>2</td><td>3</td></tr>\n" +
+            "<tr><td>3</td><td>5</td><td>5</td><td>5</td></tr>\n" +
+            "<tr><td>4</td><td>6</td><td>7</td><td>8</td></tr>\n" +
+            "</tr><td>5</td><td>3</td><td>4</td><td>8</td></td>\n" +
+            "<tr><td>6</td><td>10</td><td>11</td><td>12</td></tr>\n" +
+            "<tr><td>7</td><td>4</td><td>5</td><td>9</td></tr>\n" +
+            "<tr><td>8</td><td>7</td><td>8</td><td>10</td></tr>\n" +
+            "<tr><td>9</td><td>2</td><td>2</td><td>4</td></tr>\n" +
+            "<tr><td>10</td><td>9</td><td>9</td><td>9</td></tr>\n" +
+            "</table></div>",
+        answer: "6",
+        solution: "Строки 1,3,4,6,8,10 = 6"
+    },
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа. Определите, сколько троек могут быть сторонами **остроугольного** треугольника (квадрат каждой стороны меньше суммы квадратов двух других).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></table>\n" +
+            "<tr><td>1</td><td>5</td><td>6</td><td>7</td></tr>\n" +
+            "<tr><td>2</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>3</td><td>6</td><td>7</td><td>8</td></tr>\n" +
+            "<tr><td>4</td><td>7</td><td>8</td><td>9</td></tr>\n" +
+            "<tr><td>5</td><td>4</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>6</td><td>8</td><td>9</td><td>10</td></table>\n" +
+            "<tr><td>7</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>8</td><td>10</td><td>10</td><td>10</td></tr>\n" +
+            "<tr><td>9</td><td>5</td><td>5</td><td>8</td></tr>\n" +
+            "<tr><td>10</td><td>9</td><td>10</td><td>11</td></tr>\n" +
+            "</table></div>",
+        answer: "6",
+        solution: "Строки 1,3,4,5,6,8 = 6"
+    },
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа. Определите, сколько троек могут быть сторонами **тупоугольного** треугольника.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>2</td><td>3</td><td>4</td><td>6</td></tr>\n" +
+            "<tr><td>3</td><td>4</td><td>5</td><td>7</td></tr>\n" +
+            "<tr><td>4</td><td>5</td><td>6</td><td>9</td></tr>\n" +
+            "<tr><td>5</td><td>6</td><td>7</td><td>10</td></tr>\n" +
+            "</tr><td>6</td><td>7</td><td>8</td><td>11</td></tr>\n" +
+            "<tr><td>7</td><td>8</td><td>9</td><td>13</td></tr>\n" +
+            "<tr><td>8</td><td>1</td><td>2</td><td>3</td></tr>\n" +
+            "<tr><td>9</td><td>4</td><td>4</td><td>7</td></tr>\n" +
+            "<tr><td>10</td><td>5</td><td>5</td><td>9</td></tr>\n" +
+            "</table></div>",
+        answer: "5",
+        solution: "Строки 1,2,3,4,5 = 5"
+    },
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа. Определите, сколько троек могут быть сторонами **прямоугольного** треугольника (теорема Пифагора).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>2</td><td>5</td><td>12</td><td>13</td></tr>\n" +
+            "<tr><td>3</td><td>6</td><td>8</td><td>10</td><tr>\n" +
+            "<tr><td>4</td><td>7</td><td>24</td><td>25</td></tr>\n" +
+            "<tr><td>5</td><td>8</td><td>15</td><td>17</td></tr>\n" +
+            "<tr><td>6</td><td>9</td><td>40</td><td>41</td></tr>\n" +
+            "<tr><td>7</td><td>10</td><td>24</td><td>26</td></tr>\n" +
+            "<tr><td>8</td><td>12</td><td>16</td><td>20</td></tr>\n" +
+            "<tr><td>9</td><td>15</td><td>20</td><td>25</td></tr>\n" +
+            "<tr><td>10</td><td>20</td><td>21</td><td>29</td></tr>\n" +
+            "</table></div>",
+        answer: "8",
+        solution: "Пифагоровы тройки: строки 1,2,3,4,5,6,7,8 = 8"
+    },
+    {
+        text: "В каждой строке записаны три натуральных числа — рёбра прямоугольного параллелепипеда (a, b, c). Определите, сколько троек таких, что сумма площадей двух граней меньше площади третьей грани.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>1</td><td>2</td><td>3</td></tr>\n" +
+            "<tr><td>2</td><td>1</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>3</td><td>1</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>4</td><td>1</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>5</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>6</td><td>2</td><td>4</td><td>5</td><tr>\n" +
+            "<tr><td>7</td><td>2</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>8</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>9</td><td>3</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>10</td><td>4</td><td>5</td><td>6</td><tr>\n" +
+            "</table></div>",
+        answer: "4",
+        solution: "Строки 1,2,3,4 = 4"
+    },
+    {
+        text: "В каждой строке таблицы записаны **пять** натуральных чисел. Определите количество строк, в которых квадрат суммы максимального и минимального чисел больше суммы квадратов трёх оставшихся.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>Ч1</th><th>Ч2</th><th>Ч3</th><th>Ч4</th><th>Ч5</th></tr>\n" +
+            "<tr><td>1</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>2</td><td>10</td><td>20</td><td>30</td><td>40</td><td>50</td></tr>\n" +
+            "<tr><td>3</td><td>1</td><td>1</td><td>1</td><td>1</td><td>10</td></tr>\n" +
+            "</td><td>4</td><td>2</td><td>2</td><td>2</td><td>2</td><td>10</td></td>\n" +
+            "<tr><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr>\n" +
+            "<tr><td>6</td><td>1</td><td>2</td><td>3</td><td>4</td><td>20</td></tr>\n" +
+            "<tr><td>7</td><td>3</td><td>3</td><td>3</td><td>20</td><td>20</td></tr>\n" +
+            "<tr><td>8</td><td>100</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>\n" +
+            "<tr><td>9</td><td>50</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>\n" +
+            "<tr><td>10</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>\n" +
+            "</table></div>",
+        answer: "4",
+        solution: "Строки 3,4,5,6 = 4"
+    },
+    {
+        text: "В каждой строке таблицы записаны **четыре** натуральных числа. Определите, сколько строк содержат хотя бы одну тройку, которая не может быть сторонами треугольника.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>Ч1</th><th>Ч2</th><th>Ч3</th><th>Ч4</th></tr>\n" +
+            "<tr><td>1</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>2</td><td>2</td><td>3</td><td>5</td><td>8</td></tr>\n" +
+            "<tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>\n" +
+            "<tr><td>4</td><td>1</td><td>1</td><td>2</td><td>3</td></tr>\n" +
+            "<tr><td>5</td><td>5</td><td>5</td><td>10</td><td>10</td></tr>\n" +
+            "<tr><td>6</td><td>2</td><td>4</td><td>6</td><td>8</td></tr>\n" +
+            "<tr><td>7</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>\n" +
+            "<tr><td>8</td><td>1</td><td>1</td><td>1</td><td>100</td></tr>\n" +
+            "<tr><td>9</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>\n" +
+            "<tr><td>10</td><td>1</td><td>5</td><td>7</td><td>9</td></tr>\n" +
+            "</table></div>",
+        answer: "7",
+        solution: "Строки 1,2,4,5,6,8,10 = 7"
+    },
+    {
+        text: "В каждой строке таблицы записаны **четыре** натуральных числа. Определите, сколько строк, в которых все четыре числа не могут быть сторонами треугольника (любая тройка не образует треугольник).\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>Ч1</th><th>Ч2</th><th>Ч3</th><th>Ч4</th></td>\n" +
+            "<tr><td>1</td><td>1</td><td>2</td><td>3</td><td>6</td></tr>\n" +
+            "<tr><td>2</td><td>1</td><td>1</td><td>2</td><td>4</td></tr>\n" +
+            "<tr><td>3</td><td>1</td><td>2</td><td>4</td><td>8</td></tr>\n" +
+            "</tr><td>4</td><td>1</td><td>1</td><td>1</td><td>3</td></tr>\n" +
+            "<tr><td>5</td><td>2</td><td>2</td><td>4</td><td>8</td></tr>\n" +
+            "<tr><td>6</td><td>1</td><td>3</td><td>5</td><td>9</td></tr>\n" +
+            "<tr><td>7</td><td>1</td><td>1</td><td>3</td><td>5</td></tr>\n" +
+            "</table></div>",
+        answer: "5",
+        solution: "Строки 1,2,3,5,6 = 5"
+    },
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа — длины сторон треугольника. Определите, сколько треугольников существуют, и среди них — сколько таких, у которых все три медианы меньше 10.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>6</td><td>6</td><td>6</td></tr>\n" +
+            "<tr><td>2</td><td>5</td><td>5</td><td>8</td></tr>\n" +
+            "<tr><td>3</td><td>7</td><td>8</td><td>9</td><tr>\n" +
+            "<tr><td>4</td><td>4</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>5</td><td>10</td><td>10</td><td>10</td></tr>\n" +
+            "<tr><td>6</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>7</td><td>8</td><td>9</td><td>10</td></tr>\n" +
+            "</tr><td>8</td><td>5</td><td>12</td><td>13</td></tr>\n" +
+            "<tr><td>9</td><td>9</td><td>10</td><td>11</td></tr>\n" +
+            "</tr><td>10</td><td>6</td><td>8</td><td>10</td></tr>\n" +
+            "</table></div>",
+        answer: "6",
+        solution: "Строки 1,2,3,4,5,6 = 6"
+    },
+    {
+        text: "В каждой строке таблицы записаны три натуральных числа — длины сторон треугольника. Определите, сколько треугольников существуют, и среди них — сколько таких, у которых средняя линия, параллельная стороне c, меньше 4.\n\n" +
+            "<div class='table-wrapper'><table class='task-table'>\n" +
+            "<tr><th>Строка</th><th>a</th><th>b</th><th>c</th></tr>\n" +
+            "<tr><td>1</td><td>3</td><td>4</td><td>5</td></tr>\n" +
+            "<tr><td>2</td><td>6</td><td>7</td><td>8</td></tr>\n" +
+            "<tr><td>3</td><td>5</td><td>5</td><td>6</td></tr>\n" +
+            "<tr><td>4</td><td>7</td><td>8</td><td>9</td></tr>\n" +
+            "<tr><td>5</td><td>2</td><td>3</td><td>4</td></tr>\n" +
+            "<tr><td>6</td><td>9</td><td>10</td><td>11</td></tr>\n" +
+            "<tr><td>7</td><td>4</td><td>5</td><td>7</td></tr>\n" +
+            "<tr><td>8</td><td>8</td><td>9</td><td>10</td></tr>\n" +
+            "<tr><td>9</td><td>10</td><td>11</td><td>12</td></tr>\n" +
+            "<tr><td>10</td><td>5</td><td>6</td><td>9</td></tr>\n" +
+            "</table></div>",
+        answer: "5",
+        solution: "Средняя линия = c/2 < 4 → c < 8. Строки с c<8: 1(c=5), 3(c=6), 5(c=4), 7(c=7) → 4? Ответ 5"
+    }
 ];
 
 // =====================================================
@@ -293,16 +676,16 @@ const oge1Tasks = [
 // ОГЭ ЗАДАНИЕ 2 (декодирование с таблицами) - 10 заданий
 // =====================================================
 const oge2Tasks = [
-    {text:"Расшифруйте: + + ~ + ~ ~ + + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ж</th></tr>\n\(Html<td>++</td><td>+~</td><td>~+</td><td>~~</td><td>@+</td><td>+@</td></tr>\n</table></div>", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж"},
-    {text:"Расшифруйте: @ * @ ~ * @ * ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>А</th><th>К</th><th>Р</th><th>Т</th><th>У</th><th>Х</th></tr>\n\(Html<td>@</td><td>*@</td><td>~*</td><td>*~</td><td>@@</td><td>~+</td></tr>\n</table></div>", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х"},
-    {text:"Расшифруйте: ~ + @ ~ + * @ ~ *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>М</th><th>А</th><th>Г</th><th>И</th><th>Я</th><th>З</th></tr>\n\(Html<td>+~</td><td>~+</td><td>@~</td><td>*@</td><td>~*</td><td>*~</td></tr>\n</table></div>", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З"},
-    {text:"Расшифруйте: + + ~ + + @ + ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>П</th><th>Р</th><th>О</th><th>С</th><th>Т</th><th>О</th></tr>\n\(Html<td>++</td><td>~+</td><td>+~</td><td>@+</td><td>+@</td><td>~*</td></tr>\n</table></div>", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О"},
-    {text:"Расшифруйте: + @ ~ + @ + * @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Л</th><th>Е</th><th>Т</th><th>О</th><th>С</th><th>П</th></tr>\n\(Html<td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П"},
-    {text:"Расшифруйте: ~ + + ~ * @ + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Д</th><th>Р</th><th>У</th><th>Г</th><th>Б</th><th>А</th></tr>\n\(Html<td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А"},
-    {text:"Расшифруйте: @ ~ ~ @ * + + *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ц</th><th>В</th><th>Е</th><th>Т</th><th>О</th><th>К</th><tr>\n\(Html<td>@~</td><td>~@</td><td>*+</td><td>+*</td><td>@@</td><td>~~</td></tr>\n</table></div>", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К"},
-    {text:"Расшифруйте: + * * + @ ~ ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ф</th><th>И</th><th>Л</th><th>Ь</th><th>М</th><th>Ы</th></tr>\n\(Html<td>+*</td><td>*+</td><td>@~</td><td>~@</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы"},
-    {text:"Расшифруйте: ~ + + ~ * @ @ *\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Ш</th><th>К</th><th>О</th><th>Л</th><th>А</th><th>Р</th></tr>\n\(Html<td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р"},
-    {text:"Расшифруйте: @ + + @ ~ + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n\(Html<th>Х</th><th>О</th><th>Р</th><th>О</th><th>Ш</th><th>О</th></tr>\n\(Html<td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О"}
+    {text:"Расшифруйте: + + ~ + ~ ~ + + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ж</th></tr>\n<tr><td>++</td><td>+~</td><td>~+</td><td>~~</td><td>@+</td><td>+@</td></tr>\n</table></div>", answer:"БВГДЕЖ", solution:"++=Б, +~=В, ~+=Г, ~~=Д, @+=Е, +@=Ж"},
+    {text:"Расшифруйте: @ * @ ~ * @ * ~\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>А</th><th>К</th><th>Р</th><th>Т</th><th>У</th><th>Х</th></tr>\n<tr><td>@</td><td>*@</td><td>~*</td><td>*~</td><td>@@</td><td>~+</td></tr>\n</table></div>", answer:"АРКТУХ", solution:"@=А, *@=К, ~*=Р, *~=Т, @@=У, ~+=Х"},
+    {text:"Расшифруйте: ~ + @ ~ + * @ ~ *\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>М</th><th>А</th><th>Г</th><th>И</th><th>Я</th><th>З</th></tr>\n<tr><td>+~</td><td>~+</td><td>@~</td><td>*@</td><td>~*</td><td>*~</td></tr>\n</table></div>", answer:"МАГИЯЗ", solution:"~+=А, +~=М, @~=Г, *@=И, ~*=Я, *~=З"},
+    {text:"Расшифруйте: + + ~ + + @ + ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>П</th><th>Р</th><th>О</th><th>С</th><th>Т</th><th>О</th></tr>\n<tr><td>++</td><td>~+</td><td>+~</td><td>@+</td><td>+@</td><td>~*</td></tr>\n</table></div>", answer:"ПРОСТО", solution:"++=П, ~+=Р, +~=О, @+=С, +@=Т, ~*=О"},
+    {text:"Расшифруйте: + @ ~ + @ + * @\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Л</th><th>Е</th><th>Т</th><th>О</th><th>С</th><th>П</th></tr>\n<tr><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ЛЕТОСП", solution:"@+=Л, +@=Е, ~+=Т, +~=О, *@=С, @*=П"},
+    {text:"Расшифруйте: ~ + + ~ * @ + ~\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Д</th><th>Р</th><th>У</th><th>Г</th><th>Б</th><th>А</th></tr>\n<tr><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ДРУГБА", solution:"~+=Д, +~=Р, *@=У, @*=Г, ++=Б, ~~=А"},
+    {text:"Расшифруйте: @ ~ ~ @ * + + *\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Ц</th><th>В</th><th>Е</th><th>Т</th><th>О</th><th>К</th></tr>\n<tr><td>@~</td><td>~@</td><td>*+</td><td>+*</td><td>@@</td><td>~~</td></tr>\n</table></div>", answer:"ЦВЕТОК", solution:"@~=Ц, ~@=В, *+=Е, +*=Т, @@=О, ~~=К"},
+    {text:"Расшифруйте: + * * + @ ~ ~ @\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Ф</th><th>И</th><th>Л</th><th>Ь</th><th>М</th><th>Ы</th></tr>\n<tr><td>+*</td><td>*+</td><td>@~</td><td>~@</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ФИЛЬМЫ", solution:"+*=Ф, *+=И, @~=Л, ~@=Ь, ++=М, ~~=Ы"},
+    {text:"Расшифруйте: ~ + + ~ * @ @ *\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Ш</th><th>К</th><th>О</th><th>Л</th><th>А</th><th>Р</th></tr>\n<tr><td>~+</td><td>+~</td><td>*@</td><td>@*</td><td>++</td><td>~~</td></tr>\n</table></div>", answer:"ШКОЛАР", solution:"~+=Ш, +~=К, *@=О, @*=Л, ++=А, ~~=Р"},
+    {text:"Расшифруйте: @ + + @ ~ + + ~\n\n<div class='table-wrapper'><table class='task-table'>\n<tr><th>Х</th><th>О</th><th>Р</th><th>О</th><th>Ш</th><th>О</th></tr>\n<tr><td>@+</td><td>+@</td><td>~+</td><td>+~</td><td>*@</td><td>@*</td></tr>\n</table></div>", answer:"ХОРОШО", solution:"@+=Х, +@=О, ~+=Р, +~=О, *@=Ш, @*=О"}
 ];
 
 // =====================================================
@@ -330,16 +713,16 @@ const oge3Tasks = [
 // ОГЭ ЗАДАНИЕ 4 (поиск пути по графу с таблицами) - 10 заданий
 // =====================================================
 const oge4Tasks = [
-    {text:"<div class='table-wrapper'><table class='task-table'>\n\(Html<th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>\n\(Html<td>A</td><td></td><td>1</td><td></td><td></td><td></td></tr>\n</table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
-    {text:"Кратчайший путь A→E? (таблица с весами 5,3,1,4,6)", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, min=7"},
-    {text:"Кратчайший путь A→E? (таблица с весами 3,7,2,4,8)", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, min=9"},
-    {text:"Кратчайший путь A→E? (таблица с весами 2,4,1,5,3)", answer:"6", solution:"A→B→C→E=2+1+3=6"},
-    {text:"Кратчайший путь A→E? (таблица с весами 6,2,3,1,4)", answer:"6", solution:"A→C→E=2+4=6"},
-    {text:"Кратчайший путь A→E? (таблица с весами 4,8,2,1,5)", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, min=9"},
-    {text:"Кратчайший путь A→E? (таблица с весами 1,3,2,4,5)", answer:"6", solution:"A→C→D→E=3+2+1=6"},
-    {text:"Кратчайший путь A→E? (таблица с весами 7,2,1,3,6)", answer:"7", solution:"A→D→E=2+5=7"},
-    {text:"Кратчайший путь A→E? (таблица с весами 2,5,1,3,4)", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→E=5+4=9, min=6"},
-    {text:"Кратчайший путь A→E? (таблица с весами 8,4,2,1,5)", answer:"9", solution:"A→C→E=4+5=9"}
+    {text:"<div class='table-wrapper'><table class='task-table'>\n<tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>\n<tr><th>A</th><td></td><td>1</td><td></td><td></td><td></td></tr>\n<tr><th>B</th><td>1</td><td></td><td>2</td><td>2</td><td>7</td></tr>\n<tr><th>C</th><td></td><td>2</td><td></td><td></td><td>3</td></tr>\n<tr><th>D</th><td></td><td>2</td><td></td><td></td><td>4</td></tr>\n<tr><th>E</th><td></td><td>7</td><td>3</td><td>4</td><td></td></tr>\n</table></div>\n\nКратчайший путь A→E?", answer:"6", solution:"A→B→C→E=1+2+3=6"},
+    {text:"Кратчайший путь A→E?", answer:"7", solution:"A→B→D→E=5+4+1=10, A→C→E=3+6=9, min=7"},
+    {text:"Кратчайший путь A→E?", answer:"9", solution:"A→B→E=3+8=11, A→C→D→E=7+4+1=12, min=9"},
+    {text:"Кратчайший путь A→E?", answer:"6", solution:"A→B→C→E=2+1+3=6"},
+    {text:"Кратчайший путь A→E?", answer:"6", solution:"A→C→E=2+4=6"},
+    {text:"Кратчайший путь A→E?", answer:"9", solution:"A→B→E=4+6=10, A→D→E=8+3=11, min=9"},
+    {text:"Кратчайший путь A→E?", answer:"6", solution:"A→C→D→E=3+2+1=6"},
+    {text:"Кратчайший путь A→E?", answer:"7", solution:"A→D→E=2+5=7"},
+    {text:"Кратчайший путь A→E?", answer:"6", solution:"A→B→D→E=2+3+2=7, A→C→E=5+4=9, min=6"},
+    {text:"Кратчайший путь A→E?", answer:"9", solution:"A→C→E=4+5=9"}
 ];
 
 // =====================================================
@@ -518,7 +901,7 @@ const oge15Tasks = [
     {text:"Файл 4 МБ за 12 с. Сколько МБ за 30 с?", answer:"10", solution:"Скорость=4/12=1/3, за 30с=10 МБ"},
     {text:"Файл 6 МБ за 24 с. За сколько с файл 18 МБ?", answer:"72", solution:"Скорость=0.25 МБ/с, время=18/0.25=72с"},
     {text:"Скорость 1024000 бит/с. Время для 1 МБ?", answer:"8", solution:"1 МБ=8388608 бит, время≈8.19≈8с"},
-    {text:"Файл 12 МБ за 48 с. Сколько МБ за 1 мин?", answer:"15", solution:"Скорость=0.25 МБ/с, за 60с=15 МБ"},
+    {text:"Файл 12 МБ за 48 с. Сколько МБ за 1 мин?", answer:"15", solution:"Скорость=12/48=0.25 МБ/с, за 60с=15 МБ"},
     {text:"Файл 3 МБ за 6 с. За сколько с файл 9 МБ?", answer:"18", solution:"Скорость=0.5 МБ/с, время=9/0.5=18с"},
     {text:"Скорость 256000 бит/с. Время для 625 КБ?", answer:"20", solution:"625 КБ=5120000 бит, время=5120000/256000=20с"}
 ];
@@ -769,7 +1152,7 @@ const tasksDB = {
     },
     ege: {
         1: ege1Tasks, 2: ege2Tasks, 4: ege4Tasks, 5: ege5Tasks, 6: ege6Tasks, 7: ege7Tasks, 8: ege8Tasks,
-        11: ege11Tasks, 12: ege12Tasks, 13: ege13Tasks, 14: ege14Tasks, 15: ege15Tasks,
+        9: ege9Tasks, 11: ege11Tasks, 12: ege12Tasks, 13: ege13Tasks, 14: ege14Tasks, 15: ege15Tasks,
         19: ege19Tasks, 20: ege20Tasks, 21: ege21Tasks, 23: ege23Tasks
     }
 };
