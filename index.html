@@ -707,7 +707,14 @@ document.getElementById('submitNewTaskBtn')?.addEventListener('click', () => {
     updateRandomTask();
 });
 
-// Авторизация
+// =====================================================
+// АВТОРИЗАЦИЯ (исправленная)
+// =====================================================
+let authModal = document.getElementById('authModal');
+let profileModal = document.getElementById('profileModal');
+let selectedExam = 'oge';
+let currentMode = 'register';
+
 function openAuthModal(mode) {
     currentMode = mode;
     document.getElementById('modalTitleAuth').innerText = mode === 'login' ? 'Войти' : 'Создать аккаунт';
@@ -749,10 +756,15 @@ document.getElementById('accountIconBtn')?.addEventListener('click', () => {
 });
 document.getElementById('loginBtn')?.addEventListener('click', () => openAuthModal('login'));
 document.getElementById('openRegisterBtn')?.addEventListener('click', () => openAuthModal('register'));
+document.getElementById('closeModalBtn')?.addEventListener('click', () => authModal.classList.remove('active'));
+document.getElementById('closeProfileModalBtn')?.addEventListener('click', () => profileModal.classList.remove('active'));
 
 document.getElementById('modalActionBtn')?.addEventListener('click', () => {
     let e = document.getElementById('modalEmail').value.trim();
-    if(!e.includes('@')){ alert('Введите корректный email'); return; }
+    if(!e.includes('@')){ 
+        alert('Введите корректный email'); 
+        return; 
+    }
     currentUser = {email: e, uid: e};
     document.getElementById('authButtons').style.display = 'none';
     document.getElementById('userInfo').style.display = 'flex';
@@ -760,6 +772,7 @@ document.getElementById('modalActionBtn')?.addEventListener('click', () => {
     authModal.classList.remove('active');
     alert(currentMode === 'login' ? 'Вход выполнен!' : 'Аккаунт создан!');
 });
+
 document.querySelectorAll('#authModal .exam-btn').forEach(b => {
     b.addEventListener('click', function(){
         document.querySelectorAll('#authModal .exam-btn').forEach(bb => bb.classList.remove('active'));
@@ -767,6 +780,7 @@ document.querySelectorAll('#authModal .exam-btn').forEach(b => {
         selectedExam = this.dataset.exam;
     });
 });
+
 document.querySelectorAll('.profile-exam-btn').forEach(b => {
     b.addEventListener('click', function(){
         document.querySelectorAll('.profile-exam-btn').forEach(bb => {
@@ -778,6 +792,7 @@ document.querySelectorAll('.profile-exam-btn').forEach(b => {
         selectedExam = this.dataset.exam;
     });
 });
+
 document.getElementById('saveProfileBtn')?.addEventListener('click', () => {
     let ne = document.getElementById('newEmailInput').value.trim();
     if(ne && ne.includes('@')){
@@ -803,6 +818,7 @@ document.getElementById('saveProfileBtn')?.addEventListener('click', () => {
     }
     profileModal.classList.remove('active');
 });
+
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
     currentUser = null;
     document.getElementById('authButtons').style.display = 'flex';
