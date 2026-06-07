@@ -96,7 +96,7 @@
         .stat-card .value{font-size:1.6rem;font-weight:800;color:#034694;}
         .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:0.2s;z-index:1000;}
         .modal-overlay.active{visibility:visible;opacity:1;}
-        .modal{background:white;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;padding:25px;border-radius:24px;position:relative;top:50%;left:50%;transform:translate(-50%, -50%);}
+        .modal{background:white;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;padding:25px;border-radius:24px;position:relative;}
         .close-btn{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;z-index:10;}
         .modal h3{color:#034694;margin-bottom:10px;cursor:move;user-select:none;}
         .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #034694;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
@@ -261,16 +261,14 @@
 // Кэш загруженных заданий
 const tasksCache = { oge: {}, ege: {} };
 
-// Счётчики заданий (для отображения количества)
+// Счётчики заданий
 const tasksCounts = {
     oge: {1:15,2:10,3:15,4:10,5:15,6:10,7:10,8:10,9:10,10:15,11:10,12:10,13:10,14:10,15:10,16:10},
     ege: {1:10,2:10,3:10,4:10,5:10,6:10,7:10,8:10,9:10,11:10,12:10,13:10,14:10,15:10,16:10,17:10,18:10,19:10,20:10,21:10,22:10,23:10,24:10,25:10,26:10,27:10}
 };
 
-// Функция загрузки заданий
 async function loadTasks(exam, num) {
     if (tasksCache[exam][num]) return tasksCache[exam][num];
-    
     try {
         const module = await import(`./tasks/${exam}/task${num}.js`);
         const tasksKey = `${exam}${num}Tasks`;
@@ -283,10 +281,20 @@ async function loadTasks(exam, num) {
 }
 
 // =====================================================
-// ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ
+// ОСНОВНОЙ КОД
 // =====================================================
 
 let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
+
+// Функция центрирования модального окна
+function centerModal(modalElement) {
+    if (!modalElement) return;
+    modalElement.style.position = 'relative';
+    modalElement.style.left = '';
+    modalElement.style.top = '';
+    modalElement.style.transform = '';
+    modalElement.style.margin = '0 auto';
+}
 
 // Функция для создания подвижного модального окна
 function makeModalDraggable(modalElement, closeBtnElement) {
@@ -300,7 +308,12 @@ function makeModalDraggable(modalElement, closeBtnElement) {
     header.style.cursor = 'move';
     header.style.userSelect = 'none';
     
-    header.addEventListener('mousedown', function(e) {
+    // Удаляем старые обработчики, чтобы не было дублирования
+    const newHeader = header.cloneNode(true);
+    header.parentNode.replaceChild(newHeader, header);
+    const newHeaderElement = modalElement.querySelector('h3');
+    
+    newHeaderElement.addEventListener('mousedown', function(e) {
         if (e.target === closeBtnElement || closeBtnElement?.contains(e.target)) return;
         
         isDragging = true;
@@ -314,7 +327,6 @@ function makeModalDraggable(modalElement, closeBtnElement) {
         modalElement.style.position = 'fixed';
         modalElement.style.left = startLeft + 'px';
         modalElement.style.top = startTop + 'px';
-        modalElement.style.transform = 'none';
         modalElement.style.margin = '0';
         
         e.preventDefault();
@@ -352,7 +364,6 @@ function toggleSolutionById(id){
     if(d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
 }
 
-// Загрузка всех заданий для рандома (лениво)
 let cachedRandomTasks = null;
 let lastRandomParams = { userExam: null, includeOge: null };
 
@@ -543,7 +554,13 @@ async function openTasksModalLazy(exam, num){
     
     const container = document.getElementById('tasksListContainer');
     container.innerHTML = '<div class="loading-spinner"></div> Загрузка заданий...';
-    document.getElementById('tasksModal').classList.add('active');
+    const modal = document.getElementById('tasksModal');
+    const modalContent = modal.querySelector('.modal');
+    const closeBtn = document.getElementById('closeTasksModalBtn');
+    
+    // Сбрасываем позицию окна перед открытием
+    centerModal(modalContent);
+    modal.classList.add('active');
     
     const tasks = await loadTasks(exam, num);
     
@@ -572,9 +589,6 @@ async function openTasksModalLazy(exam, num){
         });
     });
     
-    const modal = document.getElementById('tasksModal');
-    const modalContent = modal.querySelector('.modal');
-    const closeBtn = document.getElementById('closeTasksModalBtn');
     makeModalDraggable(modalContent, closeBtn);
 }
 
@@ -708,7 +722,7 @@ document.getElementById('submitNewTaskBtn')?.addEventListener('click', () => {
 });
 
 // =====================================================
-// АВТОРИЗАЦИЯ (исправленная)
+// АВТОРИЗАЦИЯ
 // =====================================================
 let authModal = document.getElementById('authModal');
 let profileModal = document.getElementById('profileModal');
@@ -721,35 +735,28 @@ function openAuthModal(mode) {
     document.getElementById('modalActionBtn').innerText = mode === 'login' ? 'Войти' : 'Создать аккаунт';
     let modal = document.getElementById('authModal');
     let closeBtn = document.getElementById('closeModalBtn');
-    modal.classList.add('active');
-    
     const modalContent = modal.querySelector('.modal');
-    if (modalContent) {
-        modalContent.style.position = '';
-        modalContent.style.left = '';
-        modalContent.style.top = '';
-        modalContent.style.transform = '';
-        modalContent.style.margin = '';
-    }
+    
+    // Сбрасываем позицию окна перед открытием
+    centerModal(modalContent);
+    modal.classList.add('active');
+    makeModalDraggable(modalContent, closeBtn);
+}
+
+function openProfileModal() {
+    let modal = document.getElementById('profileModal');
+    let closeBtn = document.getElementById('closeProfileModalBtn');
+    const modalContent = modal.querySelector('.modal');
+    
+    centerModal(modalContent);
+    modal.classList.add('active');
     makeModalDraggable(modalContent, closeBtn);
 }
 
 document.getElementById('accountIconBtn')?.addEventListener('click', () => {
     if(currentUser){
         document.getElementById('currentEmailDisplay').innerText = currentUser.email;
-        let modal = document.getElementById('profileModal');
-        let closeBtn = document.getElementById('closeProfileModalBtn');
-        modal.classList.add('active');
-        
-        const modalContent = modal.querySelector('.modal');
-        if (modalContent) {
-            modalContent.style.position = '';
-            modalContent.style.left = '';
-            modalContent.style.top = '';
-            modalContent.style.transform = '';
-            modalContent.style.margin = '';
-        }
-        makeModalDraggable(modalContent, closeBtn);
+        openProfileModal();
     } else {
         openAuthModal('login');
     }
