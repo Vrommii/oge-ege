@@ -6386,7 +6386,54 @@ const tasksDB = {
 // =====================================================
 // ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ
 // =====================================================
-let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
+// =====================================================
+// ОПТИМИЗАЦИЯ ПРОИЗВОДИТЕЛЬНОСТИ
+// =====================================================
+
+// 1. Отложенная загрузка графиков (обновляем реже)
+let chartUpdateTimeout = null;
+function updateChartDebounced() {
+    if (chartUpdateTimeout) clearTimeout(chartUpdateTimeout);
+    chartUpdateTimeout = setTimeout(() => {
+        if(chart) chart.update();
+    }, 100);
+}
+
+// Вместо updateChart() используйте updateChartDebounced()
+
+// 2. Кэширование результатов getAllTasks()
+let cachedAllTasks = null;
+let lastUserExam = null;
+let lastIncludeOge = null;
+
+function getAllTasksOptimized() {
+    if (cachedAllTasks && lastUserExam === userExam && lastIncludeOge === includeOge) {
+        return cachedAllTasks;
+    }
+    let all = [];
+    for(let [num, tasks] of Object.entries(tasksDB[userExam])){
+        for(let t of tasks){
+            all.push({...t, exam: userExam, num: parseInt(num)});
+        }
+    }
+    if(includeOge && userExam === 'ege'){
+        for(let [num, tasks] of Object.entries(tasksDB.oge)){
+            for(let t of tasks){
+                all.push({...t, exam: 'oge', num: parseInt(num)});
+            }
+        }
+    }
+    cachedAllTasks = all;
+    lastUserExam = userExam;
+    lastIncludeOge = includeOge;
+    return all;
+}
+
+// Замените getAllTasks() на getAllTasksOptimized()
+
+// 3. Виртуальный скроллинг для списка заданий (если их очень много)
+// 4. Уменьшение количества заданий до 10-15 на тип (временно для теста)
+    let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
 
 function toggleSolution(id){
     let d = document.getElementById(id);
