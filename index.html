@@ -79,7 +79,34 @@
         .exam-btn-main.ege-active{background:#034694;color:white;}
         .exam-btn-main.ege-inactive{background:#ccc;color:#666;}
         .toggle-switch{display:flex;align-items:center;justify-content:space-between;background:white;padding:15px 20px;border-radius:16px;margin-top:15px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
-        .tasks-modal{max-width:700px;max-height:80vh;overflow-y:auto;}
+        
+        /* Модальное окно с фиксированным заголовком */
+        .tasks-modal{max-width:700px;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;}
+        .modal-header{
+            position:sticky;
+            top:0;
+            background:white;
+            z-index:20;
+            padding-bottom:10px;
+            border-bottom:2px solid #034694;
+            margin-bottom:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .modal-header h3{margin:0;color:#034694;}
+        .close-btn{
+            font-size:28px;
+            cursor:pointer;
+            color:#034694;
+            background:none;
+            border:none;
+            padding:0 10px;
+        }
+        .close-btn:hover{color:#dc2626;}
+        
+        .tasks-list-container{flex:1;overflow-y:auto;}
+        
         .task-item{background:#f8fafc;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #034694;}
         .task-item .task-text{margin-bottom:8px;white-space:pre-wrap;overflow-x:auto;}
         .task-item .task-solution-wrapper{margin-top:10px;}
@@ -89,16 +116,17 @@
         .task-item .task-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
         .btn-small{padding:5px 12px;font-size:0.8rem;border-radius:20px;border:none;cursor:pointer;}
         .solve-btn{background:#10B981;color:white;}
+        
         .stats-chart{background:white;border-radius:24px;padding:20px;margin:30px 0;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
         .chart-wrapper{height:240px;margin:20px 0;}
         .stats-grid{display:flex;gap:15px;flex-wrap:wrap;}
         .stat-card{background:#F1F5F9;padding:12px 18px;border-radius:20px;flex:1;text-align:center;}
         .stat-card .value{font-size:1.6rem;font-weight:800;color:#034694;}
+        
         .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:0.2s;z-index:1000;}
         .modal-overlay.active{visibility:visible;opacity:1;}
         .modal{background:white;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;padding:25px;border-radius:24px;position:relative;}
-        .close-btn{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;z-index:10;}
-        .modal h3{color:#034694;margin-bottom:10px;cursor:move;user-select:none;}
+        
         .loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #034694;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
         @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
         @media (max-width:768px){.numbers-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));}}
@@ -201,9 +229,11 @@
 
 <div class="modal-overlay" id="tasksModal">
     <div class="modal tasks-modal">
-        <span class="close-btn" id="closeTasksModalBtn">&times;</span>
-        <h3>Задания №<span id="modalNum"></span></h3>
-        <div id="tasksListContainer"></div>
+        <div class="modal-header">
+            <h3>Задания №<span id="modalNum"></span></h3>
+            <button class="close-btn" id="closeTasksModalBtn">&times;</button>
+        </div>
+        <div id="tasksListContainer" class="tasks-list-container"></div>
         <button id="showAddFormBtn" class="add-task-btn" style="background:#034694; margin-top:15px; padding:10px 20px; border-radius:30px; border:none; color:white; cursor:pointer;">📝 Добавить новое задание</button>
         <div id="addTaskForm" style="display:none; margin-top:15px;" class="add-task-form">
             <h4>Добавить задание в этот номер</h4>
@@ -217,8 +247,10 @@
 
 <div class="modal-overlay" id="authModal">
     <div class="modal">
-        <span class="close-btn" id="closeModalBtn">&times;</span>
-        <h3 id="modalTitleAuth">Создайте аккаунт</h3>
+        <div class="modal-header">
+            <h3 id="modalTitleAuth">Создайте аккаунт</h3>
+            <button class="close-btn" id="closeModalBtn">&times;</button>
+        </div>
         <input type="email" id="modalEmail" placeholder="Email" style="width:100%; padding:10px; margin:10px 0; border-radius:12px; border:1px solid #ccc;">
         <input type="password" id="modalPassword" placeholder="Пароль" style="width:100%; padding:10px; margin:10px 0; border-radius:12px; border:1px solid #ccc;">
         <label>Выберите экзамен:</label>
@@ -232,8 +264,10 @@
 
 <div class="modal-overlay" id="profileModal">
     <div class="modal">
-        <span class="close-btn" id="closeProfileModalBtn">&times;</span>
-        <h3>Настройки профиля</h3>
+        <div class="modal-header">
+            <h3>Настройки профиля</h3>
+            <button class="close-btn" id="closeProfileModalBtn">&times;</button>
+        </div>
         <div style="margin: 15px 0;">
             <label style="font-weight: 600;">Текущая почта:</label>
             <p id="currentEmailDisplay" style="background: #f1f5f9; padding: 8px; border-radius: 8px; margin-top: 5px;"></p>
@@ -285,70 +319,6 @@ async function loadTasks(exam, num) {
 // =====================================================
 
 let currentUser = null, userExam = "oge", includeOge = false, solvedTasks = {}, answerHistory = [], ogeCorrectHistory = [], egeCorrectHistory = [], chart = null, currentRandomTask = null, currentModalExam = "oge", currentModalNum = 1, currentVariantTasks = [];
-
-// Функция центрирования модального окна
-function centerModal(modalElement) {
-    if (!modalElement) return;
-    modalElement.style.position = 'relative';
-    modalElement.style.left = '';
-    modalElement.style.top = '';
-    modalElement.style.transform = '';
-    modalElement.style.margin = '0 auto';
-}
-
-// Функция для создания подвижного модального окна
-function makeModalDraggable(modalElement, closeBtnElement) {
-    if (!modalElement) return;
-    let isDragging = false;
-    let startX, startY, startLeft, startTop;
-    
-    const header = modalElement.querySelector('h3');
-    if (!header) return;
-    
-    header.style.cursor = 'move';
-    header.style.userSelect = 'none';
-    
-    // Удаляем старые обработчики, чтобы не было дублирования
-    const newHeader = header.cloneNode(true);
-    header.parentNode.replaceChild(newHeader, header);
-    const newHeaderElement = modalElement.querySelector('h3');
-    
-    newHeaderElement.addEventListener('mousedown', function(e) {
-        if (e.target === closeBtnElement || closeBtnElement?.contains(e.target)) return;
-        
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        
-        const rect = modalElement.getBoundingClientRect();
-        startLeft = rect.left;
-        startTop = rect.top;
-        
-        modalElement.style.position = 'fixed';
-        modalElement.style.left = startLeft + 'px';
-        modalElement.style.top = startTop + 'px';
-        modalElement.style.margin = '0';
-        
-        e.preventDefault();
-    });
-    
-    document.addEventListener('mousemove', function(e) {
-        if (!isDragging) return;
-        
-        let newLeft = startLeft + (e.clientX - startX);
-        let newTop = startTop + (e.clientY - startY);
-        
-        newLeft = Math.max(10, Math.min(newLeft, window.innerWidth - modalElement.offsetWidth - 10));
-        newTop = Math.max(10, Math.min(newTop, window.innerHeight - modalElement.offsetHeight - 10));
-        
-        modalElement.style.left = newLeft + 'px';
-        modalElement.style.top = newTop + 'px';
-    });
-    
-    document.addEventListener('mouseup', function() {
-        isDragging = false;
-    });
-}
 
 function toggleSolution(id){
     let d = document.getElementById(id);
@@ -555,11 +525,6 @@ async function openTasksModalLazy(exam, num){
     const container = document.getElementById('tasksListContainer');
     container.innerHTML = '<div class="loading-spinner"></div> Загрузка заданий...';
     const modal = document.getElementById('tasksModal');
-    const modalContent = modal.querySelector('.modal');
-    const closeBtn = document.getElementById('closeTasksModalBtn');
-    
-    // Сбрасываем позицию окна перед открытием
-    centerModal(modalContent);
     modal.classList.add('active');
     
     const tasks = await loadTasks(exam, num);
@@ -588,8 +553,6 @@ async function openTasksModalLazy(exam, num){
             updateStats();
         });
     });
-    
-    makeModalDraggable(modalContent, closeBtn);
 }
 
 function updateChart(){
@@ -733,30 +696,13 @@ function openAuthModal(mode) {
     currentMode = mode;
     document.getElementById('modalTitleAuth').innerText = mode === 'login' ? 'Войти' : 'Создать аккаунт';
     document.getElementById('modalActionBtn').innerText = mode === 'login' ? 'Войти' : 'Создать аккаунт';
-    let modal = document.getElementById('authModal');
-    let closeBtn = document.getElementById('closeModalBtn');
-    const modalContent = modal.querySelector('.modal');
-    
-    // Сбрасываем позицию окна перед открытием
-    centerModal(modalContent);
-    modal.classList.add('active');
-    makeModalDraggable(modalContent, closeBtn);
-}
-
-function openProfileModal() {
-    let modal = document.getElementById('profileModal');
-    let closeBtn = document.getElementById('closeProfileModalBtn');
-    const modalContent = modal.querySelector('.modal');
-    
-    centerModal(modalContent);
-    modal.classList.add('active');
-    makeModalDraggable(modalContent, closeBtn);
+    document.getElementById('authModal').classList.add('active');
 }
 
 document.getElementById('accountIconBtn')?.addEventListener('click', () => {
     if(currentUser){
         document.getElementById('currentEmailDisplay').innerText = currentUser.email;
-        openProfileModal();
+        profileModal.classList.add('active');
     } else {
         openAuthModal('login');
     }
